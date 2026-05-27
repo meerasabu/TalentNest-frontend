@@ -52,7 +52,7 @@ const SearchResults = () => {
     <div key={prod.id} className="market-card" onClick={() => navigate(`/product/${prod.id}`, { state: { user } })} style={{cursor: 'pointer', padding: '1rem', border: '1px solid #E5E7EB', borderRadius: '12px', display: 'flex', flexDirection: 'column', gap: '1rem', background: '#fff', transition: 'box-shadow 0.2s'}}>
       <div style={{width: '100%', height: '160px', backgroundColor: '#F3F4F6', borderRadius: '8px', overflow: 'hidden', position: 'relative'}}>
         {prod.image_urls && prod.image_urls.length > 0 ? (
-          <img src={`${import.meta.env.VITE_API_URL || 'http://localhost:5000'}${prod.image_urls[0]}`} alt={prod.title} style={{width: '100%', height: '100%', objectFit: 'cover'}} />
+          <img src={window.getImageUrl(prod.image_urls[0])} alt={prod.title} style={{width: '100%', height: '100%', objectFit: 'cover'}} />
         ) : (
           <div style={{width: '100%', height: '100%', background: 'linear-gradient(135deg, #E0E7FF 0%, #EDE9FE 100%)'}}></div>
         )}
@@ -68,7 +68,7 @@ const SearchResults = () => {
         <div className="prod-seller-row" style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '0.75rem' }}>
           {prod.profile_image ? (
             <img 
-              src={`${import.meta.env.VITE_API_URL || 'http://localhost:5000'}${prod.profile_image}`} 
+              src={window.getImageUrl(prod.profile_image)} 
               alt={prod.first_name} 
               style={{ width: '20px', height: '20px', borderRadius: '50%', objectFit: 'cover' }} 
             />
@@ -105,7 +105,7 @@ const SearchResults = () => {
     <div key={skill.id} className="market-card" onClick={() => navigate(`/skill/${skill.id}`, { state: { user } })} style={{cursor: 'pointer', padding: '1rem', border: '1px solid #E5E7EB', borderRadius: '12px', display: 'flex', flexDirection: 'column', gap: '1rem', background: '#fff', transition: 'box-shadow 0.2s'}}>
       <div style={{width: '100%', height: '160px', backgroundColor: '#F3F4F6', borderRadius: '8px', overflow: 'hidden', position: 'relative'}}>
         {skill.image_urls && skill.image_urls.length > 0 ? (
-          <img src={`${import.meta.env.VITE_API_URL || 'http://localhost:5000'}${skill.image_urls[0]}`} alt={skill.title} style={{width: '100%', height: '100%', objectFit: 'cover'}} />
+          <img src={window.getImageUrl(skill.image_urls[0])} alt={skill.title} style={{width: '100%', height: '100%', objectFit: 'cover'}} />
         ) : (
           <div style={{width: '100%', height: '100%', background: 'linear-gradient(135deg, #D1FAE5 0%, #ECFDF5 100%)'}}></div>
         )}
@@ -122,7 +122,7 @@ const SearchResults = () => {
     <div key={service.id} className="market-card" onClick={() => navigate(`/service/${service.id}`, { state: { user } })} style={{cursor: 'pointer', padding: '1rem', border: '1px solid #E5E7EB', borderRadius: '12px', display: 'flex', flexDirection: 'column', gap: '1rem', background: '#fff', transition: 'box-shadow 0.2s'}}>
       <div style={{width: '100%', height: '160px', backgroundColor: '#F3F4F6', borderRadius: '8px', overflow: 'hidden', position: 'relative'}}>
         {service.image_urls && service.image_urls.length > 0 ? (
-          <img src={`${import.meta.env.VITE_API_URL || 'http://localhost:5000'}${service.image_urls[0]}`} alt={service.title} style={{width: '100%', height: '100%', objectFit: 'cover'}} />
+          <img src={window.getImageUrl(service.image_urls[0])} alt={service.title} style={{width: '100%', height: '100%', objectFit: 'cover'}} />
         ) : (
           <div style={{width: '100%', height: '100%', background: 'linear-gradient(135deg, #FEF3C7 0%, #FFFBEB 100%)'}}></div>
         )}

@@ -191,7 +191,7 @@ const AdminStudents = () => {
                       <div className="student-profile-cell">
                         <div className="student-avatar-mini" style={{backgroundColor: '#E0E7FF', color: '#4F46E5'}}>
                           {student.profile_image ? (
-                            <img src={`${import.meta.env.VITE_API_URL || 'http://localhost:5000'}${student.profile_image}`} alt="" />
+                            <img src={window.getImageUrl(student.profile_image)} alt="" />
                           ) : (
                             student.first_name.charAt(0)
                           )}

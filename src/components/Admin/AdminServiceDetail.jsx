@@ -351,7 +351,7 @@ const AdminServiceDetail = () => {
                   <div className="provider-profile-sm">
                     <div className="provider-avatar-sm" style={{backgroundColor: '#F5F3FF', color: '#7C3AED'}}>
                       {service.provider_avatar ? (
-                        <img src={`${import.meta.env.VITE_API_URL || 'http://localhost:5000'}${service.provider_avatar}`} alt="" />
+                        <img src={window.getImageUrl(service.provider_avatar)} alt="" />
                       ) : (
                         service.first_name.charAt(0)
                       )}

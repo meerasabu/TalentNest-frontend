@@ -74,7 +74,7 @@ const Wishlist = () => {
               {filteredItems.map(item => (
                 <div key={item.wishlist_id} className="wishlist-card">
                   <div className="card-image-wrap">
-                    <img src={item.image_url ? `${import.meta.env.VITE_API_URL || 'http://localhost:5000'}${item.image_url}` : "https://placehold.co/600x400?text=No+Image"} alt={item.title} className="card-image" />
+                    <img src={item.image_url ? window.getImageUrl(item.image_url) : "https://placehold.co/600x400?text=No+Image"} alt={item.title} className="card-image" />
                     <div className="card-badge" style={{textTransform: 'uppercase'}}>{item.category}</div>
                     <button className="remove-wishlist" onClick={() => handleRemoveFromWishlist(item.type, item.id)}>❤️</button>
                   </div>

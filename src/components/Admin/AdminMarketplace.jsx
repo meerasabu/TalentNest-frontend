@@ -171,7 +171,7 @@ const AdminMarketplace = () => {
                         <div className="product-profile-cell">
                           <div className="product-img-mini">
                             {product.image_urls && product.image_urls.length > 0 ? (
-                              <img src={`${import.meta.env.VITE_API_URL || 'http://localhost:5000'}${product.image_urls[0]}`} alt="" />
+                              <img src={window.getImageUrl(product.image_urls[0])} alt="" />
                             ) : (
                               <div className="img-placeholder">
                                 <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#9CA3AF" strokeWidth="2"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect><circle cx="8.5" cy="8.5" r="1.5"></circle><polyline points="21 15 16 10 5 21"></polyline></svg>

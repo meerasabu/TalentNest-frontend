@@ -107,7 +107,7 @@ const Notifications = () => {
               withPerson: `${o.seller_first_name} ${o.seller_last_name || ''}`,
               status: (o.status || '').toUpperCase(),
               time: formatTime(o.updated_at || o.created_at),
-              image: o.seller_profile_image ? `${import.meta.env.VITE_API_URL || 'http://localhost:5000'}${o.seller_profile_image}` : null,
+              image: o.seller_profile_image ? window.getImageUrl(o.seller_profile_image) : null,
               hasChat: s !== 'pending',
               itemType: o.item_type,
               createdAt: o.updated_at || o.created_at,
@@ -139,7 +139,7 @@ const Notifications = () => {
               withPerson: `${o.buyer_first_name} ${o.buyer_last_name || ''}`,
               status: (o.status || '').toUpperCase(),
               time: formatTime(o.updated_at || o.created_at),
-              image: o.buyer_profile_image ? `${import.meta.env.VITE_API_URL || 'http://localhost:5000'}${o.buyer_profile_image}` : null,
+              image: o.buyer_profile_image ? window.getImageUrl(o.buyer_profile_image) : null,
               iconType: o.item_type === 'skill' ? 'purple' : 'blue',
               iconSvg: o.item_type === 'skill'
                 ? <path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"></path>
@@ -163,7 +163,7 @@ const Notifications = () => {
               withPerson: `${n.seller_first_name} ${n.seller_last_name || ''}`,
               status: 'AVAILABLE',
               time: formatTime(n.created_at),
-              image: n.seller_profile_image ? `${import.meta.env.VITE_API_URL || 'http://localhost:5000'}${n.seller_profile_image}` : null,
+              image: n.seller_profile_image ? window.getImageUrl(n.seller_profile_image) : null,
               iconType: 'blue',
               iconSvg: <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path>,
               hasChat: false,

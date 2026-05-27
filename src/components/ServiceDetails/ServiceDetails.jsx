@@ -148,7 +148,7 @@ const ServiceDetails = () => {
   }
 
   const mainImageUrl = service.image_urls && service.image_urls.length > 0 
-    ? `${import.meta.env.VITE_API_URL || 'http://localhost:5000'}${service.image_urls[0]}` 
+    ? window.getImageUrl(service.image_urls[0]) 
     : 'https://placehold.co/1200x500/e6e3df/a39589?text=Service';
 
   return (
@@ -316,7 +316,7 @@ const ServiceDetails = () => {
               <div className="sd-content-right">
                 
                 <div className="sd-seller-card">
-                  <img src={service.profile_image ? `${import.meta.env.VITE_API_URL || 'http://localhost:5000'}${service.profile_image}` : `https://placehold.co/80x80/222/fff?text=${service.first_name?.[0] || 'U'}${service.last_name?.[0] || ''}`} alt={service.first_name} className="sd-seller-avatar" style={{objectFit: 'cover'}} />
+                  <img src={service.profile_image ? window.getImageUrl(service.profile_image) : `https://placehold.co/80x80/222/fff?text=${service.first_name?.[0] || 'U'}${service.last_name?.[0] || ''}`} alt={service.first_name} className="sd-seller-avatar" style={{objectFit: 'cover'}} />
                   <h4 className="sd-seller-name">{service.first_name} {service.last_name}</h4>
                   <p className="sd-seller-role">Member since {new Date(service.created_at).getFullYear()}</p>
                   

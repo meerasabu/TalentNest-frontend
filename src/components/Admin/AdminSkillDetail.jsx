@@ -325,7 +325,7 @@ const AdminSkillDetail = () => {
                   <h3>Media & Demos Showcase</h3>
                   <div className="demo-showcase-gallery">
                     {skill.demo_media.map((mediaPath, index) => {
-                      const fileUrl = `${import.meta.env.VITE_API_URL || 'http://localhost:5000'}${mediaPath}`;
+                      const fileUrl = window.getImageUrl(mediaPath);
                       const isVideo = mediaPath.toLowerCase().endsWith('.mp4') || 
                                       mediaPath.toLowerCase().endsWith('.mov') ||
                                       mediaPath.toLowerCase().endsWith('.webm');
@@ -372,7 +372,7 @@ const AdminSkillDetail = () => {
                 <div className="provider-profile-sm">
                   <div className="provider-avatar-sm" style={{ backgroundColor: '#F5F3FF', color: '#7C3AED' }}>
                     {skill.provider_avatar ? (
-                      <img src={`${import.meta.env.VITE_API_URL || 'http://localhost:5000'}${skill.provider_avatar}`} alt="" />
+                      <img src={window.getImageUrl(skill.provider_avatar)} alt="" />
                     ) : (
                       skill.first_name.charAt(0)
                     )}

@@ -149,7 +149,7 @@ const AdminProductDetail = () => {
               <div className="product-image-card">
                 <div className="main-product-img">
                   {product.image_urls && product.image_urls.length > 0 ? (
-                    <img src={`${import.meta.env.VITE_API_URL || 'http://localhost:5000'}${product.image_urls[0]}`} alt={product.title} />
+                    <img src={window.getImageUrl(product.image_urls[0])} alt={product.title} />
                   ) : (
                     <div className="img-placeholder-lg">No Image Available</div>
                   )}
@@ -188,7 +188,7 @@ const AdminProductDetail = () => {
                 <div className="seller-profile-sm">
                   <div className="seller-avatar-sm" style={{ backgroundColor: '#F5F3FF', color: '#7C3AED' }}>
                     {product.seller_avatar ? (
-                      <img src={`${import.meta.env.VITE_API_URL || 'http://localhost:5000'}${product.seller_avatar}`} alt="" />
+                      <img src={window.getImageUrl(product.seller_avatar)} alt="" />
                     ) : (
                       product.first_name.charAt(0)
                     )}

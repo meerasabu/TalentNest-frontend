@@ -52,8 +52,8 @@ const EditProfile = () => {
     const [loading, setLoading] = useState(false);
 
     // Image states
-    const [profileImgPreview, setProfileImgPreview] = useState(user.profileImage ? `${import.meta.env.VITE_API_URL || 'http://localhost:5000'}${user.profileImage}` : 'https://placehold.co/150x150');
-    const [bannerImgPreview, setBannerImgPreview] = useState(user.bannerImage ? `${import.meta.env.VITE_API_URL || 'http://localhost:5000'}${user.bannerImage}` : 'https://placehold.co/1200x260/0284c7/ecf0f1');
+    const [profileImgPreview, setProfileImgPreview] = useState(user.profileImage ? window.getImageUrl(user.profileImage) : 'https://placehold.co/150x150');
+    const [bannerImgPreview, setBannerImgPreview] = useState(user.bannerImage ? window.getImageUrl(user.bannerImage) : 'https://placehold.co/1200x260/0284c7/ecf0f1');
     const [profileImgFile, setProfileImgFile] = useState(null);
     const [bannerImgFile, setBannerImgFile] = useState(null);
 

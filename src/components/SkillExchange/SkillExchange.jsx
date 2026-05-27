@@ -267,7 +267,7 @@ const SkillExchange = () => {
                    <div key={skill.id} className="sk-card" onClick={() => navigate(`/skill/${skill.id}`, { state: { user } })} style={{cursor: 'pointer'}}>
                      <div className="sk-img-layer">
                        {skill.image_urls && skill.image_urls.length > 0 ? (
-                         <img src={`${import.meta.env.VITE_API_URL || 'http://localhost:5000'}${skill.image_urls[0]}`} alt={skill.title} className="sk-img"/>
+                         <img src={window.getImageUrl(skill.image_urls[0])} alt={skill.title} className="sk-img"/>
                        ) : (
                          <div className="sk-img sk-gradient-bg"></div>
                        )}
@@ -288,7 +288,7 @@ const SkillExchange = () => {
                        <h3 className="sk-card-title">{skill.title}</h3>
                        
                        <div className="sk-author-row">
-                         <img src={skill.profile_image ? `${import.meta.env.VITE_API_URL || 'http://localhost:5000'}${skill.profile_image}` : "https://placehold.co/24x24/e2e8f0/e2e8f0"} alt="Avatar" className="sk-auth-ava" style={{objectFit: 'cover'}}/>
+                         <img src={skill.profile_image ? window.getImageUrl(skill.profile_image) : "https://placehold.co/24x24/e2e8f0/e2e8f0"} alt="Avatar" className="sk-auth-ava" style={{objectFit: 'cover'}}/>
                          <span className="sk-auth-lbl">by <strong>{skill.first_name} {skill.last_name?.charAt(0)}.</strong></span>
                        </div>
 

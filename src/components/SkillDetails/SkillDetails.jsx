@@ -202,7 +202,7 @@ const SkillDetails = () => {
   });
 
   const mainImageUrl = skill.image_urls && skill.image_urls.length > 0 
-    ? `${import.meta.env.VITE_API_URL || 'http://localhost:5000'}${skill.image_urls[0]}` 
+    ? window.getImageUrl(skill.image_urls[0]) 
     : 'https://placehold.co/1200x500/e6e3df/a39589?text=Skill';
 
   // Badges calculation
@@ -410,7 +410,7 @@ const SkillDetails = () => {
                     <h3>Media & Demos Showcase</h3>
                     <div className="demo-showcase-gallery">
                       {skill.demo_media.map((mediaPath, index) => {
-                        const fileUrl = `${import.meta.env.VITE_API_URL || 'http://localhost:5000'}${mediaPath}`;
+                        const fileUrl = window.getImageUrl(mediaPath);
                         const isVideo = mediaPath.toLowerCase().endsWith('.mp4') || 
                                         mediaPath.toLowerCase().endsWith('.mov') ||
                                         mediaPath.toLowerCase().endsWith('.webm');
@@ -525,7 +525,7 @@ const SkillDetails = () => {
                           <div className="rev-head">
                             <div className="rev-user-grp">
                               <img 
-                                src={r.profile_image ? `${import.meta.env.VITE_API_URL || 'http://localhost:5000'}${r.profile_image}` : `https://placehold.co/40x40/555/fff?text=${r.first_name?.[0] || 'S'}`} 
+                                src={r.profile_image ? window.getImageUrl(r.profile_image) : `https://placehold.co/40x40/555/fff?text=${r.first_name?.[0] || 'S'}`} 
                                 alt={r.first_name} 
                                 style={{width: '40px', height: '40px', borderRadius: '50%', objectFit: 'cover'}} 
                               />
@@ -575,7 +575,7 @@ const SkillDetails = () => {
                 
                 {/* Tutor info & badges card */}
                 <div className="sk-seller-card">
-                  <img src={skill.profile_image ? `${import.meta.env.VITE_API_URL || 'http://localhost:5000'}${skill.profile_image}` : `https://placehold.co/80x80/222/fff?text=${skill.first_name?.[0] || 'U'}${skill.last_name?.[0] || ''}`} alt={skill.first_name} className="sk-seller-avatar" style={{objectFit: 'cover'}} />
+                  <img src={skill.profile_image ? window.getImageUrl(skill.profile_image) : `https://placehold.co/80x80/222/fff?text=${skill.first_name?.[0] || 'U'}${skill.last_name?.[0] || ''}`} alt={skill.first_name} className="sk-seller-avatar" style={{objectFit: 'cover'}} />
                   
                   <div className="mentor-title-verification">
                     <h4 className="sk-seller-name">{skill.first_name} {skill.last_name}</h4>

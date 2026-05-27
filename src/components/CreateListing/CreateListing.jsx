@@ -81,12 +81,12 @@ const CreateListing = () => {
       
       if (item.image_urls) {
         setExistingImages(item.image_urls);
-        setPreviews(item.image_urls.map(url => `${import.meta.env.VITE_API_URL || 'http://localhost:5000'}${url}`));
+        setPreviews(item.image_urls.map(url => window.getImageUrl(url)));
       }
 
       if (item.demo_media) {
         setExistingDemoMedia(item.demo_media);
-        setDemoPreviews(item.demo_media.map(url => `${import.meta.env.VITE_API_URL || 'http://localhost:5000'}${url}`));
+        setDemoPreviews(item.demo_media.map(url => window.getImageUrl(url)));
       }
     } else if (location.state?.initialTab) {
       setActiveTab(location.state.initialTab);
@@ -143,7 +143,7 @@ const CreateListing = () => {
       setImages(prev => {
         const newImages = [...prev, ...selectedFiles].slice(0, 4 - existingImages.length);
         const newPreviews = [
-          ...existingImages.map(url => `${import.meta.env.VITE_API_URL || 'http://localhost:5000'}${url}`),
+          ...existingImages.map(url => window.getImageUrl(url)),
           ...newImages.map(file => URL.createObjectURL(file))
         ];
         setPreviews(newPreviews);
@@ -158,7 +158,7 @@ const CreateListing = () => {
       const updatedExisting = existingImages.filter((_, idx) => idx !== indexToRemove);
       setExistingImages(updatedExisting);
       setPreviews([
-        ...updatedExisting.map(url => `${import.meta.env.VITE_API_URL || 'http://localhost:5000'}${url}`),
+        ...updatedExisting.map(url => window.getImageUrl(url)),
         ...images.map(file => URL.createObjectURL(file))
       ]);
     } else {
@@ -167,7 +167,7 @@ const CreateListing = () => {
       setImages(prev => {
         const newImages = prev.filter((_, idx) => idx !== relativeIdx);
         setPreviews([
-          ...existingImages.map(url => `${import.meta.env.VITE_API_URL || 'http://localhost:5000'}${url}`),
+          ...existingImages.map(url => window.getImageUrl(url)),
           ...newImages.map(file => URL.createObjectURL(file))
         ]);
         return newImages;
@@ -199,7 +199,7 @@ const CreateListing = () => {
       setDemoMedia(prev => {
         const newDemos = [...prev, ...selectedFiles].slice(0, 4 - existingDemoMedia.length);
         const newPreviews = [
-          ...existingDemoMedia.map(url => `${import.meta.env.VITE_API_URL || 'http://localhost:5000'}${url}`),
+          ...existingDemoMedia.map(url => window.getImageUrl(url)),
           ...newDemos.map(file => URL.createObjectURL(file))
         ];
         setDemoPreviews(newPreviews);
@@ -213,7 +213,7 @@ const CreateListing = () => {
       const updatedExisting = existingDemoMedia.filter((_, idx) => idx !== indexToRemove);
       setExistingDemoMedia(updatedExisting);
       setDemoPreviews([
-        ...updatedExisting.map(url => `${import.meta.env.VITE_API_URL || 'http://localhost:5000'}${url}`),
+        ...updatedExisting.map(url => window.getImageUrl(url)),
         ...demoMedia.map(file => URL.createObjectURL(file))
       ]);
     } else {
@@ -221,7 +221,7 @@ const CreateListing = () => {
       setDemoMedia(prev => {
         const newDemos = prev.filter((_, idx) => idx !== relativeIdx);
         setDemoPreviews([
-          ...existingDemoMedia.map(url => `${import.meta.env.VITE_API_URL || 'http://localhost:5000'}${url}`),
+          ...existingDemoMedia.map(url => window.getImageUrl(url)),
           ...newDemos.map(file => URL.createObjectURL(file))
         ]);
         return newDemos;
