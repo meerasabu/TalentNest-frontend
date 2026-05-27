@@ -6,10 +6,12 @@ import './Login.css';
 const Login = () => {
   const navigate = useNavigate();
   const [showPassword, setShowPassword] = useState(false);
+
+  // Corrected: Using 'email' to match backend destructuring expectations
   const [formData, setFormData] = useState({
-  email: '', 
-  password: ''
-});
+    email: '',
+    password: ''
+  });
   const [error, setError] = useState(null);
 
   useEffect(() => {
@@ -68,7 +70,7 @@ const Login = () => {
           </svg>
         </Link>
         <div className="avatar">T</div>
-        
+
         <div style={{ textAlign: 'center', marginBottom: '0.75rem' }}>
           <h1 style={{ fontSize: '1.75rem', fontWeight: '800', color: '#4f46e5', margin: '0 0 0.25rem 0', letterSpacing: '-0.025em' }}>
             TalentNest
@@ -78,27 +80,30 @@ const Login = () => {
           </h2>
         </div>
         <p className="login-subtitle">Enter your credentials to access the nest</p>
- 
-        {error && <div className="error-message" style={{color: '#ef4444', fontSize: '0.875rem', marginBottom: '0.75rem', textAlign: 'center'}}>{error}</div>}
- 
+
+        {error && <div className="error-message" style={{ color: '#ef4444', fontSize: '0.875rem', marginBottom: '0.75rem', textAlign: 'center' }}>{error}</div>}
+
         <form className="login-form" onSubmit={handleLogin}>
           <div className="form-group">
             <label htmlFor="email">Campus Email</label>
             <div className="input-wrapper">
               <span className="input-icon">
                 <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
-                  <path d="M.05 3.555A2 2 0 0 1 2 2h12a2 2 0 0 1 1.95 1.555L8 8.414.05 3.555ZM0 4.697v7.104l5.803-3.558L0 4.697ZM6.761 8.83l-6.57 4.027A2 2 0 0 0 2 14h12a2 2 0 0 0 1.808-1.144l-6.57-4.027L8 9.586l-1.239-.757Zm3.436-.586L16 11.801V4.697l-5.803 3.546Z"/>
+                  <path d="M.05 3.555A2 2 0 0 1 2 2h12a2 2 0 0 1 1.95 1.555L8 8.414.05 3.555ZM0 4.697v7.104l5.803-3.558L0 4.697ZM6.761 8.83l-6.57 4.027A2 2 0 0 0 2 14h12a2 2 0 0 0 1.808-1.144l-6.57-4.027L8 9.586l-1.239-.757Zm3.436-.586L16 11.801V4.697l-5.803 3.546Z" />
                 </svg>
               </span>
-              <input 
-                type="email" 
-                id="email" 
-                value={formData.email || formData.campusEmail || ''} 
-                onChange={handleChange} 
-                required />
+              {/* Corrected id and value parameters */}
+              <input
+                type="email"
+                id="email"
+                placeholder="name@university.edu"
+                value={formData.email}
+                onChange={handleChange}
+                required
+              />
             </div>
           </div>
- 
+
           <div className="form-group">
             <div className="label-wrapper">
               <label htmlFor="password">Password</label>
@@ -107,21 +112,21 @@ const Login = () => {
             <div className="input-wrapper">
               <span className="input-icon">
                 <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
-                  <path d="M8 1a2 2 0 0 1 2 2v4H6V3a2 2 0 0 1 2-2zm3 6V3a3 3 0 0 0-6 0v4a2 2 0 0 0-2 2v5a2 2 0 0 0 2 2h6a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2zM5 8h6a1 1 0 0 1 1 1v5a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1V9a1 1 0 0 1 1-1z"/>
+                  <path d="M8 1a2 2 0 0 1 2 2v4H6V3a2 2 0 0 1 2-2zm3 6V3a3 3 0 0 0-6 0v4a2 2 0 0 0-2 2v5a2 2 0 0 0 2 2h6a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2zM5 8h6a1 1 0 0 1 1 1v5a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1V9a1 1 0 0 1 1-1z" />
                 </svg>
               </span>
-              <input 
-                type={showPassword ? "text" : "password"} 
-                id="password" 
-                placeholder="••••••••" 
-                value={formData.password} 
-                onChange={handleChange} 
-                className="password-input" 
-                required 
+              <input
+                type={showPassword ? "text" : "password"}
+                id="password"
+                placeholder="••••••••"
+                value={formData.password}
+                onChange={handleChange}
+                className="password-input"
+                required
               />
-              <button 
-                type="button" 
-                className="password-toggle-btn" 
+              <button
+                type="button"
+                className="password-toggle-btn"
                 onClick={() => setShowPassword(!showPassword)}
                 aria-label={showPassword ? "Hide password" : "Show password"}
               >
