@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import axios from 'axios';
+import api from '../../api/axiosConfig';
 import './Login.css';
 
 const Login = () => {
@@ -44,7 +44,7 @@ const Login = () => {
     setError(null);
 
     try {
-      const response = await axios.post(`${import.meta.env.VITE_API_URL || 'http://localhost:5000'}/api/login`, formData);
+      const response = await api.post('/login', formData);
       if (response.data.success) {
         // Persist user session
         localStorage.setItem('token', response.data.token);

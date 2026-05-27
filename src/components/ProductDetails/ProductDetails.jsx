@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import axios from 'axios';
 import api from '../../api/axiosConfig';
-import { useNavigate, useLocation, useParams } from 'react-router-dom';
+import { useNavigate, useLocation, useParams, Navigate } from 'react-router-dom';
 import Sidebar from '../Common/Sidebar';
 import '../Dashboard/Index.css'; 
 import './ProductDetails.css';
@@ -12,7 +11,12 @@ const ProductDetails = () => {
   const location = useLocation();
   const { id } = useParams();
   
-  const user = location.state?.user || JSON.parse(localStorage.getItem('user')) || { id: 5, firstName: 'Student', lastName: '', email: 'student@university.edu' };
+  const user = location.state?.user || JSON.parse(localStorage.getItem('user'));
+  const token = localStorage.getItem('token');
+
+  if (!user || !token || token === 'undefined') {
+    return <Navigate to="/login" />;
+  }
   const handlePrefix = user.email ? user.email.split('@')[0].toUpperCase() : '';
 
   const [product, setProduct] = useState(null);

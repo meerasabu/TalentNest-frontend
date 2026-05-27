@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from 'react';
-import axios from 'axios';
 import api from '../../api/axiosConfig';
 import { useNavigate, useLocation } from 'react-router-dom';
 import '../Dashboard/Index.css'; 
@@ -125,6 +124,22 @@ const CreateListing = () => {
   const [existingDemoMedia, setExistingDemoMedia] = useState([]);
 
   const [currentStep, setCurrentStep] = useState(1);
+
+  // Cleanup object URLs on unmount to prevent memory leaks
+  useEffect(() => {
+    return () => {
+      previews.forEach(url => {
+        if (url && !url.startsWith('data:') && !url.startsWith('http')) {
+          try { URL.revokeObjectURL(url); } catch (e) { /* ignore */ }
+        }
+      });
+      demoPreviews.forEach(url => {
+        if (url && !url.startsWith('data:') && !url.startsWith('http')) {
+          try { URL.revokeObjectURL(url); } catch (e) { /* ignore */ }
+        }
+      });
+    };
+  }, []);
 
   const handleTabChange = (tab) => {
     if (isEditMode) return; // Prevent changing tab in edit mode

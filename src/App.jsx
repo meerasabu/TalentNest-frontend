@@ -38,11 +38,13 @@ import AdminVerification from './components/Admin/AdminVerification';
 import AdminReports from './components/Admin/AdminReports';
 import { NotificationProvider } from './context/NotificationContext';
 import { PresenceProvider } from './context/PresenceContext';
+import ErrorBoundary from './components/Common/ErrorBoundary';
 
 const About = () => <div style={{ padding: '2rem' }}><h1>About TalentNest</h1><p>A campus ecosystem for student talent.</p></div>;
 
 function App() {
   return (
+    <ErrorBoundary>
     <Router>
       <PresenceProvider>
         <NotificationProvider>
@@ -77,7 +79,6 @@ function App() {
           <Route path="/skill/:id" element={<SkillDetails />} />
           <Route path="/services" element={<Services />} />
           <Route path="/service/:id" element={<ServiceDetails />} />
-          <Route path="/services/:id" element={<ServiceDetails />} />
           <Route path="/orders" element={<Orders />} />
           <Route path="/profile" element={<Profile />} />
           <Route path="/edit-profile" element={<EditProfile />} />
@@ -91,6 +92,7 @@ function App() {
         </NotificationProvider>
       </PresenceProvider>
     </Router>
+    </ErrorBoundary>
   );
 }
 

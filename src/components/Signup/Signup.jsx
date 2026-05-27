@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import axios from 'axios';
+import api from '../../api/axiosConfig';
 import { useNavigate, Link } from 'react-router-dom';
 import '../VerifyOtp/VerifyOtp.css';
 
@@ -102,7 +102,7 @@ const Signup = () => {
   const handleResendOtp = async () => {
     setOtpMessage(null);
     try {
-      const response = await axios.post(`${import.meta.env.VITE_API_URL || 'http://localhost:5000'}/api/signup/resend-otp`, {
+      const response = await api.post('/signup/resend-otp', {
         campusEmail: formData.campusEmail
       }, {
         headers: { 'Content-Type': 'application/json' }
@@ -132,7 +132,7 @@ const Signup = () => {
     setOtpMessage(null);
 
     try {
-      const response = await axios.post(`${import.meta.env.VITE_API_URL || 'http://localhost:5000'}/api/signup/verify-otp`, {
+      const response = await api.post('/signup/verify-otp', {
         campusEmail: formData.campusEmail,
         otp: otpCode
       }, {
@@ -178,7 +178,7 @@ const Signup = () => {
 
     try {
       setMessage(null);
-      const response = await axios.post(`${import.meta.env.VITE_API_URL || 'http://localhost:5000'}/api/signup`, formData, {
+      const response = await api.post('/signup', formData, {
         headers: { 'Content-Type': 'application/json' }
       });
       if (response.data.success) {
