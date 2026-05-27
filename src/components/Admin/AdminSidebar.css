@@ -1,0 +1,694 @@
+/* Admin Sidebar Variables */
+:root {
+  --admin-sidebar-width-expanded: 240px;
+  --admin-sidebar-width-collapsed: 72px;
+  --admin-sidebar-transition-duration: 0.35s;
+  --admin-sidebar-transition-timing: cubic-bezier(0.16, 1, 0.3, 1);
+  --admin-sidebar-transition: width var(--admin-sidebar-transition-duration) var(--admin-sidebar-transition-timing),
+                              padding var(--admin-sidebar-transition-duration) var(--admin-sidebar-transition-timing),
+                              background-color 0.2s ease;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  :root {
+    --admin-sidebar-transition-duration: 0.01s;
+  }
+}
+
+/* Global Layout Override for Admin views to keep them perfectly synced with sidebar width transitions */
+.admin-container {
+  display: flex !important;
+  height: 100vh !important;
+  width: 100vw !important;
+  background-color: #FFFFFF !important;
+  overflow: hidden !important;
+  font-family: 'Inter', sans-serif !important;
+}
+
+.admin-main {
+  flex: 1 !important;
+  display: flex !important;
+  flex-direction: column !important;
+  background-color: #FFFFFF !important;
+  height: 100vh !important;
+  overflow-y: auto !important;
+  transition: padding var(--admin-sidebar-transition-duration) var(--admin-sidebar-transition-timing) !important;
+  position: relative !important;
+}
+
+/* Admin Sidebar base styles */
+.admin-sidebar {
+  width: var(--admin-sidebar-width-expanded);
+  background-color: #FFFFFF;
+  border-right: 1px solid var(--neutral-100);
+  display: flex;
+  flex-direction: column;
+  padding: 1.25rem 0;
+  flex-shrink: 0;
+  box-shadow: 1px 0 0 rgba(0, 0, 0, 0.01), 4px 0 24px rgba(15, 23, 42, 0.015);
+  z-index: 100;
+  transition: var(--admin-sidebar-transition);
+  position: relative;
+  box-sizing: border-box;
+}
+
+/* Collapsed state rules */
+.admin-sidebar.collapsed {
+  width: var(--admin-sidebar-width-collapsed);
+  overflow: visible; /* Required to prevent tooltips from clipping */
+}
+
+/* Header & Logo styling */
+.admin-sidebar-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 1.25rem 1.25rem 1.25rem;
+  transition: padding var(--admin-sidebar-transition);
+}
+
+.admin-sidebar.collapsed .admin-sidebar-header {
+  padding: 0 0 1.25rem 0;
+  justify-content: center;
+}
+
+.admin-logo-group {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  min-width: 0;
+}
+
+.admin-logo-icon {
+  background-color: var(--primary-color);
+  color: #FFFFFF;
+  width: 2.25rem;
+  height: 2.25rem;
+  border-radius: var(--radius-md);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.9rem;
+  font-weight: 800;
+  box-shadow: 0 4px 10px rgba(79, 70, 229, 0.2);
+  flex-shrink: 0;
+}
+
+.admin-logo-details {
+  display: flex;
+  flex-direction: column;
+  opacity: 1;
+  visibility: visible;
+  transition: opacity 0.2s ease, visibility 0.2s ease;
+}
+
+.admin-sidebar.collapsed .admin-logo-details {
+  opacity: 0;
+  visibility: hidden;
+  position: absolute;
+  pointer-events: none;
+}
+
+.admin-logo-text {
+  font-size: 1.15rem;
+  font-weight: 800;
+  color: #111827;
+  letter-spacing: -0.03em;
+  line-height: 1.2;
+}
+
+.admin-logo-sub {
+  font-size: 0.65rem;
+  font-weight: 700;
+  color: #9CA3AF;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  margin-top: 1px;
+}
+
+/* Sidebar Collapse toggle button */
+.admin-sidebar-collapse-btn {
+  background: transparent;
+  border: none;
+  color: var(--neutral-400);
+  cursor: pointer;
+  padding: 0.375rem;
+  border-radius: 6px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s ease;
+  outline: none;
+}
+
+.admin-sidebar-collapse-btn:focus-visible {
+  box-shadow: 0 0 0 2px var(--primary-color);
+}
+
+.admin-sidebar-collapse-btn:hover {
+  background-color: var(--neutral-50);
+  color: var(--neutral-700);
+}
+
+.hamburger-menu {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  width: 18px;
+  height: 14px;
+  position: relative;
+  cursor: pointer;
+}
+
+.hamburger-menu .bar {
+  display: block;
+  width: 100%;
+  height: 2px;
+  background-color: currentColor;
+  border-radius: 9999px;
+  transition: transform var(--admin-sidebar-transition-duration) var(--admin-sidebar-transition-timing),
+              opacity var(--admin-sidebar-transition-duration) var(--admin-sidebar-transition-timing);
+  transform-origin: center;
+}
+
+/* Animate hamburger to X when sidebar is expanded (NOT collapsed) */
+.admin-sidebar:not(.collapsed) .line-1 {
+  transform: translateY(6px) rotate(45deg);
+}
+
+.admin-sidebar:not(.collapsed) .line-2 {
+  opacity: 0;
+  transform: scaleX(0);
+}
+
+.admin-sidebar:not(.collapsed) .line-3 {
+  transform: translateY(-6px) rotate(-45deg);
+}
+
+/* Normal state when collapsed */
+.admin-sidebar.collapsed .line-1,
+.admin-sidebar.collapsed .line-2,
+.admin-sidebar.collapsed .line-3 {
+  transform: none;
+  opacity: 1;
+}
+
+/* Fade text label animations */
+.nav-item-text {
+  opacity: 1;
+  visibility: visible;
+  transition: opacity 0.2s ease, visibility 0.2s ease;
+  white-space: nowrap;
+}
+
+.admin-sidebar.collapsed .nav-item-text,
+.admin-sidebar.collapsed .dropdown-chevron {
+  opacity: 0;
+  visibility: hidden;
+  position: absolute;
+  pointer-events: none;
+}
+
+/* Navigation items container styling */
+.admin-nav {
+  flex: 1;
+  padding: 0 0.5rem;
+  overflow-y: auto;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+  transition: padding var(--admin-sidebar-transition);
+}
+
+.admin-sidebar.collapsed .admin-nav {
+  padding: 0 0.5rem;
+}
+
+.admin-nav::-webkit-scrollbar {
+  display: none;
+}
+
+.admin-nav-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.admin-nav-item {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.625rem 0.75rem;
+  color: var(--neutral-600);
+  font-size: 0.875rem;
+  font-weight: 600;
+  border-radius: var(--radius-md);
+  cursor: pointer;
+  transition: all var(--admin-sidebar-transition-duration) var(--admin-sidebar-transition-timing);
+  box-sizing: border-box;
+  position: relative;
+  outline: none;
+}
+
+.admin-nav-item:focus-visible {
+  box-shadow: 0 0 0 2px var(--primary-color);
+}
+
+.admin-sidebar.collapsed .admin-nav-item {
+  justify-content: center;
+  padding: 0.625rem 0;
+}
+
+.admin-nav-item:hover {
+  background-color: var(--neutral-50);
+  color: var(--neutral-900);
+  padding-left: 1rem;
+}
+
+.admin-sidebar.collapsed .admin-nav-item:hover {
+  padding-left: 0;
+  background-color: var(--neutral-50);
+}
+
+/* Active indicator accent bar + glow */
+.admin-nav-item::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 15%;
+  height: 70%;
+  width: 3px;
+  background-color: var(--primary-color);
+  border-radius: 0 4px 4px 0;
+  opacity: 0;
+  transform: scaleY(0.3);
+  transition: opacity 0.2s ease, transform 0.2s var(--admin-sidebar-transition-timing);
+}
+
+.admin-nav-item.active::before {
+  opacity: 1;
+  transform: scaleY(1);
+}
+
+.admin-nav-item.active {
+  background-color: var(--primary-light);
+  color: var(--primary-color);
+  font-weight: 700;
+  box-shadow: inset 0 0 12px rgba(79, 70, 229, 0.05);
+}
+
+/* Nav Item Content for alignment inside dropdown toggles */
+.nav-item-content {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  min-width: 0;
+  flex: 1;
+}
+
+.admin-sidebar.collapsed .nav-item-content {
+  justify-content: center;
+}
+
+/* Sub-items dropdown chevron */
+.dropdown-chevron {
+  margin-left: auto;
+  transition: transform 0.3s var(--admin-sidebar-transition-timing);
+  color: var(--neutral-400);
+  flex-shrink: 0;
+}
+
+.dropdown-chevron.open {
+  transform: rotate(180deg);
+  color: var(--primary-color);
+}
+
+/* Sub navigation list */
+.admin-sub-nav {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  max-height: 0;
+  overflow: hidden;
+  transition: max-height 0.3s var(--admin-sidebar-transition-timing), 
+              opacity 0.3s ease, 
+              margin 0.3s ease;
+  opacity: 0;
+  background-color: var(--neutral-50);
+  border-radius: var(--radius-md);
+  margin-bottom: 0.25rem;
+}
+
+.admin-sub-nav.show {
+  max-height: 200px;
+  opacity: 1;
+  padding: 0.375rem 0;
+  margin-top: 0.125rem;
+  border: 1px solid rgba(15, 23, 42, 0.03);
+}
+
+.admin-sidebar.collapsed .admin-sub-nav {
+  display: none !important; /* Hide submenus when sidebar collapses */
+}
+
+.admin-sub-nav-item {
+  display: block;
+  padding: 0.45rem 0.75rem 0.45rem 3rem;
+  font-size: 0.825rem;
+  color: var(--neutral-600);
+  font-weight: 550;
+  text-decoration: none;
+  transition: all 0.2s var(--admin-sidebar-transition-timing);
+}
+
+.admin-sub-nav-item:hover {
+  background-color: rgba(79, 70, 229, 0.05);
+  color: var(--primary-color);
+  padding-left: 3.25rem;
+}
+
+.admin-sub-nav-item.active {
+  color: var(--primary-color);
+  font-weight: 700;
+  background-color: var(--primary-light);
+}
+
+/* Icons */
+.admin-icon-wrapper {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 1.5rem;
+  height: 1.5rem;
+  flex-shrink: 0;
+}
+
+.admin-nav-item svg {
+  stroke: var(--neutral-500);
+  transition: stroke 0.2s;
+}
+
+.admin-nav-item:hover svg, .admin-nav-item.active svg {
+  stroke: currentColor;
+}
+
+/* Collapsed tooltips styling */
+.admin-nav-item[data-tooltip], .logout-item[data-tooltip] {
+  position: relative;
+}
+
+.admin-nav-item[data-tooltip]::after, .logout-item[data-tooltip]::after {
+  content: attr(data-tooltip);
+  position: absolute;
+  left: calc(100% + 14px);
+  top: 50%;
+  transform: translateY(-50%) scale(0.95);
+  background-color: #0f172a;
+  color: #ffffff;
+  padding: 6px 10px;
+  border-radius: 6px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  white-space: nowrap;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.15s var(--admin-sidebar-transition-timing),
+              transform 0.15s var(--admin-sidebar-transition-timing);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  z-index: 1000;
+}
+
+.admin-nav-item[data-tooltip]::before, .logout-item[data-tooltip]::before {
+  content: '';
+  position: absolute;
+  left: calc(100% + 6px);
+  top: 50%;
+  transform: translateY(-50%);
+  border-width: 4px;
+  border-style: solid;
+  border-color: transparent #0f172a transparent transparent;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.15s var(--admin-sidebar-transition-timing);
+  z-index: 1000;
+}
+
+.admin-nav-item[data-tooltip]:hover::after, .logout-item[data-tooltip]:hover::after {
+  opacity: 1;
+  transform: translateY(-50%) scale(1);
+}
+
+.admin-nav-item[data-tooltip]:hover::before, .logout-item[data-tooltip]:hover::before {
+  opacity: 1;
+}
+
+/* Sidebar Badges */
+.sidebar-badge {
+  font-size: 0.7rem;
+  font-weight: 800;
+  padding: 1.5px 5.5px;
+  border-radius: 9999px;
+  margin-left: auto;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 14px;
+  height: 14px;
+}
+
+.sidebar-badge-dot {
+  position: absolute;
+  top: -2px;
+  right: -2px;
+  width: 8px;
+  height: 8px;
+  background-color: #EF4444;
+  border-radius: 50%;
+  border: 1.5px solid white;
+}
+
+/* Sidebar Footer & Logout */
+.admin-sidebar-footer {
+  padding: 0.875rem 0.5rem;
+  border-top: 1px solid rgba(226, 232, 240, 0.6);
+  transition: padding var(--admin-sidebar-transition);
+}
+
+.admin-sidebar.collapsed .admin-sidebar-footer {
+  padding: 1rem 0;
+  display: flex;
+  justify-content: center;
+}
+
+.logout-item {
+  color: var(--neutral-500);
+}
+
+.logout-item:hover {
+  background-color: #fee2e2;
+  color: #ef4444;
+  padding-left: 1rem;
+}
+
+.admin-sidebar.collapsed .logout-item:hover {
+  padding-left: 0;
+}
+
+/* Responsive Admin Drawer Mobile Overrides */
+.admin-sidebar-overlay {
+  display: none;
+}
+
+@media (max-width: 768px) {
+  .admin-sidebar-overlay {
+    display: block;
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(15, 23, 42, 0.4);
+    backdrop-filter: blur(4px);
+    -webkit-backdrop-filter: blur(4px);
+    z-index: 998;
+    animation: fade-in-overlay 0.25s ease;
+  }
+
+  .admin-sidebar {
+    position: fixed;
+    top: 0;
+    left: -240px; /* Hide offscreen */
+    bottom: 0;
+    width: 240px !important;
+    height: 100vh;
+    z-index: 999;
+    background-color: #FFFFFF;
+    box-shadow: 4px 0 24px rgba(15, 23, 42, 0.08);
+    transition: left var(--admin-sidebar-transition-duration) var(--admin-sidebar-transition-timing);
+  }
+
+  /* Slide drawer in */
+  .admin-sidebar:not(.collapsed) {
+    left: 0 !important;
+    width: 240px !important;
+  }
+
+  .admin-sidebar.collapsed {
+    left: -240px !important;
+    width: 240px !important;
+  }
+
+  /* Floating hamburger button pinned on top left header */
+  .admin-sidebar-collapse-btn {
+    position: fixed;
+    top: 14px;
+    z-index: 1001;
+    background-color: #FFFFFF;
+    border: 1px solid rgba(15, 23, 42, 0.08);
+    box-shadow: 0 2px 8px rgba(15, 23, 42, 0.05);
+    width: 36px;
+    height: 36px;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: left var(--admin-sidebar-transition-duration) var(--admin-sidebar-transition-timing),
+                background-color 0.2s ease,
+                box-shadow 0.2s ease,
+                border-color 0.2s ease;
+  }
+
+  .admin-sidebar:not(.collapsed) .admin-sidebar-collapse-btn {
+    left: 188px;
+    background-color: transparent;
+    border-color: transparent;
+    box-shadow: none;
+  }
+
+  .admin-sidebar.collapsed .admin-sidebar-collapse-btn {
+    left: 16px;
+  }
+
+  .admin-main {
+    padding-left: 0 !important;
+    width: 100%;
+  }
+
+  .admin-header {
+    padding-left: 4.25rem !important; /* prevent overlap with sticky floating hamburger */
+  }
+
+  .admin-nav-item[data-tooltip]::after {
+    left: calc(100% + 14px) !important;
+  }
+}
+
+@keyframes fade-in-overlay {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+/* SaaS layout constraints for all admin pages */
+.admin-main > header.admin-header-flex,
+.admin-main > .admin-header-flex,
+.admin-main > .admin-breadcrumb-flex {
+  width: 100% !important;
+  max-width: 1200px !important;
+  margin: 0 auto 2rem auto !important;
+  padding: 1.5rem 2rem 1rem 2rem !important;
+  box-sizing: border-box !important;
+  border-bottom: 1px solid #F3F4F6 !important;
+}
+
+.admin-main > .admin-table-container,
+.admin-main > .admin-profile-grid,
+.admin-main > .admin-reports-dashboard,
+.admin-main > .reports-kpi-grid,
+.admin-main > .dashboard-trends-grid,
+.admin-main > .leaderboards-grid,
+.admin-main > .reports-tables-section,
+.admin-main > .admin-details-card,
+.admin-main > .admin-detail-container,
+.admin-main > .verification-dashboard,
+.admin-main > .orders-dashboard,
+.admin-main > .services-dashboard,
+.admin-main > .chat-moderation-container,
+.admin-main > .admin-detail-layout,
+.admin-main > .filter-bar,
+.admin-main > .admin-content-grid,
+.admin-main > .admin-bulk-actions-bar,
+.admin-main > div:has(.pagination),
+.admin-main > div:has(> .pagination) {
+  width: calc(100% - 4rem) !important;
+  max-width: 1200px !important;
+  margin-left: auto !important;
+  margin-right: auto !important;
+  box-sizing: border-box !important;
+}
+
+/* Make page headers look like sticky blurred navbars if desired, or just beautiful flat headers */
+.admin-header-flex,
+.admin-breadcrumb-flex {
+  background-color: rgba(255, 255, 255, 0.8) !important;
+  backdrop-filter: blur(12px) !important;
+  -webkit-backdrop-filter: blur(12px) !important;
+  position: sticky !important;
+  top: 0 !important;
+  z-index: 80 !important;
+}
+
+/* Ensure smooth hover lift effects and border-radius consistency across all admin cards and tables */
+.admin-table-container,
+.trend-card,
+.leaderboard-card,
+.kpi-card,
+.profile-left-card,
+.profile-right-content > div,
+.activity-overview-card,
+.reports-history-card,
+.reports-list,
+.admin-bulk-actions-bar {
+  border-radius: var(--radius-lg, 12px) !important;
+  border: 1px solid rgba(15, 23, 42, 0.04) !important;
+  box-shadow: var(--shadow-sm, 0 1px 3px rgba(0, 0, 0, 0.05)) !important;
+  background-color: #FFFFFF !important;
+}
+
+/* Table rows styling matching user dashboard system */
+.admin-table tbody tr {
+  transition: background-color 0.15s ease;
+}
+
+.admin-table tbody tr:hover {
+  background-color: var(--neutral-50, #F9FAFB) !important;
+}
+
+/* Focus and inputs styling */
+.admin-search-wrapper input,
+.admin-filter-select,
+.admin-filter-btn {
+  border: 1px solid var(--neutral-200, #E5E7EB) !important;
+  border-radius: var(--radius-md, 8px) !important;
+  font-family: 'Inter', sans-serif !important;
+  transition: all 0.2s ease !important;
+}
+
+.admin-search-wrapper input:focus,
+.admin-filter-select:focus,
+.admin-filter-btn:hover {
+  border-color: var(--primary-color, #4F46E5) !important;
+  box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.1) !important;
+}
+
+.options-btn {
+  border-radius: var(--radius-sm, 6px) !important;
+  border: 1px solid var(--neutral-200, #E5E7EB) !important;
+  transition: all 0.2s ease !important;
+}
+
+.options-btn:hover {
+  background-color: var(--neutral-50, #F9FAFB) !important;
+  border-color: var(--neutral-300, #D1D5DB) !important;
+}

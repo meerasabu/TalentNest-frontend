@@ -1,0 +1,53 @@
+.privacy-alert {
+  background-color: #EFF6FF;
+  border: 1px solid #BFDBFE;
+  border-radius: 8px;
+  padding: 16px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 24px;
+}
+
+.privacy-alert p {
+  margin: 0;
+  color: #1E40AF;
+  font-size: 14px;
+}
+
+.privacy-alert .info-icon {
+  color: #3B82F6;
+  flex-shrink: 0;
+}
+
+.reason-cell {
+  color: #DC2626;
+  font-weight: 500;
+}
+
+/* Status pills for reports */
+.status-pill.status-flagged {
+  background-color: #FEF3C7;
+  color: #92400E;
+}
+
+.status-pill.status-under-review {
+  background-color: #FFF7ED;
+  color: #C2410C;
+}
+
+.status-pill.status-pending {
+  background-color: #F3F4F6;
+  color: #374151;
+}
+
+.status-pill.status-resolved {
+  background-color: #DCFCE7;
+  color: #166534;
+}
+
+.loading-state, .error-state {
+  text-align: center;
+  padding: 3rem;
+  color: #6B7280;
+}

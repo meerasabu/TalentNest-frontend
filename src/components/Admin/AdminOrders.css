@@ -1,0 +1,135 @@
+.admin-tabs {
+  display: flex;
+  gap: 32px;
+  border-bottom: 1px solid #E5E7EB;
+  margin-bottom: 24px;
+}
+
+.admin-tab {
+  background: none;
+  border: none;
+  padding: 12px 0;
+  font-size: 14px;
+  font-weight: 500;
+  color: #6B7280;
+  cursor: pointer;
+  position: relative;
+  transition: all 0.2s;
+}
+
+.admin-tab:hover {
+  color: #111827;
+}
+
+.admin-tab.active {
+  color: #7C3AED;
+}
+
+.admin-tab.active::after {
+  content: '';
+  position: absolute;
+  bottom: -1px;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background-color: #7C3AED;
+}
+
+.status-pill {
+  padding: 4px 10px;
+  border-radius: 6px;
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.status-pill.status-accepted { background-color: #ECFDF5; color: #059669; }
+.status-pill.status-pending { background-color: #FFFBEB; color: #D97706; }
+.status-pill.status-completed { background-color: #ECFDF5; color: #059669; }
+
+.completion-pill {
+  padding: 4px 12px;
+  background-color: #F3F4F6;
+  border-radius: 6px;
+  font-size: 11px;
+  font-weight: 600;
+  color: #4B5563;
+  display: inline-block;
+}
+
+.action-dropdown-wrapper {
+  position: relative;
+  display: inline-block;
+}
+
+.action-dropdown {
+  position: absolute;
+  right: 0;
+  top: calc(100% + 5px);
+  background: white;
+  border: 1px solid #E5E7EB;
+  border-radius: 8px;
+  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+  z-index: 100;
+  min-width: 140px;
+  display: none;
+  overflow: hidden;
+  animation: slideDown 0.2s ease-out;
+}
+
+@keyframes slideDown {
+  from { opacity: 0; transform: translateY(-10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.action-dropdown.show {
+  display: block;
+}
+
+.action-dropdown button {
+  width: 100%;
+  padding: 10px 16px;
+  text-align: left;
+  background: none;
+  border: none;
+  font-size: 14px;
+  font-weight: 500;
+  color: #374151;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  transition: all 0.2s;
+}
+
+.action-dropdown button:hover {
+  background-color: #F5F3FF;
+  color: #7C3AED;
+}
+
+.action-dropdown button svg {
+  color: #9CA3AF;
+  transition: color 0.2s;
+}
+
+.action-dropdown button:hover svg {
+  color: #7C3AED;
+}
+
+
+.options-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 12px;
+  background-color: white;
+  border: 1px solid #E5E7EB;
+  border-radius: 6px;
+  font-size: 13px;
+  font-weight: 500;
+  color: #374151;
+  cursor: pointer;
+}
+
+.options-btn:hover {
+  background-color: #F9FAFB;
+}
