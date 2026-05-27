@@ -102,7 +102,7 @@ const Signup = () => {
   const handleResendOtp = async () => {
     setOtpMessage(null);
     try {
-      const response = await axios.post('http://localhost:5000/api/signup/resend-otp', {
+      const response = await axios.post(`${import.meta.env.VITE_API_URL || 'http://localhost:5000'}/api/signup/resend-otp`, {
         campusEmail: formData.campusEmail
       }, {
         headers: { 'Content-Type': 'application/json' }
@@ -132,7 +132,7 @@ const Signup = () => {
     setOtpMessage(null);
 
     try {
-      const response = await axios.post('http://localhost:5000/api/signup/verify-otp', {
+      const response = await axios.post(`${import.meta.env.VITE_API_URL || 'http://localhost:5000'}/api/signup/verify-otp`, {
         campusEmail: formData.campusEmail,
         otp: otpCode
       }, {
@@ -178,7 +178,7 @@ const Signup = () => {
 
     try {
       setMessage(null);
-      const response = await axios.post('http://localhost:5000/api/signup', formData, {
+      const response = await axios.post(`${import.meta.env.VITE_API_URL || 'http://localhost:5000'}/api/signup`, formData, {
         headers: { 'Content-Type': 'application/json' }
       });
       if (response.data.success) {

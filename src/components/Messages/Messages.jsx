@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef, useCallback, useMemo } from 'react';
 import { useLocation, useNavigate, Link } from 'react-router-dom';
-import api from '../../api/axiosConfig';
+import api, { API_BASE_URL } from '../../api/axiosConfig';
 import Sidebar from '../Common/Sidebar';
 import '../Dashboard/Index.css';
 import './Messages.css';
@@ -234,7 +234,7 @@ const Messages = () => {
     if (!user) return;
 
     const token = localStorage.getItem('token');
-    const socket = io('http://localhost:5000', {
+    const socket = io(API_BASE_URL, {
       auth: { token }
     });
 
@@ -520,7 +520,7 @@ const Messages = () => {
   const getPartnerAvatar = (obj) => {
     const imgPath = obj.partner_image || obj.profile_image;
     if (imgPath && imgPath !== 'undefined' && imgPath !== 'null' && imgPath !== '/uploads/undefined') {
-      return <img src={`http://localhost:5000${imgPath}`} alt="Profile" style={{width: '100%', height: '100%', borderRadius: '50%', objectFit: 'cover'}} />;
+      return <img src={`${API_BASE_URL}${imgPath}`} alt="Profile" style={{width: '100%', height: '100%', borderRadius: '50%', objectFit: 'cover'}} />;
     }
     const name = obj.partner_name || (obj.first_name ? `${obj.first_name} ${obj.last_name || ''}` : null) || 'U';
     const parts = name.trim().split(/\s+/).filter(Boolean);

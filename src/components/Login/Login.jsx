@@ -42,7 +42,7 @@ const Login = () => {
     setError(null);
 
     try {
-      const response = await axios.post('http://localhost:5000/api/login', formData);
+      const response = await axios.post(`${import.meta.env.VITE_API_URL || 'http://localhost:5000'}/api/login`, formData);
       if (response.data.success) {
         // Persist user session
         localStorage.setItem('token', response.data.token);

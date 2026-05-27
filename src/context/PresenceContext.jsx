@@ -2,6 +2,8 @@
 import React, { createContext, useContext, useState, useEffect, useRef, useCallback } from 'react';
 import io from 'socket.io-client';
 
+import { API_BASE_URL } from '../api/axiosConfig';
+
 const PresenceContext = createContext({ onlineUsers: new Set(), isOnline: () => false });
 
 export const usePresence = () => useContext(PresenceContext);
@@ -22,7 +24,7 @@ export const PresenceProvider = ({ children }) => {
     // Only connect if the user is logged in
     if (!user || !token) return;
 
-    const socket = io('http://localhost:5000', {
+    const socket = io(API_BASE_URL, {
       auth: { token },
       // Use a separate namespace path so it doesn't collide with the Messages socket
       // (same server, same default namespace is fine — both authenticate identically)

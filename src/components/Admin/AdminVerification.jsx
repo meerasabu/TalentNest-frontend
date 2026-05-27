@@ -256,7 +256,7 @@ const AdminVerification = () => {
   const getMediaUrl = (url) => {
     if (typeof url !== 'string' || !url) return '';
     if (url.startsWith('http://') || url.startsWith('https://')) return url;
-    return `http://localhost:5000${url.startsWith('/') ? '' : '/'}${url}`;
+    return `${import.meta.env.VITE_API_URL || 'http://localhost:5000'}${url.startsWith('/') ? '' : '/'}${url}`;
   };
 
   const formatLink = (url) => {
@@ -384,7 +384,7 @@ const AdminVerification = () => {
                         <div className="student-profile-cell">
                           <div className="student-avatar-mini" style={{ backgroundColor: '#F3E8FF', color: '#9333EA' }}>
                             {request.profile_image ? (
-                              <img src={`http://localhost:5000${request.profile_image}`} alt="" />
+                              <img src={`${import.meta.env.VITE_API_URL || 'http://localhost:5000'}${request.profile_image}`} alt="" />
                             ) : (
                               (request.first_name || 'U').charAt(0)
                             )}

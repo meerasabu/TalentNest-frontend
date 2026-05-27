@@ -215,7 +215,7 @@ const AdminStudentDetail = () => {
               <div className="profile-main-info">
                 <div className="profile-avatar-large" style={{backgroundColor: '#F5F3FF', color: '#7C3AED'}}>
                   {student.profile_image ? (
-                    <img src={`http://localhost:5000${student.profile_image}`} alt="" />
+                    <img src={`${import.meta.env.VITE_API_URL || 'http://localhost:5000'}${student.profile_image}`} alt="" />
                   ) : (
                     student.first_name.charAt(0)
                   )}

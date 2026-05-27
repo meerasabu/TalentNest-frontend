@@ -116,7 +116,7 @@ const ProductDetails = () => {
   }
 
   const imageUrls = product.image_urls && product.image_urls.length > 0 
-    ? product.image_urls.map(url => `http://localhost:5000${url}`) 
+    ? product.image_urls.map(url => `${import.meta.env.VITE_API_URL || 'http://localhost:5000'}${url}`) 
     : ['https://placehold.co/600x500/e6e3df/a39589?text=No+Image'];
 
   return (
@@ -242,7 +242,7 @@ const ProductDetails = () => {
                   <div className="seller-box">
                     <div className="seller-profile-group">
                       {product.profile_image ? (
-                        <img src={`http://localhost:5000${product.profile_image}`} alt={product.first_name} className="seller-avatar" style={{ objectFit: 'cover' }} />
+                        <img src={`${import.meta.env.VITE_API_URL || 'http://localhost:5000'}${product.profile_image}`} alt={product.first_name} className="seller-avatar" style={{ objectFit: 'cover' }} />
                       ) : (
                         <div 
                           className="seller-avatar-fallback" 
@@ -357,7 +357,7 @@ const ProductDetails = () => {
                            <div className="rev-head">
                              <div className="rev-user-grp">
                                {rev.profile_image ? (
-                                 <img src={`http://localhost:5000${rev.profile_image}`} alt={rev.first_name} className="rev-avatar" style={{ objectFit: 'cover' }} />
+                                 <img src={`${import.meta.env.VITE_API_URL || 'http://localhost:5000'}${rev.profile_image}`} alt={rev.first_name} className="rev-avatar" style={{ objectFit: 'cover' }} />
                                ) : (
                                  <img src={`https://placehold.co/40x40/6366f1/fff?text=${initials}`} alt={rev.first_name} className="rev-avatar" />
                                )}
@@ -417,7 +417,7 @@ const ProductDetails = () => {
                      <div key={sim.id} className="sim-card" onClick={() => navigate(`/product/${sim.id}`, { state: { user } })} style={{cursor: 'pointer'}}>
                        <div className="sim-img-wrap">
                          <img 
-                           src={sim.image_urls && sim.image_urls.length > 0 ? `http://localhost:5000${sim.image_urls[0]}` : "https://placehold.co/300x200/e6e3df/a39589?text=No+Image"} 
+                           src={sim.image_urls && sim.image_urls.length > 0 ? `${import.meta.env.VITE_API_URL || 'http://localhost:5000'}${sim.image_urls[0]}` : "https://placehold.co/300x200/e6e3df/a39589?text=No+Image"} 
                            alt={sim.title} 
                            className="sim-img" 
                          />

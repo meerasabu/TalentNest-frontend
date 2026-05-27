@@ -259,7 +259,7 @@ const Services = () => {
                    <div key={service.id} className="srv-card" onClick={() => navigate(`/service/${service.id}`, { state: { user } })} style={{cursor: 'pointer'}}>
                      <div className="srv-img-layer">
                        {service.image_urls && service.image_urls.length > 0 ? (
-                         <img src={`http://localhost:5000${service.image_urls[0]}`} alt={service.title} className="srv-img"/>
+                         <img src={`${import.meta.env.VITE_API_URL || 'http://localhost:5000'}${service.image_urls[0]}`} alt={service.title} className="srv-img"/>
                        ) : (
                          <div className="srv-img srv-gradient-bg"></div>
                        )}
@@ -280,7 +280,7 @@ const Services = () => {
                        <h3 className="srv-card-title">{service.title}</h3>
                        
                        <div className="srv-author-row">
-                         <img src={service.profile_image ? `http://localhost:5000${service.profile_image}` : "https://placehold.co/24x24/e2e8f0/e2e8f0"} alt="Avatar" className="srv-auth-ava" style={{objectFit: 'cover'}}/>
+                         <img src={service.profile_image ? `${import.meta.env.VITE_API_URL || 'http://localhost:5000'}${service.profile_image}` : "https://placehold.co/24x24/e2e8f0/e2e8f0"} alt="Avatar" className="srv-auth-ava" style={{objectFit: 'cover'}}/>
                          <span className="srv-auth-lbl">by <strong>{service.first_name} {service.last_name?.charAt(0)}.</strong></span>
                        </div>
 
