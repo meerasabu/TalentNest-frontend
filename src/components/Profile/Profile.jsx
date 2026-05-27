@@ -465,10 +465,10 @@ const Profile = () => {
           
            {/* Top Floating Context Container */}
            <div className="prof-top-block">
-              <img src={user.bannerImage ? window.getImageUrl(user.bannerImage) : "https://placehold.co/1200x260/0284c7/ecf0f1"} alt="Banner" className="prof-banner" />
+              <img src={profileUser.bannerImage ? window.getImageUrl(profileUser.bannerImage) : "https://placehold.co/1200x260/0284c7/ecf0f1"} alt="Banner" className="prof-banner" />
               <div className="prof-info-sect">
                 <div className="prof-avatar-halo">
-                  <img src={user.profileImage ? window.getImageUrl(user.profileImage) : "https://placehold.co/150x150"} alt="Avatar" className="prof-main-ava" />
+                  <img src={profileUser.profileImage ? window.getImageUrl(profileUser.profileImage) : "https://placehold.co/150x150"} alt="Avatar" className="prof-main-ava" />
                 </div>
                 
                 <div className="prof-desc-grp">
