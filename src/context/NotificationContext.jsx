@@ -1,6 +1,6 @@
 /* eslint-disable react-refresh/only-export-components */
 /* eslint-disable react-hooks/set-state-in-effect */
-import React, { createContext, useContext, useState, useEffect, useRef } from 'react';
+import React, { createContext, useContext, useState, useEffect, useRef, useCallback } from 'react';
 import { useLocation } from 'react-router-dom';
 import api from '../api/axiosConfig';
 
@@ -10,20 +10,22 @@ export const useNotifications = () => useContext(NotificationContext);
 
 export const NotificationProvider = ({ children }) => {
   const location = useLocation();
-  const [user, setUser] = useState(() => JSON.parse(localStorage.getItem('user') || 'null'));
+  const [userId, setUserId] = useState(() => {
+    const u = JSON.parse(localStorage.getItem('user') || 'null');
+    return u?.id || null;
+  });
   const [unreadNotificationCount, setUnreadNotificationCount] = useState(0);
   const [unreadChatCount, setUnreadChatCount] = useState(0);
   const [activeChatId, setActiveChatId] = useState(null);
   
   const activeChatIdRef = useRef(activeChatId);
 
-  // Sync user state on route change
+  // Sync user ID on route change (only update if it actually changed)
   useEffect(() => {
     const currentUser = JSON.parse(localStorage.getItem('user') || 'null');
-    if (JSON.stringify(currentUser) !== JSON.stringify(user)) {
-      setUser(currentUser);
-    }
-  }, [location.pathname, user]);
+    const currentId = currentUser?.id || null;
+    setUserId(prev => prev !== currentId ? currentId : prev);
+  }, [location.pathname]);
 
   // Keep activeChatIdRef in sync
   useEffect(() => {
@@ -31,7 +33,7 @@ export const NotificationProvider = ({ children }) => {
   }, [activeChatId]);
 
   // Fetch all unread counts
-  const fetchUnreadCounts = async () => {
+  const fetchUnreadCounts = useCallback(async () => {
     const currentUser = JSON.parse(localStorage.getItem('user') || 'null');
     if (!currentUser) return;
     try {
@@ -57,10 +59,6 @@ export const NotificationProvider = ({ children }) => {
       const readIds = readSaved ? JSON.parse(readSaved) : [];
 
       let notifCount = 0;
-      // Admin notification
-      if (!deletedIds.includes('admin-1') && !readIds.includes('admin-1')) {
-        notifCount += 1;
-      }
 
       if (buyerRes.data.success) {
         buyerRes.data.orders.forEach(o => {
@@ -103,15 +101,15 @@ export const NotificationProvider = ({ children }) => {
     } catch (err) {
       console.error('Error fetching unread counts:', err);
     }
-  };
+  }, []);
 
   useEffect(() => {
-    if (user) {
+    if (userId) {
       fetchUnreadCounts();
       const interval = setInterval(fetchUnreadCounts, 10000);
       return () => clearInterval(interval);
     }
-  }, [user]);
+  }, [userId, fetchUnreadCounts]);
 
   return (
     <NotificationContext.Provider value={{

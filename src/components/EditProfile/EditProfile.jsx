@@ -1,6 +1,5 @@
 import React, { useState, useRef } from 'react';
 import { useNavigate, useLocation, Navigate } from 'react-router-dom';
-import axios from 'axios';
 import api from '../../api/axiosConfig';
 import '../Dashboard/Index.css'; 
 import './EditProfile.css';

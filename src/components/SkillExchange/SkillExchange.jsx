@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from 'react';
-import axios from 'axios';
 import api from '../../api/axiosConfig';
 import { useNavigate, useLocation, Navigate } from 'react-router-dom';
 import Sidebar from '../Common/Sidebar';
@@ -114,7 +113,7 @@ const SkillExchange = () => {
     e.stopPropagation();
     try {
       const res = await api.post('/wishlist', {
-        userId: user.id || 5,
+        userId: user.id,
         itemType: 'skill',
         itemId
       });

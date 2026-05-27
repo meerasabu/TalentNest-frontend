@@ -184,7 +184,7 @@ const IndexDashboard = () => {
                   ) : dashboardData.products.length > 0 ? dashboardData.products.map(prod => (
                     <div key={prod.id} className="product-card" onClick={() => navigate(`/product/${prod.id}`)} style={{ cursor: 'pointer' }}>
                       <div className="image-box">
-                        <img src={prod.image_urls && prod.image_urls.length > 0 ? `http://127.0.0.1:5000${prod.image_urls[0]}` : "https://placehold.co/200x200"} alt={prod.title} />
+                        <img src={prod.image_urls && prod.image_urls.length > 0 ? window.getImageUrl(prod.image_urls[0]) : "https://placehold.co/200x200"} alt={prod.title} />
                         <span className="price-tag">₹{prod.price}</span>
                       </div>
                       <div className="product-info">
@@ -218,7 +218,7 @@ const IndexDashboard = () => {
                     ))
                   ) : dashboardData.services.length > 0 ? dashboardData.services.map(svc => (
                     <div key={svc.id} className="service-card" onClick={() => navigate(`/service/${svc.id}`)} style={{ cursor: 'pointer' }}>
-                      <img src={svc.image_urls && svc.image_urls.length > 0 ? `http://127.0.0.1:5000${svc.image_urls[0]}` : "https://placehold.co/60x60"} alt={svc.title} />
+                      <img src={svc.image_urls && svc.image_urls.length > 0 ? window.getImageUrl(svc.image_urls[0]) : "https://placehold.co/60x60"} alt={svc.title} />
                       <div className="service-info">
                         <h4>{svc.title}</h4>
                         <p>by {svc.first_name} {svc.last_name}</p>
@@ -312,7 +312,7 @@ const IndexDashboard = () => {
                     <div key={skill.id} className="skill-card" onClick={() => navigate(`/skills/${skill.id}`)} style={{ cursor: 'pointer' }}>
                       <div className="skill-icon">
                         {skill.image_urls && skill.image_urls.length > 0 ? (
-                          <img src={`http://127.0.0.1:5000${skill.image_urls[0]}`} alt="" style={{ width: '100%', height: '100%', borderRadius: '12px', objectFit: 'cover' }} />
+                          <img src={window.getImageUrl(skill.image_urls[0])} alt="" style={{ width: '100%', height: '100%', borderRadius: '12px', objectFit: 'cover' }} />
                         ) : (
                           <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="m13 2-2 10h3L7 22l2-10H6L13 2z"></path></svg>
                         )}

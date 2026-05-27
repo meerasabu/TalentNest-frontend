@@ -209,23 +209,6 @@ const Notifications = () => {
           }
         }
 
-        // Add mock admin notification
-        const adminNotif = {
-          id: 'admin-1',
-          type: 'admin_announcement',
-          title: 'System Update',
-          description: 'TalentNest has been updated to version 2.0 with improved security.',
-          withPerson: 'System Admin',
-          status: 'INFO',
-          time: '3 hours ago',
-          iconType: 'dark',
-          iconSvg: <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path>,
-          hasChat: false,
-          itemType: 'admin',
-          createdAt: new Date(Date.now() - 3 * 3600000).toISOString()
-        };
-        combined = [...combined, adminNotif];
-
         combined.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
         setNotificationsData(combined);
 

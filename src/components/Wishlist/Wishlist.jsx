@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import api from '../../api/axiosConfig';
-import { useNavigate, useLocation } from 'react-router-dom';
+import { useNavigate, useLocation, Navigate } from 'react-router-dom';
 import Sidebar from '../Common/Sidebar';
 import '../Dashboard/Index.css';
 import './Wishlist.css';
@@ -14,7 +14,12 @@ const Wishlist = () => {
   const [wishlistItems, setWishlistItems] = useState([]);
   const [loading, setLoading] = useState(true);
 
-  const user = location.state?.user || JSON.parse(localStorage.getItem('user')) || { id: 5, firstName: 'Student', lastName: '', email: 'student@university.edu' };
+  const user = location.state?.user || JSON.parse(localStorage.getItem('user'));
+  const token = localStorage.getItem('token');
+
+  if (!user || !token || token === 'undefined') {
+    return <Navigate to="/login" />;
+  }
   const handlePrefix = user.email ? user.email.split('@')[0].toUpperCase() : 'STUDENT';
 
   useEffect(() => {
