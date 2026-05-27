@@ -397,7 +397,9 @@ const CreateListing = () => {
       data.append('images', img);
     });
 
-    let endpoint = `${import.meta.env.VITE_API_URL || 'http://localhost:5000'}/api/`;
+    const rawUrl = import.meta.env.VITE_API_URL || 'http://localhost:5000';
+    const cleanUrl = rawUrl.endsWith('/') ? rawUrl.slice(0, -1) : rawUrl;
+    let endpoint = `${cleanUrl}/api/`;
     let method = isEditMode ? 'put' : 'post';
 
     if (activeTab === 'product' || activeTab === 'products') {

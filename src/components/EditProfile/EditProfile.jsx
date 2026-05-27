@@ -114,6 +114,8 @@ const EditProfile = () => {
             });
 
             if (response.data.success) {
+                // Update localStorage so refreshes show the latest data
+                localStorage.setItem('user', JSON.stringify(response.data.user));
                 alert('Profile updated successfully!');
                 navigate('/profile', { state: { user: response.data.user } });
             }
