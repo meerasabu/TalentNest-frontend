@@ -667,5 +667,31 @@
   margin: 0.5rem 0 1rem 0;
 }
 
+@media (max-width: 768px) {
+  .create-listing-scroll {
+    padding: 1rem;
+  }
+  .mockup-form-card {
+    padding: 1.25rem;
+  }
+  .mockup-split-row {
+    flex-direction: column;
+    gap: 1rem;
+  }
+  .peer-grid-2 {
+    grid-template-columns: 1fr;
+    gap: 1rem;
+  }
+  .portfolio-links-container {
+    grid-template-columns: 1fr;
+  }
+  .review-grid {
+    grid-template-columns: 1fr;
+  }
+  .wizard-step-node .step-title-text {
+    font-size: 0.65rem;
+  }
+}
+
 
 

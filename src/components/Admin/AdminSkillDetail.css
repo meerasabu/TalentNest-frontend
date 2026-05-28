@@ -558,3 +558,52 @@
 .btn-modal-warn { padding: 10px 24px; background: linear-gradient(135deg, #D97706, #F59E0B); color: white; border: none; border-radius: 8px; font-size: 14px; font-weight: 600; cursor: pointer; transition: all 0.2s; }
 .btn-modal-warn:hover:not(:disabled) { opacity: 0.9; transform: translateY(-1px); }
 .btn-modal-warn:disabled { opacity: 0.5; cursor: not-allowed; transform: none; }
+
+@media (max-width: 768px) {
+  .admin-skill-grid {
+    grid-template-columns: 1fr !important;
+    gap: 16px;
+  }
+  .history-card-admin {
+    grid-column: auto !important;
+  }
+  .skill-info-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 12px;
+  }
+  .skill-meta-grid {
+    grid-template-columns: repeat(2, 1fr) !important;
+    gap: 12px;
+  }
+  .mentor-info-grid-box {
+    grid-template-columns: repeat(2, 1fr) !important;
+    gap: 16px;
+    padding: 16px;
+  }
+  .topics-outcomes-flex {
+    flex-direction: column !important;
+    gap: 16px;
+  }
+}
+
+@media (max-width: 480px) {
+  .skill-meta-grid {
+    grid-template-columns: 1fr !important;
+  }
+  .mentor-info-grid-box {
+    grid-template-columns: 1fr !important;
+  }
+  .skill-info-card, .provider-details-card, .history-card-admin, .warn-history-card {
+    padding: 16px !important;
+  }
+  .suspension-modal-card {
+    padding: 16px !important;
+    margin: 12px !important;
+  }
+  .history-date {
+    position: static !important;
+    display: block;
+    margin-top: 4px;
+  }
+}

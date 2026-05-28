@@ -1530,6 +1530,16 @@
     padding-left: 4.25rem !important; /* spacing offset to prevent overlap with floating hamburger */
   }
 
+  .content-scrollable {
+    padding: 1rem 0.75rem !important;
+  }
+
+  .welcome-banner {
+    flex-direction: column !important;
+    align-items: flex-start !important;
+    gap: 1rem !important;
+  }
+
   /* Make sure tooltip arrow points correctly or is offset */
   .nav-item[data-tooltip]::after,
   .user-info-group[data-tooltip]::after {

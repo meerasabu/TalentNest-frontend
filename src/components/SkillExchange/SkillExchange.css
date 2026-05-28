@@ -370,3 +370,21 @@
   transform: scale(1.1);
 }
 .heart-icon-layer:hover svg { fill: #EF4444; stroke: #EF4444; }
+
+@media (max-width: 768px) {
+  .sk-ex-scrollable {
+    padding: 1.5rem 1rem;
+  }
+  .sk-ex-header-row {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 1rem;
+  }
+  .sk-ex-dual-col {
+    grid-template-columns: 1fr;
+    gap: 1.5rem;
+  }
+  .sk-grid-wrap {
+    grid-template-columns: 1fr;
+  }
+}

@@ -209,3 +209,10 @@
 .input-wrapper input.password-input {
   padding-right: 2.75rem;
 }
+
+@media (max-width: 480px) {
+  .login-card {
+    padding: 2.5rem 1.5rem 1.5rem 1.5rem;
+    border-radius: 1rem;
+  }
+}

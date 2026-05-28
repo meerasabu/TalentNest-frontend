@@ -186,3 +186,14 @@
   from { opacity: 0; }
   to   { opacity: 1; }
 }
+
+@media (max-width: 480px) {
+  .verify-card {
+    padding: 2.5rem 1.5rem 1.5rem 1.5rem;
+  }
+  .otp-digit-input {
+    width: 2.25rem;
+    height: 2.75rem;
+    font-size: 1.25rem;
+  }
+}

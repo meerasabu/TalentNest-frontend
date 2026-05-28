@@ -496,5 +496,48 @@
   text-decoration: underline;
 }
 
+@media (max-width: 768px) {
+  .prof-scrollable {
+    padding: 1.5rem 1rem;
+  }
+  .prof-info-sect {
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    gap: 1.5rem;
+    padding: 1.5rem 1.5rem 2rem 1.5rem;
+  }
+  .prof-avatar-halo {
+    margin-top: -60px;
+    width: 120px;
+    height: 120px;
+  }
+  .prof-name-row {
+    flex-direction: column;
+    align-items: center;
+    gap: 1rem;
+  }
+  .prof-lbl-row {
+    justify-content: center;
+  }
+  .prof-bio {
+    max-width: 100%;
+  }
+  .prof-split-view {
+    grid-template-columns: 1fr;
+    gap: 2rem;
+  }
+  .prof-tabs {
+    justify-content: center;
+    gap: 1rem;
+  }
+  .prof-skill-card {
+    width: 100%;
+  }
+  .prof-prod-card {
+    width: 100%;
+  }
+}
+
 
 

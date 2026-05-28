@@ -679,3 +679,32 @@
 }
 .btn-modal-warn:hover:not(:disabled) { opacity: 0.9; transform: translateY(-1px); }
 .btn-modal-warn:disabled { opacity: 0.5; cursor: not-allowed; transform: none; }
+
+@media (max-width: 768px) {
+  .admin-service-grid {
+    grid-template-columns: 1fr !important;
+    gap: 16px;
+  }
+  .service-info-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 12px;
+  }
+}
+
+@media (max-width: 480px) {
+  .service-meta-grid {
+    grid-template-columns: 1fr !important;
+  }
+  .service-info-card, .provider-details-card, .reports-history-card, .warn-history-card {
+    padding: 16px !important;
+  }
+  .severity-pill-group {
+    grid-template-columns: repeat(2, 1fr) !important;
+  }
+  .suspension-modal-card {
+    padding: 16px !important;
+    margin: 12px !important;
+  }
+}
+

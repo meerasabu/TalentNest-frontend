@@ -634,3 +634,46 @@
   to { transform: translateY(0); opacity: 1; }
 }
 
+@media (max-width: 768px) {
+  .admin-profile-actions {
+    flex-wrap: wrap;
+    width: 100%;
+    gap: 8px;
+  }
+  .admin-profile-actions button {
+    flex: 1 1 calc(50% - 4px);
+    text-align: center;
+    padding: 8px 12px;
+  }
+  .activity-stats-grid {
+    grid-template-columns: repeat(2, 1fr) !important;
+    gap: 12px;
+  }
+  .profile-left-card {
+    padding: 24px 16px;
+  }
+}
+
+@media (max-width: 480px) {
+  .admin-profile-actions button {
+    flex: 1 1 100%;
+  }
+  .activity-stats-grid {
+    grid-template-columns: 1fr !important;
+  }
+  .severity-pill-group {
+    grid-template-columns: repeat(2, 1fr) !important;
+  }
+  .suspension-modal-card {
+    padding: 16px;
+    margin: 12px;
+  }
+  .card-header-flex {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 12px;
+  }
+  .search-input {
+    width: 100%;
+  }
+}

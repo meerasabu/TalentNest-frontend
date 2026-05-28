@@ -668,3 +668,29 @@
   to { transform: rotate(360deg); }
 }
 
+@media (max-width: 768px) {
+  .service-details-scroll {
+    padding: 1.5rem 1rem;
+  }
+  .sd-hero-banner {
+    height: 220px;
+  }
+  .sd-hero-overlay {
+    padding: 1.25rem;
+  }
+  .sd-hero-title {
+    font-size: 1.75rem;
+  }
+  .sd-content-grid {
+    grid-template-columns: 1fr;
+    gap: 1.5rem;
+  }
+  .sd-pricing-grid {
+    grid-template-columns: 1fr;
+    gap: 1rem;
+  }
+  .sd-similar-grid {
+    grid-template-columns: 1fr;
+  }
+}
+

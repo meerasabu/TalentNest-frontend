@@ -180,3 +180,23 @@
   color: #9CA3AF;
   font-style: italic;
 }
+
+@media (max-width: 768px) {
+  .chat-review-grid {
+    grid-template-columns: 1fr !important;
+    gap: 16px;
+  }
+}
+
+@media (max-width: 480px) {
+  .chat-log-header {
+    padding: 12px 16px !important;
+  }
+  .chat-messages-container {
+    padding: 16px !important;
+  }
+  .mod-btn {
+    padding: 10px !important;
+  }
+}
+

@@ -356,3 +356,28 @@
 
 .sim-title { font-size: 0.875rem; font-weight: 700; color: #111827; margin: 0 0 0.125rem 0; }
 .sim-cat { font-size: 0.75rem; color: #6B7280; margin: 0; }
+
+@media (max-width: 768px) {
+  .product-details-scroll {
+    padding: 1.5rem 1rem;
+  }
+  .details-stage-grid {
+    grid-template-columns: 1fr;
+    gap: 1.5rem;
+  }
+  .stage-traits-row {
+    flex-direction: column;
+  }
+  .reviews-analysis-box {
+    flex-direction: column;
+    gap: 1.5rem;
+    align-items: stretch;
+    text-align: center;
+  }
+  .raa-left {
+    align-items: center;
+  }
+  .pd-similar-grid {
+    grid-template-columns: 1fr;
+  }
+}

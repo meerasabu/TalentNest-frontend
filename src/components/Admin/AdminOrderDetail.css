@@ -142,3 +142,21 @@
   border-radius: 12px;
   border: 1px solid #E5E7EB;
 }
+
+@media (max-width: 768px) {
+  .order-detail-grid {
+    grid-template-columns: 1fr !important;
+    gap: 16px;
+  }
+  .detail-header {
+    gap: 8px;
+    margin-bottom: 16px;
+  }
+}
+
+@media (max-width: 480px) {
+  .detail-card {
+    padding: 16px !important;
+  }
+}
+

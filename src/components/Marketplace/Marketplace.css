@@ -412,3 +412,14 @@
   transition: stroke var(--transition-fast);
 }
 
+@media (max-width: 768px) {
+  .marketplace-content {
+    padding: 1.5rem 1rem;
+  }
+  .market-header-actions {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 1rem;
+  }
+}
+

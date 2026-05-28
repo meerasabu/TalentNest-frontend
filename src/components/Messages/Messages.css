@@ -1554,3 +1554,47 @@
   font-size: 0.95rem;
   font-weight: 600;
 }
+
+@media (max-width: 768px) {
+  .chat-layout {
+    margin: 0.5rem !important;
+    height: calc(100vh - 120px) !important;
+  }
+  
+  .chat-sidebar {
+    width: 100% !important;
+    display: flex !important;
+  }
+  
+  .chat-main {
+    display: none !important;
+  }
+  
+  .chat-layout.has-active-chat .chat-sidebar {
+    display: none !important;
+  }
+  
+  .chat-layout.has-active-chat .chat-main {
+    display: flex !important;
+    width: 100% !important;
+  }
+  
+  .chat-back-btn {
+    display: flex !important;
+  }
+  
+  .chat-session-tabs-wrapper {
+    padding-right: 0.5rem !important;
+  }
+  
+  .session-info-header-row {
+    flex-wrap: wrap;
+    gap: 0.5rem;
+  }
+  
+  .session-info-actions {
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    width: 100%;
+  }
+}

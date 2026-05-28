@@ -604,3 +604,46 @@
     transform: translateY(0);
   }
 }
+
+@media (max-width: 768px) {
+  .ord-scrollable {
+    padding: 1.5rem 1rem;
+  }
+  .ord-header-row {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 1rem;
+  }
+  .ord-itm {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 1.25rem;
+    padding: 1.5rem 1rem !important;
+  }
+  .ord-act-grp {
+    width: 100%;
+  }
+  .ord-btn {
+    flex: 1;
+    justify-content: center;
+  }
+  .orders-bulk-actions-bar {
+    margin: 1rem !important;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 1rem;
+  }
+  .ord-select-wrapper {
+    position: static;
+    transform: none;
+    margin-bottom: 0.5rem;
+  }
+  .ord-delete-single-btn {
+    position: absolute;
+    top: 1rem;
+    right: 1rem;
+    transform: none;
+    opacity: 1;
+    pointer-events: auto;
+  }
+}
