@@ -160,7 +160,12 @@ const CreateListing = () => {
 
   const handleImageChange = (e) => {
     if (e.target.files) {
-      const selectedFiles = Array.from(e.target.files);
+      const selectedFiles = Array.from(e.target.files).filter(file => 
+        /\.(jpe?g|png|gif|webp)$/i.test(file.name) || file.type.startsWith('image/')
+      );
+      if (selectedFiles.length < Array.from(e.target.files).length) {
+        setMessage({ type: 'error', text: 'Only image files (JPEG, PNG, GIF, WebP) are allowed.' });
+      }
       setImages(prev => {
         const newImages = [...prev, ...selectedFiles].slice(0, 4 - existingImages.length);
         const newPreviews = [
@@ -867,7 +872,7 @@ const CreateListing = () => {
                               <div className="photo-drop-zone" style={{display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center'}}>
                                 <input 
                                   type="file" 
-                                  accept="image/*" 
+                                  accept="image/jpeg,image/png,image/gif,image/webp" 
                                   id="imageUpload" 
                                   onChange={handleImageChange} 
                                   className="file-input" 
@@ -881,7 +886,7 @@ const CreateListing = () => {
                             </>
                           )}
                         </div>
-                        <p className="photo-helper-text">Add up to 4 high-quality photos. First image will be the cover.</p>
+                        <p className="photo-helper-text">Add up to 4 high-quality photos. First image will be the cover. Only image files (JPEG, PNG, GIF, WebP) are allowed.</p>
                       </div>
 
                       <div className="form-group">
@@ -973,7 +978,7 @@ const CreateListing = () => {
                               <div className="photo-drop-zone" style={{display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center'}}>
                                 <input 
                                   type="file" 
-                                  accept="image/*" 
+                                  accept="image/jpeg,image/png,image/gif,image/webp" 
                                   id="imageUpload" 
                                   onChange={handleImageChange} 
                                   className="file-input" 
@@ -987,7 +992,7 @@ const CreateListing = () => {
                             </>
                           )}
                         </div>
-                        <p className="photo-helper-text">Add up to 4 high-quality photos. First image will be the cover.</p>
+                        <p className="photo-helper-text">Add up to 4 high-quality photos. First image will be the cover. Only image files (JPEG, PNG, GIF, WebP) are allowed.</p>
                       </div>
 
                       <div className="form-group">
@@ -1198,7 +1203,7 @@ const CreateListing = () => {
                               <div className="photo-drop-zone" style={{display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center'}}>
                                 <input 
                                   type="file" 
-                                  accept="image/*" 
+                                  accept="image/jpeg,image/png,image/gif,image/webp" 
                                   id="imageUpload" 
                                   onChange={handleImageChange} 
                                   className="file-input" 
@@ -1212,7 +1217,7 @@ const CreateListing = () => {
                             </>
                           )}
                         </div>
-                        <p className="photo-helper-text">Add up to 4 high-quality photos. First image will be the cover.</p>
+                        <p className="photo-helper-text">Add up to 4 high-quality photos. First image will be the cover. Only image files (JPEG, PNG, GIF, WebP) are allowed.</p>
                       </div>
 
                       <div className="peer-section-title" style={{ marginTop: '0.5rem' }}>
