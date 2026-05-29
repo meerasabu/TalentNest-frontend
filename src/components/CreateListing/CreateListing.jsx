@@ -216,7 +216,12 @@ const CreateListing = () => {
 
   const handleDemoMediaChange = (e) => {
     if (e.target.files) {
-      const selectedFiles = Array.from(e.target.files);
+      const selectedFiles = Array.from(e.target.files).filter(file => 
+        /\.(jpe?g|png|gif|webp)$/i.test(file.name) || file.type.startsWith('image/')
+      );
+      if (selectedFiles.length < Array.from(e.target.files).length) {
+        setMessage({ type: 'error', text: 'Only image files (JPEG, PNG, GIF, WebP) are allowed.' });
+      }
       setDemoMedia(prev => {
         const newDemos = [...prev, ...selectedFiles].slice(0, 4 - existingDemoMedia.length);
         const newPreviews = [
@@ -661,24 +666,9 @@ const CreateListing = () => {
           <div className="review-section">
             <h3 className="review-section-header">Demo Project Gallery</h3>
             <div className="review-image-previews">
-              {demoPreviews.map((src, idx) => {
-                const isVideo = src.includes('.mp4') || src.includes('.mov') || src.includes('.webm') || (demoMedia[idx - existingDemoMedia.length] && demoMedia[idx - existingDemoMedia.length].type.startsWith('video/'));
-                const isPdf = src.toLowerCase().includes('.pdf') || (demoMedia[idx - existingDemoMedia.length] && demoMedia[idx - existingDemoMedia.length].type === 'application/pdf');
-                return (
-                  <div key={idx} style={{ position: 'relative', width: '80px', height: '80px', borderRadius: '8px', overflow: 'hidden', border: '1px solid #E5E7EB', display: 'flex', alignItems: 'center', justifyContent: 'center', backgroundColor: isPdf ? '#FEF2F2' : '#000' }}>
-                    {isVideo ? (
-                      <video src={src} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
-                    ) : isPdf ? (
-                      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#DC2626" strokeWidth="2.5">
-                        <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
-                        <polyline points="14 2 14 8 20 8"></polyline>
-                      </svg>
-                    ) : (
-                      <img src={src} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
-                    )}
-                  </div>
-                );
-              })}
+              {demoPreviews.map((src, idx) => (
+                <img key={idx} src={src} alt={`Demo Preview ${idx + 1}`} className="review-image-thumbnail" />
+              ))}
             </div>
           </div>
         )}
@@ -1418,14 +1408,14 @@ const CreateListing = () => {
 
                       <div className="peer-section-title">
                         <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect><circle cx="8.5" cy="8.5" r="1.5"></circle><polyline points="21 15 16 10 5 21"></polyline></svg>
-                        Optional Portfolio Demo Gallery (Images/Videos/PDFs)
+                        Optional Portfolio Demo Gallery (Images)
                       </div>
 
                       <div className="demo-media-box">
                         <div style={{ display: 'flex', gap: '1rem', alignItems: 'center' }}>
                           <input 
                             type="file" 
-                            accept="image/*,video/*,application/pdf" 
+                            accept="image/jpeg,image/png,image/gif,image/webp" 
                             id="demoUpload" 
                             onChange={handleDemoMediaChange} 
                             className="file-input" 
@@ -1434,56 +1424,20 @@ const CreateListing = () => {
                           <label htmlFor="demoUpload" className="mockup-publish-btn" style={{ background: '#F3F4F6', color: '#374151', cursor: 'pointer', margin: 0, display: 'inline-block' }}>
                             Choose Demo Files
                           </label>
-                          <span className="photo-helper-text">Upload up to 4 demo files.</span>
+                          <span className="photo-helper-text">
+                            Upload up to 4 demo images. Only image files (JPEG, PNG, GIF, WebP) are allowed.
+                          </span>
                         </div>
 
                         <div className="demo-media-grid">
-                          {demoPreviews.map((src, idx) => {
-                            const isVideo = src.includes('.mp4') || src.includes('.mov') || src.includes('.webm') || (demoMedia[idx - existingDemoMedia.length] && demoMedia[idx - existingDemoMedia.length].type.startsWith('video/'));
-                            const isPdf = src.toLowerCase().includes('.pdf') || (demoMedia[idx - existingDemoMedia.length] && demoMedia[idx - existingDemoMedia.length].type === 'application/pdf');
-                            
-                            let cleanName = 'Document.pdf';
-                            if (isPdf) {
-                              if (idx < existingDemoMedia.length) {
-                                const pathParts = src.split('-');
-                                cleanName = pathParts.length > 3 
-                                  ? pathParts.slice(3).join('-') 
-                                  : (pathParts.slice(2).join('-') || 'Document.pdf');
-                              } else {
-                                const newFile = demoMedia[idx - existingDemoMedia.length];
-                                if (newFile) {
-                                  cleanName = newFile.name;
-                                }
-                              }
-                            }
-
-                            return (
-                              <div key={idx} className="demo-media-thumbnail relative-box">
-                                {isVideo ? (
-                                  <>
-                                    <video src={src} muted style={{width: '100%', height: '100%', objectFit: 'cover'}} />
-                                    <span className="video-badge">VIDEO</span>
-                                  </>
-                                ) : isPdf ? (
-                                  <div className="pdf-preview-placeholder" style={{ width: '100%', height: '100%', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', backgroundColor: '#FEF2F2', border: '1px solid #FCA5A5', borderRadius: '0.75rem', gap: '0.15rem', padding: '0.25rem', textAlign: 'center' }}>
-                                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#DC2626" strokeWidth="2.5">
-                                      <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
-                                      <polyline points="14 2 14 8 20 8"></polyline>
-                                    </svg>
-                                    <span style={{ fontSize: '0.55rem', fontWeight: '800', color: '#DC2626', letterSpacing: '0.05em' }}>PDF FILE</span>
-                                    <span style={{ fontSize: '0.5rem', color: '#7F1D1D', maxWidth: '90%', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
-                                      {cleanName}
-                                    </span>
-                                  </div>
-                                ) : (
-                                  <img src={src} alt={`Demo ${idx + 1}`} style={{width: '100%', height: '100%', objectFit: 'cover'}} />
-                                )}
-                                <button type="button" className="remove-img-btn" onClick={() => handleRemoveDemoMedia(idx)} title="Remove File">
-                                  <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
-                                </button>
-                              </div>
-                            );
-                          })}
+                          {demoPreviews.map((src, idx) => (
+                            <div key={idx} className="demo-media-thumbnail relative-box">
+                              <img src={src} alt={`Demo ${idx + 1}`} style={{width: '100%', height: '100%', objectFit: 'cover'}} />
+                              <button type="button" className="remove-img-btn" onClick={() => handleRemoveDemoMedia(idx)} title="Remove File">
+                                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+                              </button>
+                            </div>
+                          ))}
                         </div>
                       </div>
                     </>
