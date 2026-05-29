@@ -187,7 +187,7 @@ const ServiceDetails = () => {
                 <span className="sd-hero-tag" style={{textTransform: 'uppercase'}}>{service.service_type}</span>
                 <h1 className="sd-hero-title">{service.title}</h1>
                 <div className="sd-hero-meta">
-                  <span><span className="sd-rate-star">★</span> 0.0 (0 Reviews)</span>
+                  <span><span className="sd-rate-star">★</span> (0 Reviews)</span>
                   <span>•</span>
                   <span><svg style={{display:'inline', marginRight:'4px', verticalAlign:'sub'}} width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg> Professional Service</span>
                   <span>•</span>
@@ -345,31 +345,6 @@ const ServiceDetails = () => {
                 </div>
 
               </div>
-            </div>
-
-            {/* Similar Services */}
-            <div className="sd-similar-head">
-              <h2 style={{fontSize: '1.25rem', fontWeight: 700, margin: 0}}>Similar Services</h2>
-              <span className="sd-view-all" onClick={() => navigate('/services', { state: { user}})}>View all ›</span>
-            </div>
-            
-            <div className="sd-similar-grid">
-              {[
-                { title: "Resume Review & Consulting", cat: "Free", rate: "Free", bg: "https://images.unsplash.com/photo-1586281380349-632531db7ed4?w=500&auto=format&fit=crop&q=60", author: "Career Services" },
-                { title: "Professional Headshots", cat: "₹30", rate: "₹30", bg: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=500&auto=format&fit=crop&q=60", author: "Studio Pro" },
-                { title: "Campus Tour Guide", cat: "₹20/hr", rate: "₹20/hr", bg: "https://images.unsplash.com/photo-1523050854058-8df90110c9f1?w=500&auto=format&fit=crop&q=60", author: "Student Ambassadors" }
-              ].map((sim, i) => (
-                <div key={i} className="sd-sim-card">
-                  <img src={sim.bg} className="sd-sim-img" alt={sim.title} />
-                  <div className="sd-sim-overlay">
-                    <h4 className="sd-sim-title">{sim.title}</h4>
-                    <div className="sd-sim-bottom">
-                      <span className="sd-sim-author">by {sim.author}</span>
-                      <span className="sd-sim-rate">{sim.rate}</span>
-                    </div>
-                  </div>
-                </div>
-              ))}
             </div>
 
           </div>

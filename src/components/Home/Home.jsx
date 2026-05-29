@@ -42,7 +42,7 @@ const Home = () => {
       {/* Hero Section */}
       <section className="hero-section">
         <div className="hero-pill">
-          <span className="pill-dot"></span> CAMPUS ECOSYSTEM PROTOTYPE
+          <span className="pill-dot"></span> TRUSTED CAMPUS COMMUNITY
         </div>
         <h1 className="hero-title">
           Discover Talent.<br />

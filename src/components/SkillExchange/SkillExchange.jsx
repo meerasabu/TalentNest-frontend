@@ -270,10 +270,10 @@ const SkillExchange = () => {
                        ) : (
                          <div className="sk-img sk-gradient-bg"></div>
                        )}
-                       <div className="sk-img-overlay">
-                          <span className="sk-tag-cat">{skill.category}</span>
-                          <span className="sk-tag-rate"><span className="sk-rate-star">★</span> {parseFloat(skill.rating || 0).toFixed(1)} <span style={{ opacity: 0.8, fontSize: '0.78em' }}>({skill.review_count || 0})</span></span>
-                       </div>
+                        <div className="sk-img-overlay">
+                           <span className="sk-tag-cat">{skill.category}</span>
+                           <span className="sk-tag-rate"><span className="sk-rate-star">★</span> <span style={{ opacity: 0.8, fontSize: '0.78em' }}>({skill.review_count || 0})</span></span>
+                        </div>
                        {skill.status && (
                          <span style={{ position: 'absolute', top: '10px', left: '10px', background: 'rgba(0,0,0,0.6)', color: '#fff', padding: '2px 8px', borderRadius: '4px', fontSize: '10px', fontWeight: 'bold' }}>
                            {skill.status}

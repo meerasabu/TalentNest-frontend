@@ -264,7 +264,7 @@ const Services = () => {
                        )}
                        <div className="srv-img-overlay">
                           <span className="srv-tag-cat">{service.service_type || 'General'}</span>
-                          <span className="srv-tag-rate"><span className="srv-rate-star">★</span> {service.rating || '0.0'}</span>
+                          <span className="srv-tag-rate"><span className="srv-rate-star">★</span></span>
                        </div>
                        {service.status && (
                          <span style={{ position: 'absolute', top: '10px', left: '10px', background: 'rgba(0,0,0,0.6)', color: '#fff', padding: '2px 8px', borderRadius: '4px', fontSize: '10px', fontWeight: 'bold' }}>

@@ -256,7 +256,7 @@ const SkillDetails = () => {
                 <span className="sk-hero-tag" style={{textTransform: 'uppercase'}}>{skill.category}</span>
                 <h1 className="sk-hero-title">{skill.title}</h1>
                 <div className="sk-hero-meta">
-                  <span><span className="sk-rate-star">★</span> {avgRating} ({totalReviews} Reviews)</span>
+                  <span><span className="sk-rate-star">★</span> ({totalReviews} Reviews)</span>
                   <span>•</span>
                   <span>
                     <svg style={{display:'inline', marginRight:'4px', verticalAlign:'sub'}} width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
@@ -664,31 +664,6 @@ const SkillDetails = () => {
                 </div>
 
               </div>
-            </div>
-
-            {/* Similar Skills */}
-            <div className="sk-similar-head">
-              <h2 style={{fontSize: '1.25rem', fontWeight: 700, margin: 0}}>Similar Skills</h2>
-              <span className="sk-view-all" onClick={() => navigate('/skills', { state: { user }})}>View all ›</span>
-            </div>
-            
-            <div className="sk-similar-grid">
-              {[
-                { title: "Python for Data Science", cat: "Programming", rate: "4.8", bg: "https://images.unsplash.com/photo-1526379095098-d400fd0bf935?w=500&auto=format&fit=crop&q=60", author: "Mike Chen" },
-                { title: "UI/UX Design Basics", cat: "Design", rate: "4.9", bg: "https://images.unsplash.com/photo-1561070791-2526d30994b5?w=500&auto=format&fit=crop&q=60", author: "Lisa Park" },
-                { title: "Spanish Conversation", cat: "Languages", rate: "4.7", bg: "https://images.unsplash.com/photo-1456513080510-7bf3a84b82f8?w=500&auto=format&fit=crop&q=60", author: "Diego M." }
-              ].map((sim, i) => (
-                <div key={i} className="sk-sim-card">
-                  <img src={sim.bg} className="sk-sim-img" alt={sim.title} />
-                  <div className="sk-sim-overlay">
-                    <h4 className="sk-sim-title">{sim.title}</h4>
-                    <div className="sk-sim-bottom">
-                      <span className="sk-sim-author">by {sim.author}</span>
-                      <span className="sk-sim-rate">★ {sim.rate}</span>
-                    </div>
-                  </div>
-                </div>
-              ))}
             </div>
 
           </div>

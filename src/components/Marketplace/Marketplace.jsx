@@ -226,11 +226,10 @@ const Marketplace = () => {
 
                  <div className="market-card-body">
                     <h3 className="prod-title">{prod.title}</h3>
-                    <div className="prod-rating">
-                       <span style={{ color: '#FBBF24', fontSize: '0.75rem', marginRight: '2px' }}>⭐</span>
-                       <span className="rating-num">{prod.rating ? parseFloat(prod.rating).toFixed(1) : '0.0'}</span>
-                       <span className="rating-revs">({prod.reviews || 0} {prod.reviews === 1 ? 'Review' : 'Reviews'})</span>
-                    </div>
+                     <div className="prod-rating">
+                        <span style={{ color: '#FBBF24', fontSize: '0.75rem', marginRight: '2px' }}>⭐</span>
+                        <span className="rating-revs">({prod.reviews || 0} {prod.reviews === 1 ? 'Review' : 'Reviews'})</span>
+                     </div>
                     
                     <div className="prod-seller-row" style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '0.75rem' }}>
                       {prod.profile_image ? (

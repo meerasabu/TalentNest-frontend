@@ -617,10 +617,6 @@ const Messages = () => {
                     </div>
                     <div className="chat-header-info">
                       <h3>{activeGroup.partner_name}</h3>
-                      <span className={`status-text ${isOnline(activeGroup.partner_id) ? 'online' : 'offline'}`}>
-                        <span className={isOnline(activeGroup.partner_id) ? 'online-dot' : 'offline-dot'} />
-                        {isOnline(activeGroup.partner_id) ? 'Online now' : 'Offline'}
-                      </span>
                     </div>
                   </div>
                 </div>
