@@ -295,8 +295,11 @@ const IndexDashboard = () => {
 
               {/* Popular Skills */}
               <section className="dashboard-section">
-                <h3 className="section-title">Popular Skills</h3>
-                <div className="skills-list" style={{ marginTop: '1rem' }}>
+                <div className="section-header">
+                  <h3 onClick={() => navigate('/skills', { state: { user } })} style={{ cursor: 'pointer' }}>Popular Skills</h3>
+                  <span className="view-all" onClick={() => navigate('/skills', { state: { user } })} style={{ cursor: 'pointer' }}>View all →</span>
+                </div>
+                <div className="skills-list">
                   {loading ? (
                     Array.from({ length: 3 }).map((_, i) => (
                       <div key={`skill-skeleton-${i}`} className="skill-card skeleton-card">
