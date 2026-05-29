@@ -30,6 +30,19 @@ const Messages = () => {
   const [messages, setMessages] = useState([]);
   const [newMessage, setNewMessage] = useState('');
   const [loading, setLoading] = useState(true);
+  const [selectedImage, setSelectedImage] = useState(null);
+  const [imagePreview, setImagePreview] = useState(null);
+  const [imageUploading, setImageUploading] = useState(false);
+  const fileInputRef = useRef(null);
+
+  useEffect(() => {
+    return () => {
+      if (imagePreview) {
+        URL.revokeObjectURL(imagePreview);
+      }
+    };
+  }, [imagePreview]);
+
   const [searchQuery, setSearchQuery] = useState('');
   
   // Modals state
@@ -326,12 +339,62 @@ const Messages = () => {
 
 
 
-  const handleSendMessage = useCallback((e) => {
+  const handleFileChange = (e) => {
+    if (e.target.files && e.target.files[0]) {
+      const file = e.target.files[0];
+      if (!file.type.startsWith('image/')) {
+        alert('Please select an image file');
+        return;
+      }
+      setSelectedImage(file);
+      if (imagePreview) {
+        URL.revokeObjectURL(imagePreview);
+      }
+      setImagePreview(URL.createObjectURL(file));
+    }
+  };
+
+  const clearSelectedImage = () => {
+    setSelectedImage(null);
+    if (imagePreview) {
+      URL.revokeObjectURL(imagePreview);
+    }
+    setImagePreview(null);
+    if (fileInputRef.current) {
+      fileInputRef.current.value = '';
+    }
+  };
+
+  const handleSendMessage = async (e) => {
     e.preventDefault();
-    if (!newMessage.trim() || !effectiveChatId || !socketRef.current) return;
+    if ((!newMessage.trim() && !selectedImage) || !effectiveChatId || !socketRef.current || imageUploading) return;
 
     const msgText = newMessage.trim();
     setNewMessage('');
+
+    let uploadedUrl = null;
+    if (selectedImage) {
+      setImageUploading(true);
+      try {
+        const data = new FormData();
+        data.append('image', selectedImage);
+        
+        const res = await api.post('/chats/upload', data, {
+          headers: { 'Content-Type': 'multipart/form-data' }
+        });
+        
+        if (res.data.success) {
+          uploadedUrl = res.data.url;
+        }
+      } catch (err) {
+        console.error('Error uploading chat image:', err);
+        alert('Failed to upload image. Please try again.');
+        setImageUploading(false);
+        return;
+      } finally {
+        setImageUploading(false);
+      }
+    }
 
     // Add temporary message for optimistic UI
     const tempMsg = {
@@ -340,6 +403,7 @@ const Messages = () => {
       chat_id: effectiveChatId,
       sender_id: user?.id,
       message_text: msgText,
+      image_url: uploadedUrl || undefined,
       created_at: new Date().toISOString()
     };
     setMessages(prev => [...prev, tempMsg]);
@@ -348,9 +412,20 @@ const Messages = () => {
     socketRef.current.emit('send_message', {
       chatId: effectiveChatId,
       senderId: user?.id,
-      text: msgText
+      text: msgText,
+      imageUrl: uploadedUrl
     });
-  }, [newMessage, effectiveChatId, user]);
+
+    // Reset selected image states
+    setSelectedImage(null);
+    if (imagePreview) {
+      URL.revokeObjectURL(imagePreview);
+    }
+    setImagePreview(null);
+    if (fileInputRef.current) {
+      fileInputRef.current.value = '';
+    }
+  };
 
   const markCompleted = async (chatId) => {
     if(!window.confirm("Are you sure you want to mark this order as completed?")) return;
@@ -889,7 +964,16 @@ const Messages = () => {
                               )}
                               <div className="message-content">
                                 <div className="message-bubble">
-                                  {msg.message_text}
+                                  {msg.image_url && (
+                                    <div className="chat-msg-image-wrap" style={{ marginBottom: msg.message_text ? '8px' : '0' }}>
+                                      <img 
+                                        src={msg.image_url} 
+                                        alt="Uploaded attachment" 
+                                        onClick={() => window.open(msg.image_url, '_blank')}
+                                      />
+                                    </div>
+                                  )}
+                                  {msg.message_text && <span style={{ display: 'block', wordBreak: 'break-word' }}>{msg.message_text}</span>}
                                 </div>
                                 {showTime && <span className="message-time">{formatTime(msg.created_at)}</span>}
                               </div>
@@ -918,20 +1002,91 @@ const Messages = () => {
                 </div>
 
                 {canType ? (
-                  <form className="chat-input-area" onSubmit={handleSendMessage}>
-                    <button type="button" className="icon-btn attachment-btn">
-                      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#9ca3af" strokeWidth="2"><path d="M21.44 11.05l-9.19 9.19a6 6 0 0 1-8.49-8.49l9.19-9.19a4 4 0 0 1 5.66 5.66l-9.2 9.19a2 2 0 0 1-2.83-2.83l8.49-8.48"></path></svg>
-                    </button>
-                    <input 
-                      type="text" 
-                      placeholder="Type your message..." 
-                      value={newMessage}
-                      onChange={(e) => setNewMessage(e.target.value)}
-                    />
-                    <button type="submit" className="send-btn" disabled={!newMessage.trim()}>
-                      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><line x1="22" y1="2" x2="11" y2="13"></line><polygon points="22 2 15 22 11 13 2 9 22 2"></polygon></svg>
-                    </button>
-                  </form>
+                  <div className="chat-input-wrapper-outer" style={{ position: 'relative', width: '100%' }}>
+                    {imagePreview && (
+                      <div className="chat-image-preview-container">
+                        <div style={{ position: 'relative', width: '60px', height: '60px', borderRadius: '6px', overflow: 'hidden', border: '1px solid #e2e8f0' }}>
+                          <img src={imagePreview} alt="Selected attachment preview" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                          {imageUploading && (
+                            <div style={{
+                              position: 'absolute',
+                              top: 0, left: 0, right: 0, bottom: 0,
+                              backgroundColor: 'rgba(0,0,0,0.4)',
+                              display: 'flex',
+                              alignItems: 'center',
+                              justifyContent: 'center'
+                            }}>
+                              <svg className="spinner-icon-btn" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#fff" strokeWidth="3" style={{ animation: 'spin 1s linear infinite' }}>
+                                <circle cx="12" cy="12" r="10" strokeOpacity="0.25" />
+                                <path d="M12 2C6.477 2 2 6.477 2 12a10 10 0 0 0 10 10" strokeLinecap="round" />
+                              </svg>
+                            </div>
+                          )}
+                        </div>
+                        <div style={{ flex: 1, display: 'flex', flexDirection: 'column', gap: '2px', textAlign: 'left' }}>
+                          <span style={{ fontSize: '0.75rem', fontWeight: '600', color: '#334155' }}>{selectedImage?.name}</span>
+                          <span style={{ fontSize: '0.75rem', color: '#64748b' }}>{(selectedImage?.size / 1024).toFixed(1)} KB</span>
+                        </div>
+                        <button 
+                          type="button" 
+                          onClick={clearSelectedImage}
+                          disabled={imageUploading}
+                          style={{
+                            background: '#fee2e2',
+                            color: '#ef4444',
+                            border: '1px solid #fecaca',
+                            borderRadius: '50%',
+                            width: '24px',
+                            height: '24px',
+                            display: 'flex',
+                            alignItems: 'center',
+                            justifyContent: 'center',
+                            cursor: 'pointer',
+                            fontSize: '0.75rem',
+                            fontWeight: 'bold'
+                          }}
+                          title="Remove attachment"
+                        >
+                          ✕
+                        </button>
+                      </div>
+                    )}
+                    <form className="chat-input-area" onSubmit={handleSendMessage}>
+                      <button 
+                        type="button" 
+                        className="icon-btn attachment-btn" 
+                        onClick={() => fileInputRef.current?.click()}
+                        disabled={imageUploading}
+                        title="Attach image"
+                      >
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#9ca3af" strokeWidth="2"><path d="M21.44 11.05l-9.19 9.19a6 6 0 0 1-8.49-8.49l9.19-9.19a4 4 0 0 1 5.66 5.66l-9.2 9.19a2 2 0 0 1-2.83-2.83l8.49-8.48"></path></svg>
+                      </button>
+                      <input 
+                        type="file" 
+                        accept="image/*" 
+                        ref={fileInputRef} 
+                        style={{ display: 'none' }} 
+                        onChange={handleFileChange} 
+                      />
+                      <input 
+                        type="text" 
+                        placeholder="Type your message..." 
+                        value={newMessage}
+                        onChange={(e) => setNewMessage(e.target.value)}
+                        disabled={imageUploading}
+                      />
+                      <button type="submit" className="send-btn" disabled={(!newMessage.trim() && !selectedImage) || imageUploading}>
+                        {imageUploading ? (
+                          <svg className="spinner-icon-btn" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" style={{ animation: 'spin 1s linear infinite' }}>
+                            <circle cx="12" cy="12" r="10" strokeOpacity="0.25" />
+                            <path d="M12 2C6.477 2 2 6.477 2 12a10 10 0 0 0 10 10" strokeLinecap="round" />
+                          </svg>
+                        ) : (
+                          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><line x1="22" y1="2" x2="11" y2="13"></line><polygon points="22 2 15 22 11 13 2 9 22 2"></polygon></svg>
+                        )}
+                      </button>
+                    </form>
+                  </div>
                 ) : (
                   <div className="chat-input-disabled">
                     {currentChat?.chat_status === 'Restricted' ? (

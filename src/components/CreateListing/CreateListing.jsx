@@ -1143,7 +1143,7 @@ const CreateListing = () => {
                                 checked={formData.sessionTypes.includes(type)}
                                 onChange={() => handleCheckboxChange('sessionTypes', type)}
                               />
-                              {type}
+                              <span className="checkbox-label-text">{type}</span>
                             </label>
                           ))}
                         </div>
@@ -1233,7 +1233,7 @@ const CreateListing = () => {
                                 checked={formData.dayAvailability.includes(day)}
                                 onChange={() => handleCheckboxChange('dayAvailability', day)}
                               />
-                              {day}
+                              <span className="checkbox-label-text">{day}</span>
                             </label>
                           ))}
                         </div>

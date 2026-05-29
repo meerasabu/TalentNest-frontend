@@ -1598,3 +1598,42 @@
     width: 100%;
   }
 }
+
+/* Chat Image Upload Previews & Bubble Styles */
+.chat-image-preview-container {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 8px 12px;
+  background-color: #f8fafc;
+  border-top: 1px solid #e2e8f0;
+  border-bottom: 1px solid #e2e8f0;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.chat-msg-image-wrap {
+  margin-top: 4px;
+  overflow: hidden;
+  border-radius: 8px;
+  border: 1px solid #e2e8f0;
+  background-color: #f1f5f9;
+}
+
+.chat-msg-image-wrap img {
+  display: block;
+  max-width: 100%;
+  max-height: 240px;
+  object-fit: cover;
+  cursor: pointer;
+  transition: opacity 0.2s ease;
+}
+
+.chat-msg-image-wrap img:hover {
+  opacity: 0.95;
+}
+
+/* Adjust message bubbles to accommodate image containers */
+.message-bubble {
+  max-width: 100%;
+}

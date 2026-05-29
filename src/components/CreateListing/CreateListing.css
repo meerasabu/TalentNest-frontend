@@ -135,13 +135,13 @@
 
 .mockup-input[type="number"]::-webkit-outer-spin-button,
 .mockup-input[type="number"]::-webkit-inner-spin-button {
-  -webkit-appearance: none;
-  margin: 0;
+  -webkit-appearance: none !important;
+  margin: 0 !important;
 }
 
 .mockup-input[type="number"] {
-  -moz-appearance: textfield;
-  appearance: textfield;
+  -moz-appearance: textfield !important;
+  appearance: textfield !important;
 }
 
 .mockup-input:focus {
@@ -352,19 +352,29 @@
 .checkbox-option-item {
   display: flex;
   align-items: center;
-  gap: 0.4rem;
+  gap: 0.5rem;
   cursor: pointer;
-  font-size: 0.8rem;
+  font-size: 0.85rem;
   color: #374151;
   font-weight: 500;
   user-select: none;
+  text-transform: none !important;
 }
 
 .checkbox-option-item input[type="checkbox"] {
-  width: 14px;
-  height: 14px;
+  width: 16px;
+  height: 16px;
   accent-color: #4F46E5;
   cursor: pointer;
+  margin: 0 !important;
+  flex-shrink: 0;
+}
+
+.checkbox-label-text {
+  text-transform: none !important;
+  font-size: 0.85rem;
+  color: #374151;
+  line-height: 1.2;
 }
 
 .portfolio-links-container {
