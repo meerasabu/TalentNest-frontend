@@ -76,6 +76,12 @@ const Profile = () => {
     return `Joined ${date.toLocaleDateString('en-US', options)}`;
   };
 
+  const getInitials = () => {
+    const first = profileUser.firstName ? profileUser.firstName.charAt(0).toUpperCase() : '';
+    const last = profileUser.lastName ? profileUser.lastName.charAt(0).toUpperCase() : '';
+    return first + last || '?';
+  };
+
   useEffect(() => {
     const fetchUserData = async () => {
       try {
@@ -463,12 +469,22 @@ const Profile = () => {
 
         <div className="content-scrollable prof-scrollable">
           
-           {/* Top Floating Context Container */}
-           <div className="prof-top-block">
-              <img src={profileUser.bannerImage ? window.getImageUrl(profileUser.bannerImage) : "https://placehold.co/1200x260/0284c7/ecf0f1"} alt="Banner" className="prof-banner" />
+            {/* Top Floating Context Container */}
+            <div className="prof-top-block">
+              {profileUser.bannerImage ? (
+                <img src={window.getImageUrl(profileUser.bannerImage)} alt="Banner" className="prof-banner" />
+              ) : (
+                <div className="prof-banner-fallback"></div>
+              )}
               <div className="prof-info-sect">
                 <div className="prof-avatar-halo">
-                  <img src={profileUser.profileImage ? window.getImageUrl(profileUser.profileImage) : "https://placehold.co/150x150"} alt="Avatar" className="prof-main-ava" />
+                  {profileUser.profileImage ? (
+                    <img src={window.getImageUrl(profileUser.profileImage)} alt="Avatar" className="prof-main-ava" />
+                  ) : (
+                    <div className="prof-main-ava-initials">
+                      {getInitials()}
+                    </div>
+                  )}
                 </div>
                 
                 <div className="prof-desc-grp">

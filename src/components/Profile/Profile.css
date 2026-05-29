@@ -21,6 +21,14 @@
     border-top-right-radius: 1.5rem;
 }
 
+.prof-banner-fallback {
+    width: 100%;
+    height: 220px;
+    background: linear-gradient(135deg, #4f46e5 0%, #3b82f6 100%);
+    border-top-left-radius: 1.5rem;
+    border-top-right-radius: 1.5rem;
+}
+
 .prof-info-sect {
     padding: 1.5rem 2.5rem 2.5rem 2.5rem;
     position: relative;
@@ -43,6 +51,21 @@
     height: 100%;
     border-radius: 50%;
     object-fit: cover;
+}
+
+.prof-main-ava-initials {
+    width: 100%;
+    height: 100%;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #6366f1 0%, #4f46e5 100%);
+    color: #ffffff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 3.5rem;
+    font-weight: 800;
+    text-transform: uppercase;
+    box-shadow: inset 0 2px 4px rgba(0,0,0,0.1);
 }
 
 .prof-desc-grp { flex: 1; display: flex; flex-direction: column; gap: 0.5rem; }

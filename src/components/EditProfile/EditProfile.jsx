@@ -51,13 +51,21 @@ const EditProfile = () => {
     const [loading, setLoading] = useState(false);
 
     // Image states
-    const [profileImgPreview, setProfileImgPreview] = useState(user.profileImage ? window.getImageUrl(user.profileImage) : 'https://placehold.co/150x150');
-    const [bannerImgPreview, setBannerImgPreview] = useState(user.bannerImage ? window.getImageUrl(user.bannerImage) : 'https://placehold.co/1200x260/0284c7/ecf0f1');
+    const [profileImgPreview, setProfileImgPreview] = useState(user.profileImage ? window.getImageUrl(user.profileImage) : null);
+    const [bannerImgPreview, setBannerImgPreview] = useState(user.bannerImage ? window.getImageUrl(user.bannerImage) : null);
     const [profileImgFile, setProfileImgFile] = useState(null);
     const [bannerImgFile, setBannerImgFile] = useState(null);
+    const [hasProfileImage, setHasProfileImage] = useState(!!user.profileImage);
+    const [hasBannerImage, setHasBannerImage] = useState(!!user.bannerImage);
 
     const profileInputRef = useRef(null);
     const bannerInputRef = useRef(null);
+
+    const getInitials = () => {
+        const first = formData.firstName ? formData.firstName.charAt(0).toUpperCase() : '';
+        const last = formData.lastName ? formData.lastName.charAt(0).toUpperCase() : '';
+        return first + last || '?';
+    };
 
     const handleChange = (e) => {
         setFormData({ ...formData, [e.target.id]: e.target.value });
@@ -80,9 +88,11 @@ const EditProfile = () => {
             if (type === 'profile') {
                 setProfileImgFile(file);
                 setProfileImgPreview(URL.createObjectURL(file));
+                setHasProfileImage(true);
             } else {
                 setBannerImgFile(file);
                 setBannerImgPreview(URL.createObjectURL(file));
+                setHasBannerImage(true);
             }
         }
     };
@@ -102,8 +112,8 @@ const EditProfile = () => {
         data.append('skills', JSON.stringify(skills));
         
         // Pass existing URLs as fallback if no new file selected
-        data.append('profileImageUrl', user.profileImage || '');
-        data.append('bannerImageUrl', user.bannerImage || '');
+        data.append('profileImageUrl', hasProfileImage ? (profileImgFile ? '' : user.profileImage || '') : '');
+        data.append('bannerImageUrl', hasBannerImage ? (bannerImgFile ? '' : user.bannerImage || '') : '');
 
         if (profileImgFile) data.append('profileImage', profileImgFile);
         if (bannerImgFile) data.append('bannerImage', bannerImgFile);
@@ -149,22 +159,50 @@ const EditProfile = () => {
                         {/* Interactive Image Selection Section */}
                         <div className="edit-images-section">
                             <div className="banner-edit-container">
-                                <img src={bannerImgPreview} alt="Banner" className="banner-preview" />
-                                <button type="button" className="banner-overlay" onClick={() => bannerInputRef.current.click()}>
-                                    <div className="overlay-icon">
-                                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><path d="M12 20h9"></path><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"></path></svg>
-                                    </div>
-                                </button>
+                                {hasBannerImage && bannerImgPreview ? (
+                                    <img src={bannerImgPreview} alt="Banner" className="banner-preview" />
+                                ) : (
+                                    <div className="banner-preview-fallback"></div>
+                                )}
+                                <div className="banner-overlay-actions">
+                                    <button type="button" className="overlay-btn edit" onClick={() => bannerInputRef.current.click()} title="Upload Banner Image">
+                                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><path d="M12 20h9"></path><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"></path></svg>
+                                    </button>
+                                    {hasBannerImage && (
+                                        <button type="button" className="overlay-btn remove" onClick={() => {
+                                            setHasBannerImage(false);
+                                            setBannerImgFile(null);
+                                            setBannerImgPreview(null);
+                                        }} title="Remove Banner Image">
+                                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path></svg>
+                                        </button>
+                                    )}
+                                </div>
                                 <input type="file" ref={bannerInputRef} hidden accept="image/*" onChange={(e) => handleImageChange(e, 'banner')} />
                             </div>
 
                             <div className="profile-pic-edit-container">
-                                <img src={profileImgPreview} alt="Avatar" className="profile-pic-preview" />
-                                <button type="button" className="img-overlay" onClick={() => profileInputRef.current.click()}>
-                                    <div className="overlay-icon">
-                                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><path d="M12 20h9"></path><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"></path></svg>
+                                {hasProfileImage && profileImgPreview ? (
+                                    <img src={profileImgPreview} alt="Avatar" className="profile-pic-preview" />
+                                ) : (
+                                    <div className="profile-pic-preview-initials">
+                                        {getInitials()}
                                     </div>
-                                </button>
+                                )}
+                                <div className="profile-pic-overlay-actions">
+                                    <button type="button" className="overlay-btn edit" onClick={() => profileInputRef.current.click()} title="Upload Profile Picture">
+                                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><path d="M12 20h9"></path><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"></path></svg>
+                                    </button>
+                                    {hasProfileImage && (
+                                        <button type="button" className="overlay-btn remove" onClick={() => {
+                                            setHasProfileImage(false);
+                                            setProfileImgFile(null);
+                                            setProfileImgPreview(null);
+                                        }} title="Remove Profile Picture">
+                                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path></svg>
+                                        </button>
+                                    )}
+                                </div>
                                 <input type="file" ref={profileInputRef} hidden accept="image/*" onChange={(e) => handleImageChange(e, 'profile')} />
                             </div>
                         </div>
