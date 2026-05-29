@@ -133,6 +133,17 @@
   box-sizing: border-box;
 }
 
+.mockup-input[type="number"]::-webkit-outer-spin-button,
+.mockup-input[type="number"]::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+.mockup-input[type="number"] {
+  -moz-appearance: textfield;
+  appearance: textfield;
+}
+
 .mockup-input:focus {
   background-color: #FFFFFF;
   border-color: #4F46E5;
@@ -286,16 +297,7 @@
   margin-top: 0.5rem;
 }
 
-.cancel-btn {
-  color: #6B7280;
-  font-size: 0.8rem;
-  font-weight: 500;
-  cursor: pointer;
-}
-
-.cancel-btn:hover {
-  color: #374151;
-}
+/* cancel-btn styles are placed at the bottom of the stylesheet */
 
 .mockup-publish-btn {
   background-color: #4F46E5;
@@ -693,5 +695,42 @@
   }
 }
 
+/* Spinner Icon and Animation */
+@keyframes spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
 
+.spinner-icon-btn {
+  animation: spin 0.8s linear infinite;
+  flex-shrink: 0;
+  stroke: currentColor;
+}
 
+/* Cancel Button and Actions Styling Polish */
+.cancel-btn {
+  color: #6B7280;
+  font-size: 0.8rem;
+  font-weight: 500;
+  cursor: pointer;
+  background: none;
+  border: none;
+  padding: 0;
+  transition: color 0.2s ease, text-decoration 0.2s ease;
+}
+
+.cancel-btn:hover {
+  color: #111827;
+  text-decoration: underline;
+}
+
+/* Fieldset and loading overlays */
+fieldset[disabled] {
+  opacity: 0.85;
+  pointer-events: none;
+  transition: opacity 0.3s ease;
+}

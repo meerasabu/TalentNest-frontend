@@ -152,6 +152,12 @@ const CreateListing = () => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
+  const handleKeyDown = (e) => {
+    if (e.key === 'Enter' && e.target.tagName !== 'TEXTAREA') {
+      e.preventDefault();
+    }
+  };
+
   const handleImageChange = (e) => {
     if (e.target.files) {
       const selectedFiles = Array.from(e.target.files);
@@ -352,6 +358,7 @@ const CreateListing = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    if (loading) return;
 
     // Custom Client-Side Validation
     let errors = [];
@@ -745,7 +752,8 @@ const CreateListing = () => {
             )}
 
             {/* Inner Form Card */}
-            <form onSubmit={handleSubmit} noValidate className="mockup-form-card">
+            <form onSubmit={handleSubmit} onKeyDown={handleKeyDown} noValidate className="mockup-form-card">
+              <fieldset disabled={loading} style={{ border: 'none', padding: 0, margin: 0, display: 'flex', flexDirection: 'column', gap: '1.25rem', width: '100%' }}>
               
               {/* Wizard Progress Bar */}
               <div className="wizard-progress-bar">
@@ -827,14 +835,14 @@ const CreateListing = () => {
                           <label className="mockup-label">Price</label>
                           <div className="price-input-wrapper">
                             <span className="price-symbol">₹</span>
-                            <input type="number" name="price" className="mockup-input price-input" placeholder="0.00" value={formData.price} onChange={handleInputChange} required />
+                            <input type="number" name="price" className="mockup-input price-input" placeholder="0.00" value={formData.price} onChange={handleInputChange} required inputMode="decimal" step="any" />
                           </div>
                         </div>
                       </div>
                       <div className="mockup-split-row">
                         <div className="form-group half">
                           <label className="mockup-label">Quantity</label>
-                          <input type="number" name="quantity" className="mockup-input" min="1" value={formData.quantity} onChange={handleInputChange} required />
+                          <input type="number" name="quantity" className="mockup-input" min="1" value={formData.quantity} onChange={handleInputChange} required inputMode="numeric" />
                         </div>
                         <div className="form-group half">
                           <label className="mockup-label">Condition</label>
@@ -942,14 +950,14 @@ const CreateListing = () => {
                           <label className="mockup-label">Standard Plan (₹)</label>
                           <div className="price-input-wrapper">
                             <span className="price-symbol">₹</span>
-                            <input type="number" name="standardPlan" className="mockup-input price-input" placeholder="0.00" value={formData.standardPlan} onChange={handleInputChange} required />
+                            <input type="number" name="standardPlan" className="mockup-input price-input" placeholder="0.00" value={formData.standardPlan} onChange={handleInputChange} required inputMode="decimal" step="any" />
                           </div>
                         </div>
                         <div className="form-group half">
                           <label className="mockup-label">Group Plan / hr (₹) (Optional)</label>
                           <div className="price-input-wrapper">
                             <span className="price-symbol">₹</span>
-                            <input type="number" name="groupPlan" className="mockup-input price-input" placeholder="0.00" value={formData.groupPlan} onChange={handleInputChange} />
+                            <input type="number" name="groupPlan" className="mockup-input price-input" placeholder="0.00" value={formData.groupPlan} onChange={handleInputChange} inputMode="decimal" step="any" />
                           </div>
                         </div>
                       </div>
@@ -1072,6 +1080,8 @@ const CreateListing = () => {
                               value={formData.price} 
                               onChange={handleInputChange} 
                               required 
+                              inputMode="decimal"
+                              step="any"
                             />
                           </div>
                         </div>
@@ -1490,28 +1500,57 @@ const CreateListing = () => {
 
               {/* Form Footer / Step Navigation Actions */}
               <div className="mockup-form-actions">
-                <span className="cancel-btn" onClick={() => navigate(isEditMode ? '/profile' : '/index', { state: { user, activeTab: isEditMode ? `${activeTab}s` : undefined } })}>
+                <button 
+                  key="btn-cancel"
+                  type="button"
+                  className="cancel-btn" 
+                  onClick={() => !loading && navigate(isEditMode ? '/profile' : '/index', { state: { user, activeTab: isEditMode ? `${activeTab}s` : undefined } })}
+                  style={{ background: 'none', border: 'none', padding: 0, font: 'inherit', cursor: 'pointer' }}
+                >
                   Cancel
-                </span>
+                </button>
                 
                 {currentStep > 1 && (
-                  <button type="button" className="mockup-publish-btn" style={{ background: '#F3F4F6', color: '#374151' }} onClick={handlePrevStep}>
+                  <button 
+                    key="btn-prev"
+                    type="button" 
+                    className="mockup-publish-btn" 
+                    style={{ background: '#F3F4F6', color: '#374151' }} 
+                    onClick={handlePrevStep}
+                  >
                     Previous
                   </button>
                 )}
 
                 {currentStep < totalSteps ? (
-                  <button type="button" className="mockup-publish-btn" onClick={handleNextStep}>
+                  <button 
+                    key="btn-next"
+                    type="button" 
+                    className="mockup-publish-btn" 
+                    onClick={handleNextStep}
+                  >
                     Next
                   </button>
                 ) : (
-                  <button type="submit" className="mockup-publish-btn" disabled={loading}>
+                  <button 
+                    key="btn-submit"
+                    type="submit" 
+                    className="mockup-publish-btn" 
+                    disabled={loading}
+                    style={{ display: 'flex', alignItems: 'center', gap: '8px', justifyContent: 'center' }}
+                  >
+                    {loading && (
+                      <svg className="spinner-icon-btn" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" style={{ animation: 'spin 1s linear infinite' }}>
+                        <circle cx="12" cy="12" r="10" strokeOpacity="0.25" />
+                        <path d="M12 2C6.477 2 2 6.477 2 12a10 10 0 0 0 10 10" strokeLinecap="round" />
+                      </svg>
+                    )}
                     {loading ? (isEditMode ? 'Updating...' : 'Publishing...') : (isEditMode ? 'Save Changes' : `Publish ${activeTab.charAt(0).toUpperCase() + activeTab.slice(1)}`)}
                   </button>
                 )}
               </div>
-
-            </form>
+            </fieldset>
+          </form>
           </div>
         </div>
       </main>
