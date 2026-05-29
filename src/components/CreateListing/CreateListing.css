@@ -350,31 +350,33 @@
 }
 
 .checkbox-option-item {
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-  cursor: pointer;
-  font-size: 0.85rem;
-  color: #374151;
-  font-weight: 500;
+  display: flex !important;
+  align-items: center !important;
+  gap: 0.5rem !important;
   user-select: none;
-  text-transform: none !important;
 }
 
-.checkbox-option-item input[type="checkbox"] {
-  width: 16px;
-  height: 16px;
-  accent-color: #4F46E5;
-  cursor: pointer;
+.checkbox-input {
+  width: 16px !important;
+  height: 16px !important;
+  accent-color: #4F46E5 !important;
+  cursor: pointer !important;
   margin: 0 !important;
-  flex-shrink: 0;
+  flex-shrink: 0 !important;
+  position: static !important;
 }
 
-.checkbox-label-text {
+.checkbox-label {
+  font-size: 0.85rem !important;
+  color: #374151 !important;
+  font-weight: 500 !important;
+  cursor: pointer !important;
+  user-select: none !important;
   text-transform: none !important;
-  font-size: 0.85rem;
-  color: #374151;
-  line-height: 1.2;
+  margin: 0 !important;
+  padding: 0 !important;
+  line-height: 1.2 !important;
+  position: static !important;
 }
 
 .portfolio-links-container {

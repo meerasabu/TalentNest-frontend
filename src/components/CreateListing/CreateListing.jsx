@@ -1137,14 +1137,21 @@ const CreateListing = () => {
                         <label className="mockup-label">Offerings & Session Focus Types</label>
                         <div className="checkbox-options-grid">
                           {['1:1 Mentoring', 'Group Session', 'Interview Prep', 'Project Guidance'].map(type => (
-                            <label key={type} className="checkbox-option-item">
+                            <div key={type} className="checkbox-option-item">
                               <input 
                                 type="checkbox" 
+                                id={`session-${type.replace(/[^a-zA-Z0-9]/g, '-').toLowerCase()}`}
+                                className="checkbox-input"
                                 checked={formData.sessionTypes.includes(type)}
                                 onChange={() => handleCheckboxChange('sessionTypes', type)}
                               />
-                              <span className="checkbox-label-text">{type}</span>
-                            </label>
+                              <label 
+                                htmlFor={`session-${type.replace(/[^a-zA-Z0-9]/g, '-').toLowerCase()}`}
+                                className="checkbox-label"
+                              >
+                                {type}
+                              </label>
+                            </div>
                           ))}
                         </div>
                       </div>
@@ -1227,14 +1234,21 @@ const CreateListing = () => {
                         <label className="mockup-label">Available Days</label>
                         <div className="checkbox-options-grid">
                           {['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'].map(day => (
-                            <label key={day} className="checkbox-option-item">
+                            <div key={day} className="checkbox-option-item">
                               <input 
                                 type="checkbox" 
+                                id={`day-${day.toLowerCase()}`}
+                                className="checkbox-input"
                                 checked={formData.dayAvailability.includes(day)}
                                 onChange={() => handleCheckboxChange('dayAvailability', day)}
                               />
-                              <span className="checkbox-label-text">{day}</span>
-                            </label>
+                              <label 
+                                htmlFor={`day-${day.toLowerCase()}`}
+                                className="checkbox-label"
+                              >
+                                {day}
+                              </label>
+                            </div>
                           ))}
                         </div>
                       </div>
