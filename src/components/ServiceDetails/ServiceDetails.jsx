@@ -38,6 +38,8 @@ const ServiceDetails = () => {
   const [service, setService] = useState(null);
   const [loading, setLoading] = useState(true);
   const [selectedPlan, setSelectedPlan] = useState(null);
+  const [reviews, setReviews] = useState([]);
+  const [reviewsLoading, setReviewsLoading] = useState(true);
 
   // ── Booking modal state ──────────────────────────────────────────────────
   const [showBookingModal, setShowBookingModal] = useState(false);
@@ -86,6 +88,36 @@ const ServiceDetails = () => {
     };
     fetchBookedSlots();
   }, [bookingDate, showBookingModal, id]);
+
+  // Fetch reviews for this service
+  useEffect(() => {
+    const fetchReviews = async () => {
+      try {
+        const response = await api.get(`/reviews/service/${id}`);
+        if (response.data.success) {
+          setReviews(response.data.reviews);
+        }
+      } catch (error) {
+        console.error("Error fetching service reviews:", error);
+      } finally {
+        setReviewsLoading(false);
+      }
+    };
+    fetchReviews();
+  }, [id]);
+
+  const totalReviews = reviews.length;
+  const avgRating = totalReviews > 0
+    ? (reviews.reduce((sum, r) => sum + parseFloat(r.rating || 0), 0) / totalReviews).toFixed(1)
+    : '0.0';
+
+  const starPercentages = [5, 4, 3, 2, 1].map(star => {
+    const count = reviews.filter(r => Math.round(parseFloat(r.rating || 0)) === star).length;
+    return {
+      star,
+      percentage: totalReviews > 0 ? Math.round((count / totalReviews) * 100) : 0
+    };
+  });
 
   const openBookingModal = () => {
     if (!selectedPlan) {
@@ -187,7 +219,7 @@ const ServiceDetails = () => {
                 <span className="sd-hero-tag" style={{textTransform: 'uppercase'}}>{service.service_type}</span>
                 <h1 className="sd-hero-title">{service.title}</h1>
                 <div className="sd-hero-meta">
-                  <span><span className="sd-rate-star">★</span> (0 Reviews)</span>
+                  <span><span className="sd-rate-star">★</span> {avgRating} ({totalReviews} {totalReviews === 1 ? 'Review' : 'Reviews'})</span>
                   <span>•</span>
                   <span><svg style={{display:'inline', marginRight:'4px', verticalAlign:'sub'}} width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg> Professional Service</span>
                   <span>•</span>
@@ -247,73 +279,82 @@ const ServiceDetails = () => {
                 {/* Reviews */}
                 <div className="sd-section-block">
                   <h3>Reviews &amp; Ratings</h3>
-                  <div className="reviews-analysis-box" style={{backgroundColor: '#F9FAFB', borderRadius: '1rem', padding: '2rem', display: 'flex', gap: '4rem', alignItems: 'center', margin: '1rem 0 2rem 0'}}>
-                    <div className="raa-left" style={{display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '0.25rem'}}>
-                      <span className="raa-num" style={{fontSize: '3rem', fontWeight: 800, color: '#111827', lineHeight: 1}}>4.9</span>
-                      <span className="raa-stars" style={{color: '#FBBF24', letterSpacing: '0.1em'}}>★★★★★</span>
-                      <span className="raa-desc" style={{fontSize: '0.75rem', color: '#6B7280'}}>42 reviews</span>
+                  
+                  {reviewsLoading ? (
+                    <div style={{ color: '#6B7280', padding: '1rem 0', fontSize: '0.9rem' }}>Loading reviews...</div>
+                  ) : totalReviews === 0 ? (
+                    <div style={{ textAlign: 'center', padding: '2.5rem 1rem', color: '#9CA3AF', fontSize: '0.95rem' }}>
+                      <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="#D1D5DB" strokeWidth="1.5" style={{ marginBottom: '0.75rem' }}><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon></svg>
+                      <div>No reviews yet for this service.</div>
+                      <div style={{ fontSize: '0.82rem', marginTop: '4px', color: '#CBD5E1' }}>Be the first to book and review!</div>
                     </div>
-                    <div className="raa-right" style={{flex: 1, display: 'flex', flexDirection: 'column', gap: '0.5rem'}}>
-                      {[
-                        {s:5, p:95},
-                        {s:4, p:5},
-                        {s:3, p:0},
-                        {s:2, p:0},
-                        {s:1, p:0}
-                      ].map(r => (
-                        <div key={r.s} className="raa-row" style={{display: 'flex', alignItems: 'center', gap: '1rem'}}>
-                          <span className="raa-rlab" style={{width: '30px', fontSize: '0.75rem', color: '#6B7280', textAlign: 'right'}}>{r.s} ★</span>
-                          <div className="raa-track" style={{flex: 1, height: '6px', backgroundColor: '#E5E7EB', borderRadius: '999px'}}>
-                            <div className="raa-fill" style={{height: '100%', backgroundColor: '#FBBF24', borderRadius: '999px', width: `${r.p}%`}}></div>
+                  ) : (
+                    <>
+                      <div className="reviews-analysis-box" style={{backgroundColor: '#F9FAFB', borderRadius: '1rem', padding: '2rem', display: 'flex', gap: '4rem', alignItems: 'center', margin: '1rem 0 2rem 0'}}>
+                        <div className="raa-left" style={{display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '0.25rem'}}>
+                          <span className="raa-num" style={{fontSize: '3rem', fontWeight: 800, color: '#111827', lineHeight: 1}}>{avgRating}</span>
+                          <span className="raa-stars" style={{color: '#FBBF24', letterSpacing: '0.1em'}}>
+                            {'★'.repeat(Math.round(parseFloat(avgRating)))}
+                            {'☆'.repeat(5 - Math.round(parseFloat(avgRating)))}
+                          </span>
+                          <span className="raa-desc" style={{fontSize: '0.75rem', color: '#6B7280'}}>{totalReviews} {totalReviews === 1 ? 'review' : 'reviews'}</span>
+                        </div>
+                        <div className="raa-right" style={{flex: 1, display: 'flex', flexDirection: 'column', gap: '0.5rem'}}>
+                          {starPercentages.map(r => (
+                            <div key={r.star} className="raa-row" style={{display: 'flex', alignItems: 'center', gap: '1rem'}}>
+                              <span className="raa-rlab" style={{width: '30px', fontSize: '0.75rem', color: '#6B7280', textAlign: 'right'}}>{r.star} ★</span>
+                              <div className="raa-track" style={{flex: 1, height: '6px', backgroundColor: '#E5E7EB', borderRadius: '999px'}}>
+                                <div className="raa-fill" style={{height: '100%', backgroundColor: '#FBBF24', borderRadius: '999px', width: `${r.percentage}%`}}></div>
+                              </div>
+                              <span className="raa-rpct" style={{width: '30px', fontSize: '0.75rem', color: '#6B7280'}}>{r.percentage}%</span>
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+
+                      {reviews.map((rev) => {
+                        const stars = Math.round(parseFloat(rev.rating));
+                        const timeAgo = (() => {
+                          const diff = Date.now() - new Date(rev.created_at);
+                          const s = Math.floor(diff / 1000);
+                          if (s < 60) return `${s}s ago`;
+                          const m = Math.floor(s / 60);
+                          if (m < 60) return `${m}m ago`;
+                          const h = Math.floor(m / 60);
+                          if (h < 24) return `${h}h ago`;
+                          const d = Math.floor(h / 24);
+                          if (d < 7) return `${d}d ago`;
+                          return `${Math.floor(d / 7)}w ago`;
+                        })();
+                        return (
+                          <div key={rev.id} className="review-card" style={{border: '1px solid #F3F4F6', borderRadius: '1rem', padding: '1.5rem', marginBottom: '1rem'}}>
+                            <div className="rev-head" style={{display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '1rem'}}>
+                              <div className="rev-user-grp" style={{display: 'flex', alignItems: 'center', gap: '1rem'}}>
+                                <img 
+                                  src={rev.profile_image ? window.getImageUrl(rev.profile_image) : `https://placehold.co/40x40/555/fff?text=${rev.first_name?.[0] || 'S'}`} 
+                                  alt={rev.first_name} 
+                                  style={{width: '40px', height: '40px', borderRadius: '50%', objectFit: 'cover'}} 
+                                />
+                                <div className="rev-name-stack" style={{display: 'flex', flexDirection: 'column', gap: '0.25rem'}}>
+                                  <span className="rn-name" style={{fontWeight: 700, color: '#111827', fontSize: '0.875rem'}}>{rev.first_name} {rev.last_name}</span>
+                                  <span className="rn-sub" style={{fontSize: '0.75rem', color: '#9CA3AF'}}>
+                                    <span style={{color: '#FBBF24'}}>{'★'.repeat(stars)}{'☆'.repeat(5 - stars)}</span> {timeAgo}
+                                  </span>
+                                </div>
+                              </div>
+                              <div className="rev-verified-block" style={{display: 'flex', flexDirection: 'column', alignItems: 'flex-end', gap: '0.25rem'}}>
+                                <span className="rv-pill" style={{backgroundColor: '#ECFDF5', color: '#10B981', fontSize: '0.65rem', fontWeight: 600, padding: '0.25rem 0.5rem', borderRadius: '0.25rem'}}><span className="green-dot" style={{width: '6px', height: '6px', backgroundColor: '#10B981', borderRadius: '50%', display: 'inline-block'}}></span> Verified Interaction</span>
+                                <span className="rv-desc" style={{fontSize: '0.65rem', color: '#9CA3AF'}}>Completed service</span>
+                              </div>
+                            </div>
+                            <p className="rev-msg" style={{fontSize: '0.875rem', color: '#4B5563', lineHeight: 1.5, margin: 0}}>
+                              {rev.review_text}
+                            </p>
                           </div>
-                          <span className="raa-rpct" style={{width: '30px', fontSize: '0.75rem', color: '#6B7280'}}>{r.p}%</span>
-                        </div>
-                      ))}
-                    </div>
-                  </div>
-
-                  <div className="review-card" style={{border: '1px solid #F3F4F6', borderRadius: '1rem', padding: '1.5rem', marginBottom: '1rem'}}>
-                    <div className="rev-head" style={{display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '1rem'}}>
-                      <div className="rev-user-grp" style={{display: 'flex', alignItems: 'center', gap: '1rem'}}>
-                        <img src="https://placehold.co/40x40/333/fff?text=RA" alt="Rachel A." style={{width: '40px', height: '40px', borderRadius: '50%', objectFit: 'cover'}} />
-                        <div className="rev-name-stack" style={{display: 'flex', flexDirection: 'column', gap: '0.25rem'}}>
-                          <span className="rn-name" style={{fontWeight: 700, color: '#111827', fontSize: '0.875rem'}}>Rachel Adams</span>
-                          <span className="rn-sub" style={{fontSize: '0.75rem', color: '#9CA3AF'}}>
-                            <span style={{color: '#FBBF24'}}>★★★★★</span> 1 week ago
-                          </span>
-                        </div>
-                      </div>
-                      <div className="rev-verified-block" style={{display: 'flex', flexDirection: 'column', alignItems: 'flex-end', gap: '0.25rem'}}>
-                        <span className="rv-pill" style={{backgroundColor: '#ECFDF5', color: '#10B981', fontSize: '0.65rem', fontWeight: 600, padding: '0.25rem 0.5rem', borderRadius: '0.25rem'}}><span className="green-dot" style={{width: '6px', height: '6px', backgroundColor: '#10B981', borderRadius: '50%', display: 'inline-block'}}></span> Verified Interaction</span>
-                        <span className="rv-desc" style={{fontSize: '0.65rem', color: '#9CA3AF'}}>Completed service</span>
-                      </div>
-                    </div>
-                    <p className="rev-msg" style={{fontSize: '0.875rem', color: '#4B5563', lineHeight: 1.5, margin: 0}}>
-                      James was incredible! He made me feel so comfortable and the photos turned out amazing. Highly recommend for graduation shots!
-                    </p>
-                  </div>
-
-                  <div className="review-card" style={{border: '1px solid #F3F4F6', borderRadius: '1rem', padding: '1.5rem', marginBottom: '1rem'}}>
-                    <div className="rev-head" style={{display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '1rem'}}>
-                      <div className="rev-user-grp" style={{display: 'flex', alignItems: 'center', gap: '1rem'}}>
-                        <img src="https://placehold.co/40x40/555/fff?text=TJ" alt="Tom J." style={{width: '40px', height: '40px', borderRadius: '50%', objectFit: 'cover'}} />
-                        <div className="rev-name-stack" style={{display: 'flex', flexDirection: 'column', gap: '0.25rem'}}>
-                          <span className="rn-name" style={{fontWeight: 700, color: '#111827', fontSize: '0.875rem'}}>Tom Johnson</span>
-                          <span className="rn-sub" style={{fontSize: '0.75rem', color: '#9CA3AF'}}>
-                            <span style={{color: '#FBBF24'}}>★★★★★</span> 2 weeks ago
-                          </span>
-                        </div>
-                      </div>
-                      <div className="rev-verified-block" style={{display: 'flex', flexDirection: 'column', alignItems: 'flex-end', gap: '0.25rem'}}>
-                        <span className="rv-pill" style={{backgroundColor: '#ECFDF5', color: '#10B981', fontSize: '0.65rem', fontWeight: 600, padding: '0.25rem 0.5rem', borderRadius: '0.25rem'}}><span className="green-dot" style={{width: '6px', height: '6px', backgroundColor: '#10B981', borderRadius: '50%', display: 'inline-block'}}></span> Verified Interaction</span>
-                        <span className="rv-desc" style={{fontSize: '0.65rem', color: '#9CA3AF'}}>Completed service</span>
-                      </div>
-                    </div>
-                    <p className="rev-msg" style={{fontSize: '0.875rem', color: '#4B5563', lineHeight: 1.5, margin: 0}}>
-                      Professional service and amazing quality. Got my photos within 2 days! Perfect for LinkedIn and family.
-                    </p>
-                  </div>
-
+                        );
+                      })}
+                    </>
+                  )}
                 </div>
               </div>
 

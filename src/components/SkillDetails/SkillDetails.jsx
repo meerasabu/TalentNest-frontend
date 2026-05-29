@@ -73,10 +73,9 @@ const SkillDetails = () => {
   }, [id]);
 
   useEffect(() => {
-    if (!skill?.user_id) return;
     const fetchReviews = async () => {
       try {
-        const response = await api.get(`/reviews/user/${skill.user_id}`);
+        const response = await api.get(`/reviews/skill/${id}`);
         if (response.data.success) {
           setReviews(response.data.reviews);
         }
@@ -87,7 +86,7 @@ const SkillDetails = () => {
       }
     };
     fetchReviews();
-  }, [skill]);
+  }, [id]);
 
   // Fetch booked (Accepted) slots whenever the date changes
   useEffect(() => {

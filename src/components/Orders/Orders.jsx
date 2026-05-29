@@ -250,7 +250,9 @@ const Orders = () => {
       if (s === 'COMPLETED') {
         return (
           <div className="ord-act-grp">
-            <button className="ord-btn ord-btn-purp" onClick={() => openReviewModal(order)}>Write Review</button>
+            {!order.is_reviewed && (
+              <button className="ord-btn ord-btn-purp" onClick={() => openReviewModal(order)}>Write Review</button>
+            )}
             <button className="ord-btn ord-btn-out" onClick={() => navigate('/messages', { state: { user, orderId: order.id } })}><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path></svg> Open Chat</button>
           </div>
         );

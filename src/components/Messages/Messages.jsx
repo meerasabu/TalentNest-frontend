@@ -594,17 +594,38 @@ const Messages = () => {
 
   const getPartnerAvatar = (obj) => {
     const imgPath = obj.partner_image || obj.profile_image;
-    if (imgPath && imgPath !== 'undefined' && imgPath !== 'null' && imgPath !== '/uploads/undefined') {
-      return <img src={`${API_BASE_URL}${imgPath}`} alt="Profile" style={{width: '100%', height: '100%', borderRadius: '50%', objectFit: 'cover'}} />;
-    }
     const name = obj.partner_name || (obj.first_name ? `${obj.first_name} ${obj.last_name || ''}` : null) || 'U';
     const parts = name.trim().split(/\s+/).filter(Boolean);
+    let initials = 'U';
     if (parts.length > 1) {
       const firstInitial = parts[0] && parts[0][0] ? parts[0][0] : '';
       const secondInitial = parts[1] && parts[1][0] ? parts[1][0] : '';
-      return (firstInitial + secondInitial).toUpperCase() || 'U';
+      initials = (firstInitial + secondInitial).toUpperCase() || 'U';
+    } else if (name[0]) {
+      initials = name[0].toUpperCase();
     }
-    return name[0] ? name[0].toUpperCase() : 'U';
+
+    const hasImage = imgPath && 
+                     imgPath !== 'undefined' && 
+                     imgPath !== 'null' && 
+                     imgPath !== '/uploads/undefined' && 
+                     imgPath !== '/uploads/Profile.png' &&
+                     imgPath !== '/uploads/Profile.jpg';
+
+    if (hasImage) {
+      return (
+        <span style={{ position: 'relative', width: '100%', height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center', borderRadius: '50%' }}>
+          <span style={{ position: 'absolute' }}>{initials}</span>
+          <img 
+            src={`${API_BASE_URL}${imgPath}`} 
+            alt="" 
+            onError={(e) => { e.target.style.display = 'none'; }} 
+            style={{ width: '100%', height: '100%', borderRadius: '50%', objectFit: 'cover', position: 'absolute', top: 0, left: 0 }} 
+          />
+        </span>
+      );
+    }
+    return initials;
   };
 
   if (!user) return null;
