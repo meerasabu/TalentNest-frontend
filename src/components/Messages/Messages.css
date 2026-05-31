@@ -73,7 +73,7 @@
 
 .chat-search input {
   width: 100%;
-  padding: 0.45rem 0.75rem 0.45rem 2rem;
+  padding: 0.45rem 0.75rem 0.45rem 2rem !important;
   border: 1px solid var(--chat-border);
   border-radius: 8px;
   font-size: 0.85rem;
@@ -2062,7 +2062,7 @@
 
 .chat-input-area input {
   flex: 1;
-  padding: 0.6rem 0.25rem;
+  padding: 0.6rem 0.25rem !important;
   border: none;
   font-size: 0.9rem;
   background: transparent;
