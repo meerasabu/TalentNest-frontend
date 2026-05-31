@@ -642,16 +642,13 @@ const Notifications = () => {
                           </>
                         )}
                         {notif.hasAcceptDecline && (
-                          <div className="notif-btn-row">
-                            <button className="notif-action-btn btn-primary" onClick={() => navigate('/orders', { state: { user } })}>
-                              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>
-                              Accept
-                            </button>
-                            <button className="notif-action-btn btn-light" onClick={() => navigate('/orders', { state: { user } })}>
-                              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10"></circle><line x1="15" y1="9" x2="9" y2="15"></line><line x1="9" y1="9" x2="15" y2="15"></line></svg>
-                              Decline
-                            </button>
-                          </div>
+                          <button className="notif-action-btn btn-dark" onClick={() => navigate('/orders', { state: { user } })}>
+                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
+                              <circle cx="12" cy="12" r="10"></circle>
+                              <polyline points="12 6 12 12 16 14"></polyline>
+                            </svg>
+                            View Order
+                          </button>
                         )}
                       </div>
 

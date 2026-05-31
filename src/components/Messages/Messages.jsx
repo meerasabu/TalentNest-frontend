@@ -198,6 +198,9 @@ const Messages = () => {
   const [unreadSessions, setUnreadSessions] = useState({});
   const [showHistory, setShowHistory] = useState(false);
   const [showActiveSessionsDropdown, setShowActiveSessionsDropdown] = useState(false);
+  const [sessionSearchQuery, setSessionSearchQuery] = useState('');
+  const [sessionTypeFilter, setSessionTypeFilter] = useState('All');
+  const [sessionStatusFilter, setSessionStatusFilter] = useState('All');
   const [showLeftArrow, setShowLeftArrow] = useState(false);
   const [showRightArrow, setShowRightArrow] = useState(false);
   const [detailsExpanded, setDetailsExpanded] = useState(false);
@@ -206,6 +209,13 @@ const Messages = () => {
   const activeSessionsDropdownRef = useRef(null);
 
   const activeGroup = partnerGroups.find(g => g.partner_id === activePartnerId);
+
+  // Reset dropdown filters on toggle or user switch
+  useEffect(() => {
+    setSessionSearchQuery('');
+    setSessionTypeFilter('All');
+    setSessionStatusFilter('All');
+  }, [activePartnerId, showActiveSessionsDropdown]);
 
   const filteredPartnerGroups = useMemo(() => {
     if (!searchQuery.trim()) return partnerGroups;
@@ -221,6 +231,24 @@ const Messages = () => {
   const activeChats = useMemo(() => {
     return sortedChats.filter(c => !c.is_closed);
   }, [sortedChats]);
+
+  const filteredActiveChats = useMemo(() => {
+    return activeChats.filter(c => {
+      const matchesSearch = (c.item_title || '').toLowerCase().includes(sessionSearchQuery.toLowerCase());
+      
+      let matchesType = true;
+      if (sessionTypeFilter !== 'All') {
+        matchesType = (c.item_type || '').toLowerCase() === sessionTypeFilter.toLowerCase();
+      }
+      
+      let matchesStatus = true;
+      if (sessionStatusFilter !== 'All') {
+        matchesStatus = (c.order_status || '').toLowerCase() === sessionStatusFilter.toLowerCase();
+      }
+      
+      return matchesSearch && matchesType && matchesStatus;
+    });
+  }, [activeChats, sessionSearchQuery, sessionTypeFilter, sessionStatusFilter]);
 
   const closedChats = useMemo(() => {
     return sortedChats.filter(c => c.is_closed);
@@ -935,46 +963,101 @@ const Messages = () => {
                           {showActiveSessionsDropdown && (
                             <div className="active-sessions-dropdown-menu-list">
                               <div className="active-sessions-menu-header">Select Session</div>
+                              
+                              {/* Search and Filters box */}
+                              <div className="active-sessions-filter-box" onClick={(e) => e.stopPropagation()}>
+                                <div className="active-sessions-search">
+                                  <svg className="search-icon-small" xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                                    <circle cx="11" cy="11" r="8"></circle>
+                                    <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+                                  </svg>
+                                  <input 
+                                    type="text" 
+                                    placeholder="Search active sessions..." 
+                                    value={sessionSearchQuery}
+                                    onChange={(e) => setSessionSearchQuery(e.target.value)}
+                                  />
+                                  {sessionSearchQuery && (
+                                    <button 
+                                      className="clear-search-small"
+                                      onClick={() => setSessionSearchQuery('')}
+                                    >
+                                      ✕
+                                    </button>
+                                  )}
+                                </div>
+                                
+                                <div className="active-sessions-pills-row">
+                                  <span className="filter-row-label">Type:</span>
+                                  {['All', 'Product', 'Skill', 'Service'].map(type => (
+                                    <button
+                                      key={type}
+                                      className={`filter-pill-small ${sessionTypeFilter === type ? 'active' : ''}`}
+                                      onClick={() => setSessionTypeFilter(type)}
+                                    >
+                                      {type === 'Skill' ? 'Skill Share' : type}
+                                    </button>
+                                  ))}
+                                </div>
+
+                                <div className="active-sessions-pills-row">
+                                  <span className="filter-row-label">Status:</span>
+                                  {['All', 'Pending', 'Accepted', 'Completed', 'Cancelled'].map(status => (
+                                    <button
+                                      key={status}
+                                      className={`filter-pill-small ${sessionStatusFilter === status ? 'active' : ''}`}
+                                      onClick={() => setSessionStatusFilter(status)}
+                                    >
+                                      {status}
+                                    </button>
+                                  ))}
+                                </div>
+                              </div>
+
                               <div className="active-sessions-menu-scroll">
-                                {activeChats.map(c => (
-                                  <div 
-                                    key={c.chat_id}
-                                    className={`active-sessions-menu-item ${c.chat_id === effectiveChatId ? 'selected' : ''}`}
-                                    onClick={() => {
-                                      setActiveChatId(c.chat_id);
-                                      setUnreadSessions(prev => ({ ...prev, [c.chat_id]: false }));
-                                      setShowActiveSessionsDropdown(false);
-                                    }}
-                                  >
-                                    <div className="active-sessions-menu-item-left">
-                                      <span className="session-card-icon-emoji">
-                                        {c.item_type === 'product' && '📦'}
-                                        {c.item_type === 'skill' && '📖'}
-                                        {c.item_type === 'service' && '💼'}
-                                        {!['product', 'skill', 'service'].includes(c.item_type) && '💬'}
-                                      </span>
-                                      <div className="active-sessions-menu-item-meta">
-                                        <span className="active-sessions-menu-title">{c.item_title || 'Request'}</span>
-                                        <span className="active-sessions-menu-subtitle">
-                                          {formatItemType(c.item_type)} • {c.order_status || 'Pending'}
+                                {filteredActiveChats.length === 0 ? (
+                                  <div className="active-sessions-empty-msg">No matching sessions.</div>
+                                ) : (
+                                  filteredActiveChats.map(c => (
+                                    <div 
+                                      key={c.chat_id}
+                                      className={`active-sessions-menu-item ${c.chat_id === effectiveChatId ? 'selected' : ''}`}
+                                      onClick={() => {
+                                        setActiveChatId(c.chat_id);
+                                        setUnreadSessions(prev => ({ ...prev, [c.chat_id]: false }));
+                                        setShowActiveSessionsDropdown(false);
+                                      }}
+                                    >
+                                      <div className="active-sessions-menu-item-left">
+                                        <span className="session-card-icon-emoji">
+                                          {c.item_type === 'product' && '📦'}
+                                          {c.item_type === 'skill' && '📖'}
+                                          {c.item_type === 'service' && '💼'}
+                                          {!['product', 'skill', 'service'].includes(c.item_type) && '💬'}
                                         </span>
+                                        <div className="active-sessions-menu-item-meta">
+                                          <span className="active-sessions-menu-title">{c.item_title || 'Request'}</span>
+                                          <span className="active-sessions-menu-subtitle">
+                                            {formatItemType(c.item_type)} • {c.order_status || 'Pending'}
+                                          </span>
+                                        </div>
+                                      </div>
+                                      <div className="active-sessions-menu-item-right">
+                                        {unreadSessions[c.chat_id] && <span className="session-unread-dot-inline" />}
+                                        <button 
+                                          className="active-sessions-close-action-btn"
+                                          onClick={(e) => {
+                                            e.stopPropagation();
+                                            closeSession(c.chat_id, e);
+                                          }}
+                                          title="Archive Session"
+                                        >
+                                          ✕
+                                        </button>
                                       </div>
                                     </div>
-                                    <div className="active-sessions-menu-item-right">
-                                      {unreadSessions[c.chat_id] && <span className="session-unread-dot-inline" />}
-                                      <button 
-                                        className="active-sessions-close-action-btn"
-                                        onClick={(e) => {
-                                          e.stopPropagation();
-                                          closeSession(c.chat_id, e);
-                                        }}
-                                        title="Archive Session"
-                                      >
-                                        ✕
-                                      </button>
-                                    </div>
-                                  </div>
-                                ))}
+                                  ))
+                                )}
                               </div>
                             </div>
                           )}
