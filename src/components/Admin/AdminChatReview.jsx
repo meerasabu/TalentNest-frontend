@@ -3,11 +3,15 @@ import { useParams, useNavigate, useLocation } from 'react-router-dom';
 import api from '../../api/axiosConfig';
 import AdminSidebar from './AdminSidebar';
 import './AdminChatReview.css';
+import { useConfirmation } from '../../context/ConfirmationContext';
+import { useToast } from '../../context/ToastContext';
 
 const AdminChatReview = () => {
   const { id } = useParams();
   const navigate = useNavigate();
   const location = useLocation();
+  const confirm = useConfirmation();
+  const toast = useToast();
   const user = React.useMemo(() => {
     return location.state?.user || JSON.parse(localStorage.getItem('user'));
   }, [location.state?.user]);
@@ -52,34 +56,48 @@ const AdminChatReview = () => {
   };
 
   const handleResolveReport = async () => {
-    if (!window.confirm("Are you sure you want to resolve this report with no further action?")) return;
+    const confirmed = await confirm({
+      title: 'Resolve Report',
+      message: 'Are you sure you want to resolve this report with no further action?',
+      type: 'warning',
+      confirmText: 'Resolve',
+      cancelText: 'Cancel'
+    });
+    if (!confirmed) return;
     setActionLoading(true);
     try {
       const res = await api.post(`/admin/reports/${id}/resolve`);
       if (res.data.success) {
-        alert("Report resolved successfully.");
+        toast.success("Report resolved successfully.");
         navigate('/admin/chat');
       }
     } catch (err) {
       console.error("Error resolving report:", err);
-      alert("Failed to resolve report.");
+      toast.error("Failed to resolve report.");
     } finally {
       setActionLoading(false);
     }
   };
 
   const handleWarnUser = async () => {
-    if (!window.confirm(`Are you sure you want to send a guidelines warning to ${report.reported_first_name}?`)) return;
+    const confirmed = await confirm({
+      title: 'Send Guidelines Warning',
+      message: `Are you sure you want to send a guidelines warning to ${report.reported_first_name}?`,
+      type: 'warning',
+      confirmText: 'Send Warning',
+      cancelText: 'Cancel'
+    });
+    if (!confirmed) return;
     setActionLoading(true);
     try {
       const res = await api.post(`/admin/reports/${id}/warn`);
       if (res.data.success) {
-        alert("Guidelines warning sent successfully.");
+        toast.success("Guidelines warning sent successfully.");
         navigate('/admin/chat');
       }
     } catch (err) {
       console.error("Error warning user:", err);
-      alert("Failed to send warning.");
+      toast.error("Failed to send warning.");
     } finally {
       setActionLoading(false);
     }
@@ -87,7 +105,7 @@ const AdminChatReview = () => {
 
   const handleRestrictChat = async () => {
     if (!restrictReason.trim()) {
-      alert("Please provide a reason for restricting the chat.");
+      toast.warning("Please provide a reason for restricting the chat.");
       return;
     }
     setActionLoading(true);
@@ -96,14 +114,14 @@ const AdminChatReview = () => {
         reason: restrictReason
       });
       if (res.data.success) {
-        alert("Chat session restricted successfully.");
+        toast.success("Chat session restricted successfully.");
         setShowRestrictModal(false);
         setRestrictReason('');
         navigate('/admin/chat');
       }
     } catch (err) {
       console.error("Error restricting chat:", err);
-      alert(err.response?.data?.message || "Failed to restrict chat session.");
+      toast.error(err.response?.data?.message || "Failed to restrict chat session.");
     } finally {
       setActionLoading(false);
     }
@@ -111,7 +129,7 @@ const AdminChatReview = () => {
 
   const handleSuspendUser = async () => {
     if (!suspensionReason.trim()) {
-      alert("Please provide a reason for suspension.");
+      toast.warning("Please provide a reason for suspension.");
       return;
     }
     setActionLoading(true);
@@ -121,14 +139,14 @@ const AdminChatReview = () => {
         reason: suspensionReason
       });
       if (res.data.success) {
-        alert("User suspended successfully.");
+        toast.success("User suspended successfully.");
         setShowSuspendModal(false);
         setSuspensionReason('');
         navigate('/admin/chat');
       }
     } catch (err) {
       console.error("Error suspending user:", err);
-      alert("Failed to suspend user.");
+      toast.error("Failed to suspend user.");
     } finally {
       setActionLoading(false);
     }

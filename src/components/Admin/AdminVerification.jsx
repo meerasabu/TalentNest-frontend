@@ -4,10 +4,14 @@ import api from '../../api/axiosConfig';
 import AdminSidebar from './AdminSidebar';
 import Pagination from '../Common/Pagination';
 import './AdminVerification.css';
+import { useConfirmation } from '../../context/ConfirmationContext';
+import { useToast } from '../../context/ToastContext';
 
 const AdminVerification = () => {
   const location = useLocation();
   const navigate = useNavigate();
+  const confirm = useConfirmation();
+  const toast = useToast();
   const user = React.useMemo(() => {
     try {
       return location.state?.user || JSON.parse(localStorage.getItem('user'));
@@ -103,10 +107,11 @@ const AdminVerification = () => {
           setSelectedRequest(prev => ({ ...prev, status: newStatus, rejection_reason: rejectionReason }));
         }
         setActiveDropdown(null);
+        toast.success(`Request status updated to ${newStatus}.`);
       }
     } catch (err) {
       console.error('Error updating verification status:', err);
-      alert('Failed to update status.');
+      toast.error('Failed to update status.');
     }
   };
 
@@ -137,7 +142,14 @@ const AdminVerification = () => {
     else if (status === 'Pending Verification') actionLabel = 'Mark for Review';
 
     const confirmMessage = `Are you sure you want to change the status of ${selectedIds.length} selected request(s) to "${actionLabel}"?`;
-    if (!window.confirm(confirmMessage)) return;
+    const confirmed = await confirm({
+      title: 'Bulk Update Status',
+      message: confirmMessage,
+      type: status === 'Rejected' ? 'danger' : 'warning',
+      confirmText: actionLabel,
+      cancelText: 'Cancel'
+    });
+    if (!confirmed) return;
 
     try {
       setLoading(true);
@@ -152,11 +164,11 @@ const AdminVerification = () => {
         setBulkActionType(null);
         setBulkRejectionReason('');
         setShowBulkModal(false);
-        alert(res.data.message || 'Bulk status updated successfully.');
+        toast.success(res.data.message || 'Bulk status updated successfully.');
       }
     } catch (err) {
       console.error('Error updating bulk status:', err);
-      alert('Failed to apply bulk actions.');
+      toast.error('Failed to apply bulk actions.');
     } finally {
       setLoading(false);
     }
@@ -180,14 +192,15 @@ const AdminVerification = () => {
         const remainingCount = selectedIds.length - 1;
         if (remainingCount === 0) {
           setShowBulkModal(false);
-          alert('All selected requests moderated.');
+          toast.success('All selected requests moderated.');
         } else {
           setActiveBulkIndex(prev => Math.min(prev, remainingCount - 1));
+          toast.success('Request processed.');
         }
       }
     } catch (err) {
       console.error('Error in individual action:', err);
-      alert('Failed to update status.');
+      toast.error('Failed to update status.');
     }
   };
 
@@ -439,8 +452,17 @@ const AdminVerification = () => {
                                     <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>
                                     Approve
                                   </button>
-                                  <button className="text-danger" onClick={() => {
-                                    const reason = prompt('Please enter a rejection reason:');
+                                  <button className="text-danger" onClick={async () => {
+                                    const reason = await confirm({
+                                      title: 'Enter Rejection Reason',
+                                      message: 'Please provide a reason for rejecting this verification request:',
+                                      type: 'danger',
+                                      showInput: true,
+                                      inputPlaceholder: 'Reason for rejection...',
+                                      inputRequired: true,
+                                      confirmText: 'Reject Request',
+                                      cancelText: 'Cancel'
+                                    });
                                     if (reason !== null && reason.trim() !== '') {
                                       handleUpdateStatus(request.id, 'Rejected', reason);
                                     }
@@ -686,8 +708,17 @@ const AdminVerification = () => {
               </button>
               {selectedRequest.status === 'Pending Verification' && (
                 <div className="action-buttons-flex">
-                  <button className="verification-modal-btn-reject" onClick={() => {
-                    const reason = prompt('Please enter a rejection reason:');
+                  <button className="verification-modal-btn-reject" onClick={async () => {
+                    const reason = await confirm({
+                      title: 'Enter Rejection Reason',
+                      message: 'Please provide a reason for rejecting this verification request:',
+                      type: 'danger',
+                      showInput: true,
+                      inputPlaceholder: 'Reason for rejection...',
+                      inputRequired: true,
+                      confirmText: 'Reject Request',
+                      cancelText: 'Cancel'
+                    });
                     if (reason !== null && reason.trim() !== '') {
                       handleUpdateStatus(selectedRequest.id, 'Rejected', reason);
                     }
@@ -1018,8 +1049,17 @@ const AdminVerification = () => {
                       <button className="verification-modal-btn-cancel" style={{ borderColor: '#F59E0B', color: '#D97706' }} onClick={() => handleIndividualAction(activeReq.id, 'Pending Verification')}>
                         Mark for Review
                       </button>
-                      <button className="verification-modal-btn-reject" onClick={() => {
-                        const reason = prompt('Please enter a rejection reason:');
+                      <button className="verification-modal-btn-reject" onClick={async () => {
+                        const reason = await confirm({
+                          title: 'Enter Rejection Reason',
+                          message: 'Please provide a reason for rejecting this verification request:',
+                          type: 'danger',
+                          showInput: true,
+                          inputPlaceholder: 'Reason for rejection...',
+                          inputRequired: true,
+                          confirmText: 'Reject Request',
+                          cancelText: 'Cancel'
+                        });
                         if (reason !== null && reason.trim() !== '') {
                           handleIndividualAction(activeReq.id, 'Rejected', reason);
                         }

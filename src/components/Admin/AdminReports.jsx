@@ -3,10 +3,14 @@ import { useNavigate, useLocation } from 'react-router-dom';
 import api from '../../api/axiosConfig';
 import AdminSidebar from './AdminSidebar';
 import './AdminReports.css';
+import { useConfirmation } from '../../context/ConfirmationContext';
+import { useToast } from '../../context/ToastContext';
 
 const AdminReports = () => {
   const location = useLocation();
   const navigate = useNavigate();
+  const confirm = useConfirmation();
+  const toast = useToast();
 
   // Protect route - Admin role only
   const user = useMemo(() => {
@@ -94,7 +98,7 @@ const AdminReports = () => {
   // Custom Presets Logic
   const handleSavePreset = () => {
     if (!newPresetName.trim()) {
-      alert("Please provide a name for your custom preset.");
+      toast.warning("Please provide a name for your custom preset.");
       return;
     }
     const preset = {
@@ -112,8 +116,9 @@ const AdminReports = () => {
     const updated = { ...customPresets, [newPresetName.trim()]: preset };
     setCustomPresets(updated);
     localStorage.setItem('talentnest_filter_presets', JSON.stringify(updated));
+    const savedName = newPresetName;
     setNewPresetName('');
-    alert(`Preset "${newPresetName}" saved successfully.`);
+    toast.success(`Preset "${savedName}" saved successfully.`);
   };
 
   const handleLoadPreset = (name) => {
@@ -137,7 +142,7 @@ const AdminReports = () => {
     delete updated[name];
     setCustomPresets(updated);
     localStorage.setItem('talentnest_filter_presets', JSON.stringify(updated));
-    alert(`Preset "${name}" deleted.`);
+    toast.success(`Preset "${name}" deleted.`);
   };
 
   // Quick Presets Click Handlers
@@ -649,34 +654,48 @@ const AdminReports = () => {
 
   // Action Trigger Helpers
   const triggerResolve = async (report) => {
-    if (!window.confirm("Are you sure you want to resolve this report with no further action?")) return;
+    const confirmed = await confirm({
+      title: 'Resolve Report',
+      message: 'Are you sure you want to resolve this report with no further action?',
+      type: 'warning',
+      confirmText: 'Resolve',
+      cancelText: 'Cancel'
+    });
+    if (!confirmed) return;
     setActionLoading(true);
     try {
       const res = await api.post(`/admin/reports/${report.id}/resolve`);
       if (res.data.success) {
-        alert("Report resolved successfully.");
+        toast.success("Report resolved successfully.");
         fetchData();
       }
     } catch (err) {
       console.error("Error resolving report:", err);
-      alert("Failed to resolve report.");
+      toast.error("Failed to resolve report.");
     } finally {
       setActionLoading(false);
     }
   };
 
   const triggerWarn = async (report) => {
-    if (!window.confirm(`Are you sure you want to send a guidelines warning to ${report.reported_first_name} ${report.reported_last_name}?`)) return;
+    const confirmed = await confirm({
+      title: 'Send Warning',
+      message: `Are you sure you want to send a guidelines warning to ${report.reported_first_name} ${report.reported_last_name}?`,
+      type: 'warning',
+      confirmText: 'Send Warning',
+      cancelText: 'Cancel'
+    });
+    if (!confirmed) return;
     setActionLoading(true);
     try {
       const res = await api.post(`/admin/reports/${report.id}/warn`);
       if (res.data.success) {
-        alert("Warning sent to user successfully.");
+        toast.success("Warning sent to user successfully.");
         fetchData();
       }
     } catch (err) {
       console.error("Error warning user:", err);
-      alert("Failed to send warning notification.");
+      toast.error("Failed to send warning notification.");
     } finally {
       setActionLoading(false);
     }
@@ -705,14 +724,12 @@ const AdminReports = () => {
       });
       if (res.data.success) {
         setShowRestrictModal(false);
-        setTimeout(() => {
-          alert("Chat session restricted successfully.");
-          fetchData();
-        }, 100);
+        toast.success("Chat session restricted successfully.");
+        fetchData();
       }
     } catch (err) {
       console.error("Error restricting chat:", err);
-      alert(err.response?.data?.message || "Failed to restrict chat session.");
+      toast.error(err.response?.data?.message || "Failed to restrict chat session.");
     } finally {
       setActionLoading(false);
     }
@@ -728,14 +745,12 @@ const AdminReports = () => {
       });
       if (res.data.success) {
         setShowSuspendModal(false);
-        setTimeout(() => {
-          alert("User account messaging access suspended successfully.");
-          fetchData();
-        }, 100);
+        toast.success("User account messaging access suspended successfully.");
+        fetchData();
       }
     } catch (err) {
       console.error("Error suspending user:", err);
-      alert("Failed to suspend user.");
+      toast.error("Failed to suspend user.");
     } finally {
       setActionLoading(false);
     }

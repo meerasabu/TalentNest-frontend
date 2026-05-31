@@ -3,11 +3,13 @@ import { useLocation, useNavigate, useParams } from 'react-router-dom';
 import api from '../../api/axiosConfig';
 import AdminSidebar from './AdminSidebar';
 import './AdminStudentDetail.css';
+import { useToast } from '../../context/ToastContext';
 
 const AdminStudentDetail = () => {
   const { id } = useParams();
   const location = useLocation();
   const navigate = useNavigate();
+  const toast = useToast();
   const user = React.useMemo(() => {
     try {
       return location.state?.user || JSON.parse(localStorage.getItem('user'));
@@ -72,17 +74,18 @@ const AdminStudentDetail = () => {
       });
       if (res.data.success) {
         setStudent({ ...student, account_status: newStatus });
+        toast.success(`Account status updated to ${newStatus}`);
       }
     } catch (err) {
       console.error('Error updating student status:', err);
-      alert('Failed to update status');
+      toast.error('Failed to update status');
     }
   };
 
   const handleSuspend = async (e) => {
     e.preventDefault();
     if (!reason.trim()) {
-      alert('Please provide a reason for suspension');
+      toast.warning('Please provide a reason for suspension');
       return;
     }
     try {
@@ -94,18 +97,19 @@ const AdminStudentDetail = () => {
       if (res.data.success) {
         setShowSuspendModal(false);
         setReason('');
+        toast.success('Student suspended successfully');
         fetchStudentDetails();
       }
     } catch (err) {
       console.error('Error suspending student:', err);
-      alert(err.response?.data?.message || 'Failed to suspend student');
+      toast.error(err.response?.data?.message || 'Failed to suspend student');
     }
   };
 
   const handleExtend = async (e) => {
     e.preventDefault();
     if (!reason.trim()) {
-      alert('Please provide a reason for extending suspension');
+      toast.warning('Please provide a reason for extending suspension');
       return;
     }
     try {
@@ -117,11 +121,12 @@ const AdminStudentDetail = () => {
       if (res.data.success) {
         setShowExtendModal(false);
         setReason('');
+        toast.success('Suspension extended successfully');
         fetchStudentDetails();
       }
     } catch (err) {
       console.error('Error extending suspension:', err);
-      alert(err.response?.data?.message || 'Failed to extend suspension');
+      toast.error(err.response?.data?.message || 'Failed to extend suspension');
     }
   };
 
@@ -134,11 +139,12 @@ const AdminStudentDetail = () => {
       if (res.data.success) {
         setShowRestoreModal(false);
         setRestoreReason('');
+        toast.success('Student account restored successfully');
         fetchStudentDetails();
       }
     } catch (err) {
       console.error('Error restoring student:', err);
-      alert(err.response?.data?.message || 'Failed to restore student');
+      toast.error(err.response?.data?.message || 'Failed to restore student');
     }
   };
 

@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import api from '../../api/axiosConfig';
 import { useNavigate, useLocation, useParams, Navigate } from 'react-router-dom';
 import { useConfirmation } from '../../context/ConfirmationContext';
+import { useToast } from '../../context/ToastContext';
 import Sidebar from '../Common/Sidebar';
 import '../Dashboard/Index.css'; 
 import './ProductDetails.css';
@@ -12,6 +13,7 @@ const ProductDetails = () => {
   const location = useLocation();
   const { id } = useParams();
   const { confirm } = useConfirmation();
+  const toast = useToast();
   
   const user = location.state?.user || JSON.parse(localStorage.getItem('user'));
   const token = localStorage.getItem('token');
@@ -94,7 +96,7 @@ const ProductDetails = () => {
           quantity: quantity
         });
         if (res.data.success) {
-          alert('Order request sent successfully!');
+          toast.success('Order request sent successfully!');
           navigate('/orders', { state: { user } });
         }
       }
@@ -105,7 +107,7 @@ const ProductDetails = () => {
     try {
       const res = await api.post(`/products/${id}/notify`);
       if (res.data.success) {
-        alert('You will be notified when this product is back in stock!');
+        toast.success('You will be notified when this product is back in stock!');
         setProduct(prev => ({
           ...prev,
           hasRequestedNotification: true
@@ -113,7 +115,7 @@ const ProductDetails = () => {
       }
     } catch (err) {
       console.error('Error requesting restock notification:', err);
-      alert(err.response?.data?.message || 'Failed to request notification.');
+      toast.error(err.response?.data?.message || 'Failed to request notification.');
     }
   };
 

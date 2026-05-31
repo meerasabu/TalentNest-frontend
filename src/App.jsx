@@ -39,6 +39,7 @@ import AdminReports from './components/Admin/AdminReports';
 import { NotificationProvider } from './context/NotificationContext';
 import { PresenceProvider } from './context/PresenceContext';
 import { ConfirmationProvider } from './context/ConfirmationContext';
+import { ToastProvider } from './context/ToastContext';
 import ErrorBoundary from './components/Common/ErrorBoundary';
 
 const About = () => <div style={{ padding: '2rem' }}><h1>About TalentNest</h1><p>A campus ecosystem for student talent.</p></div>;
@@ -48,51 +49,53 @@ function App() {
     <ErrorBoundary>
     <Router>
       <PresenceProvider>
-        <ConfirmationProvider>
-          <NotificationProvider>
-            <Routes>
-          <Route path="/" element={<Home />} />
-          <Route path="/admin" element={<AdminDashboard />} />
-          <Route path="/admin/students" element={<AdminStudents />} />
-          <Route path="/admin/students/:id" element={<AdminStudentDetail />} />
-          <Route path="/admin/marketplace" element={<AdminMarketplace />} />
-          <Route path="/admin/marketplace/:id" element={<AdminProductDetail />} />
-          <Route path="/admin/skills" element={<AdminSkills />} />
-          <Route path="/admin/skills/:id" element={<AdminSkillDetail />} />
-          <Route path="/admin/services" element={<AdminServices />} />
-          <Route path="/admin/services/:id" element={<AdminServiceDetail />} />
-          <Route path="/admin/orders" element={<AdminOrders />} />
-          <Route path="/admin/orders/:id" element={<AdminOrderDetail />} />
-          <Route path="/admin/chat" element={<ChatModeration />} />
-          <Route path="/admin/chat/:id" element={<AdminChatReview />} />
-          <Route path="/admin/verification" element={<AdminVerification />} />
-          <Route path="/admin/reports" element={<AdminReports />} />
-          <Route path="/about" element={<About />} />
-          <Route path="/login" element={<Login />} />
-          <Route path="/signup" element={<Signup />} />
-          <Route path="/reset-password" element={<ResetPassword />} />
-          <Route path="/verify-otp" element={<VerifyOtp />} />
-          <Route path="/create-new-password" element={<CreateNewPassword />} />
-          <Route path="/index" element={<IndexDashboard />} />
-          <Route path="/create-listing" element={<CreateListing />} />
-          <Route path="/marketplace" element={<Marketplace />} />
-          <Route path="/product/:id" element={<ProductDetails />} />
-          <Route path="/skills" element={<SkillExchange />} />
-          <Route path="/skill/:id" element={<SkillDetails />} />
-          <Route path="/services" element={<Services />} />
-          <Route path="/service/:id" element={<ServiceDetails />} />
-          <Route path="/orders" element={<Orders />} />
-          <Route path="/profile" element={<Profile />} />
-          <Route path="/edit-profile" element={<EditProfile />} />
-          <Route path="/settings" element={<Settings />} />
-          <Route path="/wishlist" element={<Wishlist />} />
-          <Route path="/notifications" element={<Notifications />} />
-          <Route path="/chat" element={<Messages />} />
-          <Route path="/messages" element={<Messages />} />
-          <Route path="/search" element={<SearchResults />} />
-          </Routes>
-        </NotificationProvider>
-        </ConfirmationProvider>
+        <ToastProvider>
+          <ConfirmationProvider>
+            <NotificationProvider>
+              <Routes>
+            <Route path="/" element={<Home />} />
+            <Route path="/admin" element={<AdminDashboard />} />
+            <Route path="/admin/students" element={<AdminStudents />} />
+            <Route path="/admin/students/:id" element={<AdminStudentDetail />} />
+            <Route path="/admin/marketplace" element={<AdminMarketplace />} />
+            <Route path="/admin/marketplace/:id" element={<AdminProductDetail />} />
+            <Route path="/admin/skills" element={<AdminSkills />} />
+            <Route path="/admin/skills/:id" element={<AdminSkillDetail />} />
+            <Route path="/admin/services" element={<AdminServices />} />
+            <Route path="/admin/services/:id" element={<AdminServiceDetail />} />
+            <Route path="/admin/orders" element={<AdminOrders />} />
+            <Route path="/admin/orders/:id" element={<AdminOrderDetail />} />
+            <Route path="/admin/chat" element={<ChatModeration />} />
+            <Route path="/admin/chat/:id" element={<AdminChatReview />} />
+            <Route path="/admin/verification" element={<AdminVerification />} />
+            <Route path="/admin/reports" element={<AdminReports />} />
+            <Route path="/about" element={<About />} />
+            <Route path="/login" element={<Login />} />
+            <Route path="/signup" element={<Signup />} />
+            <Route path="/reset-password" element={<ResetPassword />} />
+            <Route path="/verify-otp" element={<VerifyOtp />} />
+            <Route path="/create-new-password" element={<CreateNewPassword />} />
+            <Route path="/index" element={<IndexDashboard />} />
+            <Route path="/create-listing" element={<CreateListing />} />
+            <Route path="/marketplace" element={<Marketplace />} />
+            <Route path="/product/:id" element={<ProductDetails />} />
+            <Route path="/skills" element={<SkillExchange />} />
+            <Route path="/skill/:id" element={<SkillDetails />} />
+            <Route path="/services" element={<Services />} />
+            <Route path="/service/:id" element={<ServiceDetails />} />
+            <Route path="/orders" element={<Orders />} />
+            <Route path="/profile" element={<Profile />} />
+            <Route path="/edit-profile" element={<EditProfile />} />
+            <Route path="/settings" element={<Settings />} />
+            <Route path="/wishlist" element={<Wishlist />} />
+            <Route path="/notifications" element={<Notifications />} />
+            <Route path="/chat" element={<Messages />} />
+            <Route path="/messages" element={<Messages />} />
+            <Route path="/search" element={<SearchResults />} />
+            </Routes>
+          </NotificationProvider>
+          </ConfirmationProvider>
+        </ToastProvider>
       </PresenceProvider>
     </Router>
     </ErrorBoundary>

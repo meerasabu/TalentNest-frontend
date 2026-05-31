@@ -3,11 +3,15 @@ import { useLocation, useNavigate, useParams, Link } from 'react-router-dom';
 import api from '../../api/axiosConfig';
 import AdminSidebar from './AdminSidebar';
 import './AdminSkillDetail.css';
+import { useConfirmation } from '../../context/ConfirmationContext';
+import { useToast } from '../../context/ToastContext';
 
 const AdminSkillDetail = () => {
   const { id } = useParams();
   const location = useLocation();
   const navigate = useNavigate();
+  const confirm = useConfirmation();
+  const toast = useToast();
   const user = React.useMemo(() => {
     try {
       return location.state?.user || JSON.parse(localStorage.getItem('user'));
@@ -64,10 +68,13 @@ const AdminSkillDetail = () => {
   const handleUpdateStatus = async (newStatus, rejectionReason = null) => {
     try {
       const res = await api.put(`/admin/skills/${id}/status`, { status: newStatus, rejectionReason });
-      if (res.data.success) setSkill({ ...skill, status: newStatus, rejection_reason: rejectionReason });
+      if (res.data.success) {
+        setSkill({ ...skill, status: newStatus, rejection_reason: rejectionReason });
+        toast.success(`Skill listing status updated to ${newStatus}`);
+      }
     } catch (err) {
       console.error('Error updating skill status:', err);
-      alert('Failed to update status');
+      toast.error('Failed to update status');
     }
   };
 
@@ -80,11 +87,12 @@ const AdminSkillDetail = () => {
       if (res.data.success) {
         setShowWarnModal(false);
         setWarnReason('');
+        toast.success('Warning sent to provider successfully');
         fetchWarnHistory();
       }
     } catch (err) {
       console.error('Error warning provider:', err);
-      alert(err.response?.data?.message || 'Failed to send warning');
+      toast.error(err.response?.data?.message || 'Failed to send warning');
     } finally {
       setWarnLoading(false);
     }
@@ -125,9 +133,20 @@ const AdminSkillDetail = () => {
             {skill?.status !== 'Rejected' && (
               <button
                 className="btn-warn btn-reject-skill"
-                onClick={() => {
-                  const reason = prompt('Please enter a rejection reason:');
-                  if (reason) handleUpdateStatus('Rejected', reason);
+                onClick={async () => {
+                  const reason = await confirm({
+                    title: 'Reject Skill Listing',
+                    message: 'Please enter a rejection reason:',
+                    type: 'danger',
+                    showInput: true,
+                    inputPlaceholder: 'Reason details...',
+                    inputRequired: true,
+                    confirmText: 'Reject Skill',
+                    cancelText: 'Cancel'
+                  });
+                  if (reason !== null && reason.trim() !== '') {
+                    handleUpdateStatus('Rejected', reason);
+                  }
                 }}
                 style={{ backgroundColor: '#EF4444', color: 'white', border: 'none', display: 'inline-flex', alignItems: 'center', cursor: 'pointer', padding: '8px 16px', borderRadius: '8px', fontWeight: '600', fontSize: '14px', marginLeft: '8px' }}
               >

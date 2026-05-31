@@ -1,4 +1,5 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
+import { useToast } from './ToastContext';
 
 const ConfirmationContext = createContext(null);
 
@@ -11,6 +12,7 @@ export const useConfirmation = () => {
 };
 
 export const ConfirmationProvider = ({ children }) => {
+  const toast = useToast();
   const [modalState, setModalState] = useState({
     isOpen: false,
     title: '',
@@ -19,9 +21,13 @@ export const ConfirmationProvider = ({ children }) => {
     confirmText: 'Confirm',
     cancelText: 'Cancel',
     onConfirm: null,
+    showInput: false,
+    inputPlaceholder: '',
+    inputRequired: false,
     resolve: null,
   });
 
+  const [inputValue, setInputValue] = useState('');
   const [isLoading, setIsLoading] = useState(false);
 
   const confirm = (options) => {
@@ -34,8 +40,12 @@ export const ConfirmationProvider = ({ children }) => {
         confirmText: options.confirmText || 'Confirm',
         cancelText: options.cancelText || 'Cancel',
         onConfirm: options.onConfirm || null,
+        showInput: options.showInput || false,
+        inputPlaceholder: options.inputPlaceholder || 'Enter details...',
+        inputRequired: options.inputRequired || false,
         resolve,
       });
+      setInputValue('');
       setIsLoading(false);
     });
   };
@@ -45,22 +55,26 @@ export const ConfirmationProvider = ({ children }) => {
       modalState.resolve(value);
     }
     setModalState((prev) => ({ ...prev, isOpen: false }));
+    setInputValue('');
     setIsLoading(false);
   };
 
   const handleConfirm = async () => {
+    if (modalState.showInput && modalState.inputRequired && !inputValue.trim()) {
+      return;
+    }
     if (modalState.onConfirm) {
       setIsLoading(true);
       try {
-        await modalState.onConfirm();
-        handleClose(true);
+        await modalState.onConfirm(inputValue);
+        handleClose(modalState.showInput ? inputValue : true);
       } catch (err) {
         console.error('Error in confirmation action:', err);
-        alert(err.response?.data?.message || err.message || 'An error occurred during this action.');
+        toast.error(err.response?.data?.message || err.message || 'An error occurred during this action.');
         setIsLoading(false); // keep modal open so user can retry or cancel
       }
     } else {
-      handleClose(true);
+      handleClose(modalState.showInput ? inputValue : true);
     }
   };
 
@@ -68,7 +82,7 @@ export const ConfirmationProvider = ({ children }) => {
   useEffect(() => {
     const handleKeyDown = (e) => {
       if (modalState.isOpen && e.key === 'Escape' && !isLoading) {
-        handleClose(false);
+        handleClose(null);
       }
     };
     window.addEventListener('keydown', handleKeyDown);
@@ -112,6 +126,8 @@ export const ConfirmationProvider = ({ children }) => {
     }
   };
 
+  const isConfirmDisabled = isLoading || (modalState.showInput && modalState.inputRequired && !inputValue.trim());
+
   return (
     <ConfirmationContext.Provider value={{ confirm }}>
       {children}
@@ -119,7 +135,7 @@ export const ConfirmationProvider = ({ children }) => {
         <div 
           className="confirm-modal-overlay" 
           onClick={() => {
-            if (!isLoading) handleClose(false);
+            if (!isLoading) handleClose(null);
           }}
         >
           <div 
@@ -136,13 +152,37 @@ export const ConfirmationProvider = ({ children }) => {
               <div className="confirm-modal-content">
                 <h3 id="confirm-modal-title" className="confirm-modal-title">{modalState.title}</h3>
                 <p className="confirm-modal-message">{modalState.message}</p>
+                
+                {modalState.showInput && (
+                  <div className="confirm-modal-prompt-wrap" style={{ marginTop: '14px', width: '100%' }}>
+                    <textarea
+                      className="confirm-modal-prompt-input"
+                      placeholder={modalState.inputPlaceholder}
+                      value={inputValue}
+                      onChange={(e) => setInputValue(e.target.value)}
+                      rows={3}
+                      style={{
+                        width: '100%',
+                        padding: '10px 12px',
+                        border: '1px solid #CBD5E1',
+                        borderRadius: '8px',
+                        fontSize: '0.875rem',
+                        outline: 'none',
+                        resize: 'none',
+                        boxSizing: 'border-box',
+                        fontFamily: 'inherit'
+                      }}
+                      autoFocus
+                    />
+                  </div>
+                )}
               </div>
             </div>
             <div className="confirm-modal-actions">
               <button 
                 type="button" 
                 className="confirm-modal-btn cancel" 
-                onClick={() => handleClose(false)}
+                onClick={() => handleClose(null)}
                 disabled={isLoading}
               >
                 {modalState.cancelText}
@@ -151,11 +191,11 @@ export const ConfirmationProvider = ({ children }) => {
                 type="button" 
                 className={`confirm-modal-btn confirm ${modalState.type}`} 
                 onClick={handleConfirm}
-                disabled={isLoading}
+                disabled={isConfirmDisabled}
               >
                 {isLoading ? (
                   <>
-                    <span className="confirm-modal-spinner"></span>
+                    <span className="confirm-modal-spinner" style={{ marginRight: '8px', display: 'inline-block' }}></span>
                     Processing...
                   </>
                 ) : (

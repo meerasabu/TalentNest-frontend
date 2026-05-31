@@ -6,6 +6,7 @@ import '../Dashboard/Index.css';
 import './ServiceDetails.css';
 import Header from '../Common/Header';
 import { useConfirmation } from '../../context/ConfirmationContext';
+import { useToast } from '../../context/ToastContext';
 
 const PREDEFINED_SLOTS = [
   '09:00 AM - 11:00 AM',
@@ -28,6 +29,7 @@ const ServiceDetails = () => {
   const location = useLocation();
   const { id } = useParams();
   const { confirm } = useConfirmation();
+  const toast = useToast();
   
   const user = location.state?.user || JSON.parse(localStorage.getItem('user'));
   const token = localStorage.getItem('token');
@@ -123,7 +125,7 @@ const ServiceDetails = () => {
 
   const openBookingModal = () => {
     if (!selectedPlan) {
-      alert('Please select a pricing plan (Basic Plan or Group/Premium Plan) before booking this service.');
+      toast.warning('Please select a pricing plan (Basic Plan or Group/Premium Plan) before booking this service.');
       return;
     }
     setBookingDate('');
@@ -171,7 +173,7 @@ const ServiceDetails = () => {
         });
         if (res.data.success) {
           setShowBookingModal(false);
-          alert('Service booking sent successfully!');
+          toast.success('Service booking sent successfully!');
           navigate('/orders', { state: { user } });
         } else {
           throw new Error(res.data.message || 'Failed to send booking request.');

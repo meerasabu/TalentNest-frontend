@@ -3,11 +3,13 @@ import { useLocation, useNavigate, useParams, Link } from 'react-router-dom';
 import api from '../../api/axiosConfig';
 import AdminSidebar from './AdminSidebar';
 import './AdminServiceDetail.css';
+import { useToast } from '../../context/ToastContext';
 
 const AdminServiceDetail = () => {
   const { id } = useParams();
   const location = useLocation();
   const navigate = useNavigate();
+  const toast = useToast();
   const user = React.useMemo(() => {
     try {
       return location.state?.user || JSON.parse(localStorage.getItem('user'));
@@ -72,11 +74,12 @@ const AdminServiceDetail = () => {
       if (res.data.success) {
         setShowWarnModal(false);
         setWarnReason('');
+        toast.success('Warning sent to provider successfully');
         fetchWarnHistory();
       }
     } catch (err) {
       console.error('Error warning provider:', err);
-      alert(err.response?.data?.message || 'Failed to send warning');
+      toast.error(err.response?.data?.message || 'Failed to send warning');
     } finally {
       setWarnLoading(false);
     }
@@ -103,17 +106,18 @@ const AdminServiceDetail = () => {
       });
       if (res.data.success) {
         setService({ ...service, status: newStatus });
+        toast.success(`Service status updated to ${newStatus}`);
       }
     } catch (err) {
       console.error('Error updating service status:', err);
-      alert('Failed to update status');
+      toast.error('Failed to update status');
     }
   };
 
   const handleSuspend = async (e) => {
     e.preventDefault();
     if (!reason.trim()) {
-      alert('Please provide a reason for suspension');
+      toast.warning('Please provide a reason for suspension');
       return;
     }
     try {
@@ -125,18 +129,19 @@ const AdminServiceDetail = () => {
       if (res.data.success) {
         setShowSuspendModal(false);
         setReason('');
+        toast.success('Service suspended successfully');
         fetchServiceDetails();
       }
     } catch (err) {
       console.error('Error suspending service:', err);
-      alert(err.response?.data?.message || 'Failed to suspend service');
+      toast.error(err.response?.data?.message || 'Failed to suspend service');
     }
   };
 
   const handleExtend = async (e) => {
     e.preventDefault();
     if (!reason.trim()) {
-      alert('Please provide a reason for extending suspension');
+      toast.warning('Please provide a reason for extending suspension');
       return;
     }
     try {
@@ -148,11 +153,12 @@ const AdminServiceDetail = () => {
       if (res.data.success) {
         setShowExtendModal(false);
         setReason('');
+        toast.success('Suspension extended successfully');
         fetchServiceDetails();
       }
     } catch (err) {
       console.error('Error extending suspension:', err);
-      alert(err.response?.data?.message || 'Failed to extend suspension');
+      toast.error(err.response?.data?.message || 'Failed to extend suspension');
     }
   };
 
@@ -165,11 +171,12 @@ const AdminServiceDetail = () => {
       if (res.data.success) {
         setShowRestoreModal(false);
         setRestoreReason('');
+        toast.success('Service listing restored successfully');
         fetchServiceDetails();
       }
     } catch (err) {
       console.error('Error restoring service:', err);
-      alert(err.response?.data?.message || 'Failed to restore service');
+      toast.error(err.response?.data?.message || 'Failed to restore service');
     }
   };
 

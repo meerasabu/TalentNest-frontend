@@ -8,6 +8,8 @@ import Header from '../Common/Header';
 import io from 'socket.io-client';
 import { useNotifications } from '../../context/NotificationContext';
 import { usePresence } from '../../context/PresenceContext';
+import { useConfirmation } from '../../context/ConfirmationContext';
+import { useToast } from '../../context/ToastContext';
 
 const Messages = () => {
   const location = useLocation();
@@ -16,6 +18,8 @@ const Messages = () => {
   const { orderId } = location.state || {};
   const { fetchUnreadCounts } = useNotifications() || { fetchUnreadCounts: () => {} };
   const { isOnline } = usePresence();
+  const confirm = useConfirmation();
+  const toast = useToast();
 
   useEffect(() => {
     if (!user) {
@@ -308,7 +312,7 @@ const Messages = () => {
 
     socket.on('error', (err) => {
       console.error('Socket error:', err.message);
-      alert(err.message || 'An error occurred.');
+      toast.error(err.message || 'An error occurred.');
       fetchChats();
       const currentActivePartnerId = activePartnerIdRef.current;
       if (currentActivePartnerId) {
@@ -343,7 +347,7 @@ const Messages = () => {
     if (e.target.files && e.target.files[0]) {
       const file = e.target.files[0];
       if (!file.type.startsWith('image/')) {
-        alert('Please select an image file');
+        toast.warning('Please select an image file');
         return;
       }
       setSelectedImage(file);
@@ -388,7 +392,7 @@ const Messages = () => {
         }
       } catch (err) {
         console.error('Error uploading chat image:', err);
-        alert('Failed to upload image. Please try again.');
+        toast.error('Failed to upload image. Please try again.');
         setImageUploading(false);
         return;
       } finally {
@@ -428,29 +432,44 @@ const Messages = () => {
   };
 
   const markCompleted = async (chatId) => {
-    if(!window.confirm("Are you sure you want to mark this order as completed?")) return;
+    const confirmed = await confirm({
+      title: 'Mark Order Completed',
+      message: 'Are you sure you want to mark this order as completed?',
+      type: 'warning',
+      confirmText: 'Mark Completed',
+      cancelText: 'Cancel'
+    });
+    if (!confirmed) return;
     try {
       const res = await api.post(`/chats/${chatId}/complete`);
       if (res.data.success) {
+        toast.success("Order marked as completed!");
         fetchChats();
       }
     } catch (error) {
       console.error("Error marking complete:", error);
-      alert("Failed to mark as completed.");
+      toast.error("Failed to mark as completed.");
     }
   };
 
   const cancelOrder = async (orderId) => {
-    if(!window.confirm("Are you sure you want to cancel this order? This will restore inventory and disable the chat.")) return;
+    const confirmed = await confirm({
+      title: 'Cancel Order',
+      message: 'Are you sure you want to cancel this order? This will restore inventory and disable the chat.',
+      type: 'danger',
+      confirmText: 'Cancel Order',
+      cancelText: 'Keep Order'
+    });
+    if (!confirmed) return;
     try {
       const res = await api.post(`/orders/${orderId}/cancel`);
       if (res.data.success) {
-        alert("Order cancelled successfully.");
+        toast.success("Order cancelled successfully.");
         fetchChats();
       }
     } catch (error) {
       console.error("Error cancelling order:", error);
-      alert(error.response?.data?.message || "Failed to cancel order.");
+      toast.error(error.response?.data?.message || "Failed to cancel order.");
     }
   };
 
@@ -465,13 +484,13 @@ const Messages = () => {
         itemType: currentChat?.item_type
       });
       if (res.data.success) {
-        alert("Report submitted successfully.");
+        toast.success("Report submitted successfully.");
         setReportModalOpen(false);
         setReportReason('');
       }
     } catch (error) {
       console.error("Error submitting report:", error);
-      alert("Failed to submit report.");
+      toast.error("Failed to submit report.");
     }
   };
 
@@ -490,7 +509,7 @@ const Messages = () => {
         outcomeRating: isSkill ? outcomeRating : (isProduct ? valueRating : null)
       });
       if (res.data.success) {
-        alert("Review submitted successfully!");
+        toast.success("Review submitted successfully!");
         setReviewModalOpen(false);
         setReviewText('');
         setReviewRating(5);
@@ -503,7 +522,7 @@ const Messages = () => {
       }
     } catch (error) {
       console.error("Error submitting review:", error);
-      alert(error.response?.data?.message || "Failed to submit review.");
+      toast.error(error.response?.data?.message || "Failed to submit review.");
     }
   };
 
@@ -545,10 +564,18 @@ const Messages = () => {
 
   const closeSession = async (chatId, e) => {
     if (e) e.stopPropagation();
-    if (!window.confirm("Are you sure you want to archive/close this session? You can restore it from Session History anytime.")) return;
+    const confirmed = await confirm({
+      title: 'Archive Chat Session',
+      message: 'Are you sure you want to archive/close this session? You can restore it from Session History anytime.',
+      type: 'warning',
+      confirmText: 'Archive Session',
+      cancelText: 'Cancel'
+    });
+    if (!confirmed) return;
     try {
       const res = await api.post(`/chats/${chatId}/close`);
       if (res.data.success) {
+        toast.success('Session archived successfully.');
         const fetched = await fetchChats();
         const rawChats = fetched?.rawChats || [];
         const activeGroupChats = rawChats.filter(c => c.partner_id === activePartnerId);
@@ -568,7 +595,7 @@ const Messages = () => {
       }
     } catch (err) {
       console.error('Error closing session:', err);
-      alert('Failed to close session.');
+      toast.error('Failed to close session.');
     }
   };
 
@@ -577,12 +604,13 @@ const Messages = () => {
     try {
       const res = await api.post(`/chats/${chatId}/reopen`);
       if (res.data.success) {
+        toast.success('Session restored successfully.');
         await fetchChats();
         setActiveChatId(chatId);
       }
     } catch (err) {
       console.error('Error restoring session:', err);
-      alert('Failed to restore session.');
+      toast.error('Failed to restore session.');
     }
   };
 

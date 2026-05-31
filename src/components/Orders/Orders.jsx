@@ -7,6 +7,7 @@ import '../Dashboard/Index.css';
 import './Orders.css';
 import Header from '../Common/Header';
 import { useConfirmation } from '../../context/ConfirmationContext';
+import { useToast } from '../../context/ToastContext';
 
 const Orders = () => {
   const navigate = useNavigate();
@@ -19,6 +20,7 @@ const Orders = () => {
   }
   const handlePrefix = user.email ? user.email.split('@')[0].toUpperCase() : '';
   const { confirm } = useConfirmation();
+  const toast = useToast();
 
   const [activeTab, setActiveTab] = useState(() => {
     try {
@@ -40,11 +42,11 @@ const Orders = () => {
       const res = await api.post(`/products/${productId}/notify`);
       if (res.data.success) {
         setNotifiedProductIds(prev => [...prev, productId]);
-        alert('You will be notified when this product is restocked!');
+        toast.success('You will be notified when this product is restocked!');
       }
     } catch (err) {
       console.error('Error subscribing to restock notifications:', err);
-      alert('Failed to set restock notification.');
+      toast.error('Failed to set restock notification.');
     }
   };
 
@@ -167,7 +169,7 @@ const Orders = () => {
         }
       } catch (err) {
         console.error('Error updating status:', err);
-        alert('Failed to update order status');
+        toast.error('Failed to update order status');
       }
     }
   };
@@ -182,7 +184,7 @@ const Orders = () => {
       onConfirm: async () => {
         const res = await api.post(`/orders/${orderId}/cancel`);
         if (res.data.success) {
-          alert("Order cancelled successfully.");
+          toast.success("Order cancelled successfully.");
           // Refresh orders
           const bRes = await api.get(`/orders/buyer/${user.id}`);
           if (bRes.data.success) setBuyerOrders(bRes.data.orders);
@@ -233,7 +235,7 @@ const Orders = () => {
 
   const handleSubmitReview = async () => {
     if (!rating) {
-      alert("Please select an overall rating.");
+      toast.warning("Please select an overall rating.");
       return;
     }
     if (!activeReviewOrder) return;
@@ -254,13 +256,13 @@ const Orders = () => {
 
       const res = await api.post('/reviews', payload);
       if (res.data.success) {
-        alert("Review submitted successfully!");
+        toast.success("Review submitted successfully!");
         setReviewModalOpen(false);
         fetchOrders();
       }
     } catch (err) {
       console.error('Error submitting review:', err);
-      alert(err.response?.data?.message || 'Failed to submit review.');
+      toast.error(err.response?.data?.message || 'Failed to submit review.');
     }
   };
 

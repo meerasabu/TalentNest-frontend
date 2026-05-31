@@ -3,11 +3,15 @@ import { useLocation, useNavigate, useParams, Link } from 'react-router-dom';
 import api from '../../api/axiosConfig';
 import AdminSidebar from './AdminSidebar';
 import './AdminProductDetail.css';
+import { useConfirmation } from '../../context/ConfirmationContext';
+import { useToast } from '../../context/ToastContext';
 
 const AdminProductDetail = () => {
   const { id } = useParams();
   const location = useLocation();
   const navigate = useNavigate();
+  const confirm = useConfirmation();
+  const toast = useToast();
   const user = React.useMemo(() => {
     try {
       return location.state?.user || JSON.parse(localStorage.getItem('user'));
@@ -64,10 +68,13 @@ const AdminProductDetail = () => {
   const handleUpdateStatus = async (newStatus) => {
     try {
       const res = await api.put(`/admin/marketplace/${id}/status`, { status: newStatus });
-      if (res.data.success) setProduct({ ...product, status: newStatus });
+      if (res.data.success) {
+        setProduct({ ...product, status: newStatus });
+        toast.success(`Product listing marked as ${newStatus}`);
+      }
     } catch (err) {
       console.error('Error updating product status:', err);
-      alert('Failed to update status');
+      toast.error('Failed to update status');
     }
   };
 
@@ -80,25 +87,36 @@ const AdminProductDetail = () => {
       if (res.data.success) {
         setShowWarnModal(false);
         setWarnReason('');
+        toast.success('Warning sent to seller successfully');
         fetchWarnHistory(); // refresh history
       }
     } catch (err) {
       console.error('Error warning seller:', err);
-      alert(err.response?.data?.message || 'Failed to send warning');
+      toast.error(err.response?.data?.message || 'Failed to send warning');
     } finally {
       setWarnLoading(false);
     }
   };
 
   const handleRestore = async () => {
-    if (!window.confirm('Restore this product listing back to Available?')) return;
+    const confirmed = await confirm({
+      title: 'Restore Product Listing',
+      message: 'Restore this product listing back to Available?',
+      type: 'warning',
+      confirmText: 'Restore',
+      cancelText: 'Cancel'
+    });
+    if (!confirmed) return;
     setRestoreLoading(true);
     try {
       const res = await api.post(`/admin/marketplace/${id}/restore`);
-      if (res.data.success) setProduct({ ...product, status: 'Available' });
+      if (res.data.success) {
+        setProduct({ ...product, status: 'Available' });
+        toast.success('Product listing restored to Available');
+      }
     } catch (err) {
       console.error('Error restoring product:', err);
-      alert(err.response?.data?.message || 'Failed to restore product');
+      toast.error(err.response?.data?.message || 'Failed to restore product');
     } finally {
       setRestoreLoading(false);
     }

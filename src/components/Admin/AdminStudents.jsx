@@ -4,10 +4,12 @@ import api from '../../api/axiosConfig';
 import AdminSidebar from './AdminSidebar';
 import Pagination from '../Common/Pagination';
 import './AdminStudents.css';
+import { useToast } from '../../context/ToastContext';
 
 const AdminStudents = () => {
   const location = useLocation();
   const navigate = useNavigate();
+  const toast = useToast();
   const user = React.useMemo(() => {
     try {
       return location.state?.user || JSON.parse(localStorage.getItem('user'));
@@ -99,10 +101,11 @@ const AdminStudents = () => {
         const updated = students.map(s => s.id === studentId ? { ...s, account_status: newStatus } : s);
         setStudents(updated);
         setActiveDropdown(null);
+        toast.success(`Student status updated to ${newStatus}`);
       }
     } catch (err) {
       console.error('Error updating student status:', err);
-      alert('Failed to update status');
+      toast.error('Failed to update status');
     }
   };
 

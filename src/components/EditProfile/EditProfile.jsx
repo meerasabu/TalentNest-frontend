@@ -5,10 +5,12 @@ import '../Dashboard/Index.css';
 import './EditProfile.css';
 import Header from '../Common/Header';
 import Sidebar from '../Common/Sidebar';
+import { useToast } from '../../context/ToastContext';
 
 const EditProfile = () => {
     const navigate = useNavigate();
     const location = useLocation();
+    const toast = useToast();
     
     // Extract existing user from state or localStorage
     const user = location.state?.user || JSON.parse(localStorage.getItem('user')) || { 
@@ -126,13 +128,13 @@ const EditProfile = () => {
             if (response.data.success) {
                 // Update localStorage so refreshes show the latest data
                 localStorage.setItem('user', JSON.stringify(response.data.user));
-                alert('Profile updated successfully!');
+                toast.success('Profile updated successfully!');
                 navigate('/profile', { state: { user: response.data.user } });
             }
         } catch (error) {
             console.error('Error updating profile:', error);
             const errorMsg = error.response?.data?.details || error.response?.data?.message || error.message;
-            alert(`Failed to update profile: ${errorMsg}`);
+            toast.error(`Failed to update profile: ${errorMsg}`);
         } finally {
             setLoading(false);
         }

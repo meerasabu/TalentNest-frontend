@@ -6,6 +6,7 @@ import '../Dashboard/Index.css';
 import './SkillDetails.css';
 import Header from '../Common/Header';
 import { useConfirmation } from '../../context/ConfirmationContext';
+import { useToast } from '../../context/ToastContext';
 
 const PREDEFINED_SLOTS = [
   '09:00 AM - 11:00 AM',
@@ -28,6 +29,7 @@ const SkillDetails = () => {
   const location = useLocation();
   const { id } = useParams();
   const { confirm } = useConfirmation();
+  const toast = useToast();
   
   const user = location.state?.user || JSON.parse(localStorage.getItem('user'));
   const token = localStorage.getItem('token');
@@ -163,7 +165,7 @@ const SkillDetails = () => {
         });
         if (res.data.success) {
           setShowBookingModal(false);
-          alert('Session request sent successfully!');
+          toast.success('Session request sent successfully!');
           navigate('/orders', { state: { user } });
         } else {
           throw new Error(res.data.message || 'Failed to send session request.');

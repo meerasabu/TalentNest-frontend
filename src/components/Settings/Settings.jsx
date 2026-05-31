@@ -3,6 +3,8 @@ import { useLocation, useNavigate, Navigate } from 'react-router-dom';
 import Sidebar from '../Common/Sidebar';
 import Header from '../Common/Header';
 import api from '../../api/axiosConfig';
+import { useConfirmation } from '../../context/ConfirmationContext';
+import { useToast } from '../../context/ToastContext';
 import './Settings.css';
 
 const Settings = () => {
@@ -11,6 +13,8 @@ const Settings = () => {
 
   const user = location.state?.user || JSON.parse(localStorage.getItem('user') || 'null');
   const token = localStorage.getItem('token');
+  const { confirm } = useConfirmation();
+  const toast = useToast();
 
   if (!user || !token || token === 'undefined') {
     return <Navigate to="/login" />;
@@ -73,7 +77,7 @@ const Settings = () => {
   const handlePasswordChangeSubmit = async (e) => {
     e.preventDefault();
     if (passwords.new !== passwords.confirm) {
-      alert("New passwords do not match.");
+      toast.warning("New passwords do not match.");
       return;
     }
     try {
@@ -82,20 +86,29 @@ const Settings = () => {
         newPassword: passwords.new
       });
       if (response.data.success) {
-        alert("Password updated successfully!");
+        toast.success("Password updated successfully!");
         setPasswordModalOpen(false);
         setPasswords({ current: '', new: '', confirm: '' });
       }
     } catch (error) {
       console.error('Password change error:', error);
-      alert(error.response?.data?.message || "Failed to update password.");
+      toast.error(error.response?.data?.message || "Failed to update password.");
     }
   };
 
-  const handleLogout = () => {
-    localStorage.removeItem('user');
-    localStorage.removeItem('token');
-    navigate('/');
+  const handleLogout = async () => {
+    const confirmed = await confirm({
+      title: 'Confirm Logout',
+      message: 'Are you sure you want to log out of TalentNest?',
+      type: 'danger',
+      confirmText: 'Logout',
+      cancelText: 'Cancel'
+    });
+    if (confirmed) {
+      localStorage.removeItem('user');
+      localStorage.removeItem('token');
+      navigate('/');
+    }
   };
 
   const handlePrefix = user.email ? user.email.split('@')[0].toUpperCase() : 'USER';

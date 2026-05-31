@@ -7,12 +7,16 @@ import '../Dashboard/Index.css';
 import './Notifications.css';
 import Header from '../Common/Header';
 import { useNotifications } from '../../context/NotificationContext';
+import { useConfirmation } from '../../context/ConfirmationContext';
+import { useToast } from '../../context/ToastContext';
 
 const Notifications = () => {
   const location = useLocation();
   const navigate = useNavigate();
   const user = location.state?.user || JSON.parse(localStorage.getItem('user') || 'null');
   const { fetchUnreadCounts } = useNotifications() || { fetchUnreadCounts: () => {} };
+  const { confirm } = useConfirmation();
+  const toast = useToast();
 
   const handlePrefix = user?.email ? user.email.split('@')[0].toUpperCase() : 'STUDENT';
   const [activeFilter, setActiveFilter] = useState('All');
@@ -26,11 +30,27 @@ const Notifications = () => {
       const res = await api.post(`/products/${productId}/notify`);
       if (res.data.success) {
         setNotifiedProductIds(prev => [...prev, productId]);
-        alert('You will be notified when this product is restocked!');
+        toast.success('You will be notified when this product is restocked!');
       }
     } catch (err) {
       console.error('Error subscribing to restock notifications:', err);
-      alert('Failed to set restock notification.');
+      toast.error('Failed to set restock notification.');
+    }
+  };
+
+  const handleDeleteNotificationsConfirm = async (idsToDelete) => {
+    const isMultiple = idsToDelete.length > 1;
+    const confirmed = await confirm({
+      title: isMultiple ? 'Delete Selected Notifications' : 'Delete Notification',
+      message: isMultiple 
+        ? `Are you sure you want to delete the ${idsToDelete.length} selected notifications?` 
+        : 'Are you sure you want to delete this notification?',
+      type: 'danger',
+      confirmText: 'Delete',
+      cancelText: 'Cancel'
+    });
+    if (confirmed) {
+      deleteNotifications(idsToDelete);
     }
   };
   const [showDateDropdown, setShowDateDropdown] = useState(false);
@@ -507,11 +527,7 @@ const Notifications = () => {
                 
                 <button 
                   className="bulk-delete-btn"
-                  onClick={() => {
-                    if (window.confirm(`Are you sure you want to delete ${selectedIds.length} selected notifications?`)) {
-                      deleteNotifications(selectedIds);
-                    }
-                  }}
+                  onClick={() => handleDeleteNotificationsConfirm(selectedIds)}
                 >
                   <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
                     <polyline points="3 6 5 6 21 6"></polyline>
@@ -643,11 +659,7 @@ const Notifications = () => {
                       <button 
                         className="notif-delete-single-btn" 
                         title="Delete notification"
-                        onClick={() => {
-                          if (window.confirm("Are you sure you want to delete this notification?")) {
-                            deleteNotifications([notif.id]);
-                          }
-                        }}
+                        onClick={() => handleDeleteNotificationsConfirm([notif.id])}
                       >
                         <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
                           <polyline points="3 6 5 6 21 6"></polyline>

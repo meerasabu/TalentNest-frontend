@@ -5,6 +5,7 @@ import Sidebar from '../Common/Sidebar';
 import '../Dashboard/Index.css'; 
 import './Profile.css';
 import { useConfirmation } from '../../context/ConfirmationContext';
+import { useToast } from '../../context/ToastContext';
 
 const Profile = () => {
   const navigate = useNavigate();
@@ -13,6 +14,7 @@ const Profile = () => {
   const user = location.state?.user || JSON.parse(localStorage.getItem('user'));
   const token = localStorage.getItem('token');
   const { confirm } = useConfirmation();
+  const toast = useToast();
 
   if (!user || !token || token === 'undefined') {
     return <Navigate to="/login" />;
@@ -172,7 +174,7 @@ const Profile = () => {
       }
     } catch (err) {
       console.error(`Error updating ${type} status:`, err);
-      alert('Failed to update status.');
+      toast.error('Failed to update status.');
     }
   };
 
@@ -180,7 +182,7 @@ const Profile = () => {
     e.preventDefault();
     const qty = parseInt(quantityInput, 10);
     if (isNaN(qty) || qty <= 0) {
-      alert("Please enter a valid positive quantity.");
+      toast.warning("Please enter a valid positive quantity.");
       return;
     }
     
@@ -203,7 +205,7 @@ const Profile = () => {
       setShowQuantityModal(false);
     } catch (err) {
       console.error(`Error updating product status:`, err);
-      alert('Failed to update status.');
+      toast.error('Failed to update status.');
     }
   };
 

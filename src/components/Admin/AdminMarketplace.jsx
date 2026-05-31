@@ -4,10 +4,14 @@ import api from '../../api/axiosConfig';
 import AdminSidebar from './AdminSidebar';
 import Pagination from '../Common/Pagination';
 import './AdminMarketplace.css';
+import { useConfirmation } from '../../context/ConfirmationContext';
+import { useToast } from '../../context/ToastContext';
 
 const AdminMarketplace = () => {
   const location = useLocation();
   const navigate = useNavigate();
+  const confirm = useConfirmation();
+  const toast = useToast();
   const user = React.useMemo(() => {
     try {
       return location.state?.user || JSON.parse(localStorage.getItem('user'));
@@ -63,14 +67,23 @@ const AdminMarketplace = () => {
         setProducts(updated);
         filterList(searchTerm, updated);
         setActiveDropdown(null);
+        toast.success(`Product status updated to ${newStatus}`);
       }
     } catch (err) {
       console.error('Error updating product status:', err);
+      toast.error('Failed to update status');
     }
   };
-
+ 
   const handleRemoveProduct = async (productId) => {
-    if (!window.confirm('Are you sure you want to remove this listing?')) return;
+    const confirmed = await confirm({
+      title: 'Remove Listing',
+      message: 'Are you sure you want to remove this listing?',
+      type: 'danger',
+      confirmText: 'Remove Listing',
+      cancelText: 'Cancel'
+    });
+    if (!confirmed) return;
     try {
       const res = await api.delete(`/admin/marketplace/${productId}`);
       if (res.data.success) {
@@ -78,9 +91,11 @@ const AdminMarketplace = () => {
         setProducts(updated);
         filterList(searchTerm, updated);
         setActiveDropdown(null);
+        toast.success('Listing removed successfully');
       }
     } catch (err) {
       console.error('Error removing product:', err);
+      toast.error('Failed to remove product listing');
     }
   };
 

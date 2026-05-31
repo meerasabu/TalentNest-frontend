@@ -6,12 +6,14 @@ import Pagination from '../Common/Pagination';
 import '../Dashboard/Index.css'; 
 import './Services.css';
 import Header from '../Common/Header';
+import { useToast } from '../../context/ToastContext';
 
 const Services = () => {
   const navigate = useNavigate();
   const location = useLocation();
   const user = location.state?.user || JSON.parse(localStorage.getItem('user'));
   const token = localStorage.getItem('token');
+  const toast = useToast();
 
   if (!user || !token || token === 'undefined') {
     return <Navigate to="/login" />;
@@ -90,7 +92,7 @@ const Services = () => {
       }
     } catch (err) {
       console.error('Error toggling wishlist:', err);
-      alert('Failed to update wishlist.');
+      toast.error('Failed to update wishlist.');
     }
   };
 
