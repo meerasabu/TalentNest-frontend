@@ -221,17 +221,17 @@ const Signup = () => {
         <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
           <div style={{ display: 'flex', gap: '1rem' }}>
             <div style={{ flex: 1 }}>
-              <label style={{ display: 'block', fontSize: '0.875rem', fontWeight: '600', color: '#4b5563', marginBottom: '0.25rem' }}>First Name</label>
+              <label style={{ display: 'block', fontSize: '0.875rem', fontWeight: '600', color: '#4b5563', marginBottom: '0.25rem' }}>First Name <span style={{ color: '#ef4444' }}>*</span></label>
               <input type="text" id="firstName" value={formData.firstName} onChange={handleChange} required style={{ width: '100%', padding: '0.5rem', borderRadius: '0.375rem', border: '1px solid #d1d5db', boxSizing: 'border-box' }}/>
             </div>
             <div style={{ flex: 1 }}>
-              <label style={{ display: 'block', fontSize: '0.875rem', fontWeight: '600', color: '#4b5563', marginBottom: '0.25rem' }}>Last Name</label>
+              <label style={{ display: 'block', fontSize: '0.875rem', fontWeight: '600', color: '#4b5563', marginBottom: '0.25rem' }}>Last Name <span style={{ color: '#ef4444' }}>*</span></label>
               <input type="text" id="lastName" value={formData.lastName} onChange={handleChange} required style={{ width: '100%', padding: '0.5rem', borderRadius: '0.375rem', border: '1px solid #d1d5db', boxSizing: 'border-box' }}/>
             </div>
           </div>
 
           <div>
-            <label style={{ display: 'block', fontSize: '0.875rem', fontWeight: '600', color: '#4b5563', marginBottom: '0.25rem' }}>Campus Email</label>
+            <label style={{ display: 'block', fontSize: '0.875rem', fontWeight: '600', color: '#4b5563', marginBottom: '0.25rem' }}>Campus Email <span style={{ color: '#ef4444' }}>*</span></label>
             <input 
               type="email" 
               id="campusEmail" 
@@ -249,7 +249,7 @@ const Signup = () => {
 
           <div style={{ display: 'flex', gap: '1rem' }}>
             <div style={{ flex: 1.5 }}>
-              <label style={{ display: 'block', fontSize: '0.875rem', fontWeight: '600', color: '#4b5563', marginBottom: '0.25rem' }}>Department</label>
+              <label style={{ display: 'block', fontSize: '0.875rem', fontWeight: '600', color: '#4b5563', marginBottom: '0.25rem' }}>Department <span style={{ color: '#ef4444' }}>*</span></label>
               <select id="department" value={formData.department} onChange={handleChange} required style={{ width: '100%', padding: '0.5rem', borderRadius: '0.375rem', border: '1px solid #d1d5db', boxSizing: 'border-box', backgroundColor: 'white', height: '38px' }}>
                 <option value="" disabled>Select Department</option>
                 <option value="Department of CS (PG)">Department of CS (PG)</option>
@@ -262,7 +262,7 @@ const Signup = () => {
               </select>
             </div>
             <div style={{ flex: 1 }}>
-              <label style={{ display: 'block', fontSize: '0.875rem', fontWeight: '600', color: '#4b5563', marginBottom: '0.25rem' }}>Graduation Year</label>
+              <label style={{ display: 'block', fontSize: '0.875rem', fontWeight: '600', color: '#4b5563', marginBottom: '0.25rem' }}>Graduation Year <span style={{ color: '#ef4444' }}>*</span></label>
               <select id="graduationYear" value={formData.graduationYear} onChange={handleChange} required style={{ width: '100%', padding: '0.5rem', borderRadius: '0.375rem', border: '1px solid #d1d5db', boxSizing: 'border-box', backgroundColor: 'white', height: '38px' }}>
                 <option value="" disabled>Select Year</option>
                 <option value="2024">2024</option>
@@ -279,7 +279,7 @@ const Signup = () => {
           </div>
 
           <div>
-            <label style={{ display: 'block', fontSize: '0.875rem', fontWeight: '600', color: '#4b5563', marginBottom: '0.25rem' }}>Password</label>
+            <label style={{ display: 'block', fontSize: '0.875rem', fontWeight: '600', color: '#4b5563', marginBottom: '0.25rem' }}>Password <span style={{ color: '#ef4444' }}>*</span></label>
             <div style={{ position: 'relative', display: 'flex', alignItems: 'center' }}>
               <input 
                 type={showPassword ? "text" : "password"} 

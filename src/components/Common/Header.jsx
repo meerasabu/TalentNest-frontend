@@ -4,7 +4,7 @@ import { useNotifications } from '../../context/NotificationContext';
 
 const Header = ({ 
   user, 
-  showSearch = true, 
+  showSearch = false, 
   onSearch, 
   onSearchChange, 
   searchPlaceholder = "Search products, skills, services..." 

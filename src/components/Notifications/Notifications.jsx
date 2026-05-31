@@ -387,12 +387,7 @@ const Notifications = () => {
       {/* Main Layout Area */}
       <main className="dashboard-main">
         {/* Top Header */}
-        <Header 
-          user={user} 
-          onSearchChange={setSearchTerm} 
-          onSearch={(val) => setSearchTerm(val)} 
-          searchPlaceholder="Search notifications..." 
-        />
+        <Header user={user} showSearch={false} />
 
         {/* Notifications Content */}
         <div className="content-scrollable">
@@ -406,6 +401,20 @@ const Notifications = () => {
             </div>
 
             <div className="notifications-filter-container">
+              <div className="notifications-search-box">
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="search-icon" viewBox="0 0 24 24">
+                  <circle cx="11" cy="11" r="8"></circle>
+                  <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+                </svg>
+                <input 
+                  type="text" 
+                  placeholder="Search notifications..." 
+                  value={searchTerm} 
+                  onChange={(e) => setSearchTerm(e.target.value)}
+                  className="search-input-field"
+                />
+              </div>
+
               <div className="filter-categories">
                 {filters.map(filter => (
                   <button

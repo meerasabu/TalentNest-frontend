@@ -801,7 +801,7 @@ const CreateListing = () => {
                   {currentStep === 1 && (
                     <>
                       <div className="form-group">
-                        <label className="mockup-label">Product Name</label>
+                        <label className="mockup-label">Product Name <span style={{ color: '#ef4444' }}>*</span></label>
                         <input 
                           type="text" 
                           name="title"
@@ -814,7 +814,7 @@ const CreateListing = () => {
                       </div>
                       <div className="mockup-split-row">
                         <div className="form-group half">
-                          <label className="mockup-label">Category</label>
+                          <label className="mockup-label">Category <span style={{ color: '#ef4444' }}>*</span></label>
                           <select name="category" className="mockup-input" value={formData.category} onChange={handleInputChange} required>
                             <option value="" disabled>Select Category</option>
                             <option value="Electronics">Electronics</option>
@@ -827,7 +827,7 @@ const CreateListing = () => {
                           </select>
                         </div>
                         <div className="form-group half">
-                          <label className="mockup-label">Price</label>
+                          <label className="mockup-label">Price <span style={{ color: '#ef4444' }}>*</span></label>
                           <div className="price-input-wrapper">
                             <span className="price-symbol">₹</span>
                             <input type="number" name="price" className="mockup-input price-input" placeholder="0.00" value={formData.price} onChange={handleInputChange} required inputMode="decimal" step="any" />
@@ -836,11 +836,11 @@ const CreateListing = () => {
                       </div>
                       <div className="mockup-split-row">
                         <div className="form-group half">
-                          <label className="mockup-label">Quantity</label>
+                          <label className="mockup-label">Quantity <span style={{ color: '#ef4444' }}>*</span></label>
                           <input type="number" name="quantity" className="mockup-input" min="1" value={formData.quantity} onChange={handleInputChange} required inputMode="numeric" />
                         </div>
                         <div className="form-group half">
-                          <label className="mockup-label">Condition</label>
+                          <label className="mockup-label">Condition <span style={{ color: '#ef4444' }}>*</span></label>
                           <select name="condition" className="mockup-input" value={formData.condition} onChange={handleInputChange} required>
                             <option value="New">New</option>
                             <option value="Like New">Like New</option>
@@ -890,7 +890,7 @@ const CreateListing = () => {
                       </div>
 
                       <div className="form-group">
-                        <label className="mockup-label">Description</label>
+                        <label className="mockup-label">Description <span style={{ color: '#ef4444' }}>*</span></label>
                         <textarea 
                           name="description"
                           className="mockup-input textarea"
@@ -914,7 +914,7 @@ const CreateListing = () => {
                   {currentStep === 1 && (
                     <>
                       <div className="form-group">
-                        <label className="mockup-label">Service Name</label>
+                        <label className="mockup-label">Service Name <span style={{ color: '#ef4444' }}>*</span></label>
                         <input 
                           type="text" 
                           name="title"
@@ -926,7 +926,7 @@ const CreateListing = () => {
                         />
                       </div>
                       <div className="form-group">
-                        <label className="mockup-label">Service Type</label>
+                        <label className="mockup-label">Service Type <span style={{ color: '#ef4444' }}>*</span></label>
                         <select name="serviceType" className="mockup-input" value={formData.serviceType} onChange={handleInputChange} required>
                           <option value="" disabled>Select Service Type</option>
                           <option value="Design">Design</option>
@@ -942,7 +942,7 @@ const CreateListing = () => {
                       </div>
                       <div className="mockup-split-row">
                         <div className="form-group half">
-                          <label className="mockup-label">Standard Plan (₹)</label>
+                          <label className="mockup-label">Standard Plan (₹) <span style={{ color: '#ef4444' }}>*</span></label>
                           <div className="price-input-wrapper">
                             <span className="price-symbol">₹</span>
                             <input type="number" name="standardPlan" className="mockup-input price-input" placeholder="0.00" value={formData.standardPlan} onChange={handleInputChange} required inputMode="decimal" step="any" />
@@ -996,7 +996,7 @@ const CreateListing = () => {
                       </div>
 
                       <div className="form-group">
-                        <label className="mockup-label">Description</label>
+                        <label className="mockup-label">Description <span style={{ color: '#ef4444' }}>*</span></label>
                         <textarea 
                           name="description"
                           className="mockup-input textarea"
@@ -1020,7 +1020,7 @@ const CreateListing = () => {
                   {currentStep === 1 && (
                     <>
                       <div className="form-group">
-                        <label className="mockup-label">Skill Name</label>
+                        <label className="mockup-label">Skill Name <span style={{ color: '#ef4444' }}>*</span></label>
                         <input 
                           type="text" 
                           name="title"
@@ -1032,7 +1032,7 @@ const CreateListing = () => {
                         />
                       </div>
                       <div className="form-group">
-                        <label className="mockup-label">Category</label>
+                        <label className="mockup-label">Category <span style={{ color: '#ef4444' }}>*</span></label>
                         <select name="category" className="mockup-input" value={formData.category} onChange={handleInputChange} required>
                           <option value="" disabled>Select Category</option>
                           <option value="Programming">Programming</option>
@@ -1046,14 +1046,14 @@ const CreateListing = () => {
                       </div>
                       <div className="mockup-split-row">
                         <div className="form-group half">
-                          <label className="mockup-label">Charge</label>
+                          <label className="mockup-label">Charge <span style={{ color: '#ef4444' }}>*</span></label>
                           <select name="chargeType" className="mockup-input" value={formData.chargeType} onChange={handleInputChange} required>
                             <option value="Paid">Paid</option>
                             <option value="Free">Free</option>
                           </select>
                         </div>
                         <div className="form-group half">
-                          <label className="mockup-label">Session Type</label>
+                          <label className="mockup-label">Session Type <span style={{ color: '#ef4444' }}>*</span></label>
                           <select name="skillType" className="mockup-input" value={formData.skillType} onChange={handleInputChange} required>
                             <option value="Online">Online</option>
                             <option value="Offline">Offline</option>
@@ -1064,7 +1064,7 @@ const CreateListing = () => {
 
                       {formData.chargeType === 'Paid' && (
                         <div className="form-group" style={{ animation: 'fadeIn 0.2s ease-out' }}>
-                          <label className="mockup-label">Hourly Rate (₹)</label>
+                          <label className="mockup-label">Hourly Rate (₹) <span style={{ color: '#ef4444' }}>*</span></label>
                           <div className="price-input-wrapper">
                             <span className="price-symbol">₹</span>
                             <input 
@@ -1093,7 +1093,7 @@ const CreateListing = () => {
 
                       <div className="peer-grid-2">
                         <div className="form-group">
-                          <label className="mockup-label">Experience Level</label>
+                          <label className="mockup-label">Experience Level <span style={{ color: '#ef4444' }}>*</span></label>
                           <select name="experienceLevel" className="mockup-input" value={formData.experienceLevel} onChange={handleInputChange} required>
                             <option value="Beginner">Beginner / Intermediate Mentor</option>
                             <option value="Intermediate">Intermediate Mentor</option>
@@ -1102,7 +1102,7 @@ const CreateListing = () => {
                         </div>
 
                         <div className="form-group">
-                          <label className="mockup-label">Languages Known</label>
+                          <label className="mockup-label">Languages Known <span style={{ color: '#ef4444' }}>*</span></label>
                           <input 
                             type="text" 
                             name="languagesKnown" 
@@ -1116,7 +1116,7 @@ const CreateListing = () => {
                       </div>
 
                       <div className="form-group">
-                        <label className="mockup-label">Previous Teaching / Session Experience</label>
+                        <label className="mockup-label">Previous Teaching / Session Experience <span style={{ color: '#ef4444' }}>*</span></label>
                         <textarea 
                           name="prevExperience" 
                           className="mockup-input textarea" 
@@ -1157,7 +1157,7 @@ const CreateListing = () => {
                       </div>
 
                       <div className="form-group">
-                        <label className="mockup-label">Topics Covered (Comma separated list)</label>
+                        <label className="mockup-label">Topics Covered (Comma separated list) <span style={{ color: '#ef4444' }}>*</span></label>
                         <textarea 
                           name="topicsCovered" 
                           className="mockup-input textarea" 
@@ -1170,7 +1170,7 @@ const CreateListing = () => {
                       </div>
 
                       <div className="form-group">
-                        <label className="mockup-label">Learning Outcomes (What will the peer achieve?)</label>
+                        <label className="mockup-label">Learning Outcomes (What will the peer achieve?) <span style={{ color: '#ef4444' }}>*</span></label>
                         <textarea 
                           name="learningOutcomes" 
                           className="mockup-input textarea" 
@@ -1250,7 +1250,7 @@ const CreateListing = () => {
 
                       <div className="form-group">
                         <label className="mockup-label" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '4px' }}>
-                          <span>Available Time Slots</span>
+                          <span>Available Time Slots <span style={{ color: '#ef4444' }}>*</span></span>
                           <button 
                             type="button" 
                             onClick={() => setTimeSlots([...timeSlots, ''])}
@@ -1451,7 +1451,7 @@ const CreateListing = () => {
                   {currentStep === 4 && (
                     <>
                       <div className="form-group">
-                        <label className="mockup-label">Description / Bio</label>
+                        <label className="mockup-label">Description / Bio <span style={{ color: '#ef4444' }}>*</span></label>
                         <textarea 
                           name="description"
                           className="mockup-input textarea"

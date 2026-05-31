@@ -29,6 +29,7 @@ const Marketplace = () => {
   const [priceRange, setPriceRange] = useState('All');
   const [minRating, setMinRating] = useState(0);
   const [sortBy, setSortBy] = useState('latest');
+  const [searchQuery, setSearchQuery] = useState('');
 
   useEffect(() => {
     const fetchProducts = async () => {
@@ -65,6 +66,12 @@ const Marketplace = () => {
 
   // Filter Logic
   const filteredProducts = products.filter(prod => {
+    if (searchQuery) {
+      const q = searchQuery.toLowerCase();
+      const titleMatch = prod.title?.toLowerCase().includes(q);
+      const descMatch = prod.description?.toLowerCase().includes(q);
+      if (!titleMatch && !descMatch) return false;
+    }
     if (activeCategory !== 'All' && prod.category !== activeCategory) return false;
     
     if (priceRange !== 'All') {
@@ -122,6 +129,19 @@ const Marketplace = () => {
             </div>
             
             <div className="market-action-group">
+              <div className="marketplace-search-box">
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="search-icon" viewBox="0 0 24 24">
+                  <circle cx="11" cy="11" r="8"></circle>
+                  <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+                </svg>
+                <input 
+                  type="text" 
+                  placeholder="Search products..." 
+                  value={searchQuery} 
+                  onChange={(e) => { setSearchQuery(e.target.value); setCurrentPage(1); }}
+                  className="search-input-field"
+                />
+              </div>
               <button className="btn-add-product" onClick={() => navigate('/create-listing', { state: { initialTab: 'product' } })}>
                 + Add Product
               </button>

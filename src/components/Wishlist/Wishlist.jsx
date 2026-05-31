@@ -59,7 +59,7 @@ const Wishlist = () => {
       {/* Main Content Area */}
       <main className="dashboard-main wishlist-main">
         {/* Header */}
-        <Header user={user} showSearch={true} searchPlaceholder="Search saved items..." />
+        <Header user={user} showSearch={false} />
 
         <div className="content-scrollable wishlist-content">
           <div className="wishlist-header">

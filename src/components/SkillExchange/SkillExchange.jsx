@@ -28,6 +28,7 @@ const SkillExchange = () => {
   const [sessionType, setSessionType] = useState('Both');
   const [minRating, setMinRating] = useState(0);
   const [sortBy, setSortBy] = useState('latest');
+  const [searchQuery, setSearchQuery] = useState('');
 
   useEffect(() => {
     const fetchSkills = async () => {
@@ -48,6 +49,14 @@ const SkillExchange = () => {
   }, []);
 
   const filteredSkills = skills.filter(skill => {
+    // 0. Search query filter
+    if (searchQuery) {
+      const q = searchQuery.toLowerCase();
+      const titleMatch = skill.title?.toLowerCase().includes(q);
+      const descMatch = skill.description?.toLowerCase().includes(q);
+      if (!titleMatch && !descMatch) return false;
+    }
+
     // 1. Category check
     if (activeCategory !== 'All' && skill.category !== activeCategory) return false;
 
@@ -150,6 +159,19 @@ const SkillExchange = () => {
             </div>
             
             <div className="sk-ex-action-group">
+              <div className="skill-search-box">
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="search-icon" viewBox="0 0 24 24">
+                  <circle cx="11" cy="11" r="8"></circle>
+                  <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+                </svg>
+                <input 
+                  type="text" 
+                  placeholder="Search skills..." 
+                  value={searchQuery} 
+                  onChange={(e) => { setSearchQuery(e.target.value); setCurrentPage(1); }}
+                  className="search-input-field"
+                />
+              </div>
               <button className="btn-add-sk" onClick={() => navigate('/create-listing', { state: { initialTab: 'skill' } })}>
                 + Add Skill
               </button>
