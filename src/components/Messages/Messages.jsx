@@ -197,11 +197,13 @@ const Messages = () => {
   const [activeChatId, setActiveChatId] = useState(null);
   const [unreadSessions, setUnreadSessions] = useState({});
   const [showHistory, setShowHistory] = useState(false);
+  const [showActiveSessionsDropdown, setShowActiveSessionsDropdown] = useState(false);
   const [showLeftArrow, setShowLeftArrow] = useState(false);
   const [showRightArrow, setShowRightArrow] = useState(false);
   const [detailsExpanded, setDetailsExpanded] = useState(false);
   const tabsContainerRef = useRef(null);
   const historyRef = useRef(null);
+  const activeSessionsDropdownRef = useRef(null);
 
   const activeGroup = partnerGroups.find(g => g.partner_id === activePartnerId);
 
@@ -675,6 +677,16 @@ const Messages = () => {
     return () => document.removeEventListener('mousedown', handleHistoryClickOutside);
   }, []);
 
+  useEffect(() => {
+    const handleActiveDropdownClickOutside = (event) => {
+      if (activeSessionsDropdownRef.current && !activeSessionsDropdownRef.current.contains(event.target)) {
+        setShowActiveSessionsDropdown(false);
+      }
+    };
+    document.addEventListener('mousedown', handleActiveDropdownClickOutside);
+    return () => document.removeEventListener('mousedown', handleActiveDropdownClickOutside);
+  }, []);
+
   const scrollLeftFn = () => {
     tabsContainerRef.current?.scrollBy({ left: -120, behavior: 'smooth' });
   };
@@ -866,61 +878,109 @@ const Messages = () => {
                   </div>
                 </div>
 
-                {/* Horizontal session tabs with carousel */}
+                {/* Refactored Active Session Selector / Cards and History */}
                 {sortedChats.length > 0 && (
-                  <div className="chat-session-tabs-wrapper">
-                    {/* Left scroll arrow */}
-                    {activeChats.length > 3 && showLeftArrow && (
-                      <button className="carousel-arrow-btn left" onClick={scrollLeftFn} aria-label="Scroll left">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><polyline points="15 18 9 12 15 6"></polyline></svg>
-                      </button>
-                    )}
-
-                    <div 
-                      ref={tabsContainerRef}
-                      onScroll={handleScroll}
-                      className={`chat-session-tabs ${activeChats.length > 3 ? 'has-carousel' : ''} ${showLeftArrow ? 'fade-left' : ''} ${showRightArrow ? 'fade-right' : ''}`}
-                    >
+                  <div className="chat-session-selector-container-row">
+                    {/* Active session card or dropdown menu */}
+                    <div className="active-sessions-selector-box">
                       {activeChats.length === 0 ? (
                         <div className="no-active-sessions-msg">No active sessions. Open Session History to restore.</div>
+                      ) : activeChats.length === 1 ? (
+                        // Single active session card
+                        <div className="single-session-card-layout">
+                          <span className="session-card-icon-emoji">
+                            {activeChats[0].item_type === 'product' && '📦'}
+                            {activeChats[0].item_type === 'skill' && '📖'}
+                            {activeChats[0].item_type === 'service' && '💼'}
+                            {!['product', 'skill', 'service'].includes(activeChats[0].item_type) && '💬'}
+                          </span>
+                          <span className="session-card-item-title-text">{activeChats[0].item_title || 'Request'}</span>
+                          <span className="session-card-item-sep">•</span>
+                          <span className="session-card-item-type-text">{formatItemType(activeChats[0].item_type)}</span>
+                          <span className="session-card-item-sep">•</span>
+                          <span className={`session-card-item-status-text order-${(activeChats[0].order_status || 'Pending').toLowerCase()}`}>
+                            {activeChats[0].order_status || 'Pending'}
+                          </span>
+                        </div>
                       ) : (
-                        activeChats.map(c => (
-                          <button
-                            key={c.chat_id}
-                            className={`session-tab-btn ${c.chat_id === effectiveChatId ? 'active' : ''}`}
-                            onClick={() => {
-                              setActiveChatId(c.chat_id);
-                              setUnreadSessions(prev => ({ ...prev, [c.chat_id]: false }));
-                            }}
+                        // Multiple active sessions dropdown selector
+                        <div className="multiple-sessions-dropdown-wrapper" ref={activeSessionsDropdownRef}>
+                          <button 
+                            className="active-sessions-dropdown-trigger"
+                            onClick={() => setShowActiveSessionsDropdown(!showActiveSessionsDropdown)}
                           >
-                            <span className="session-tab-title">{c.item_title || 'Request'}</span>
-                            {unreadSessions[c.chat_id] && <span className="session-unread-dot" />}
-                            <span className={`session-tab-badge ${c.order_status ? c.order_status.toLowerCase() : 'active'}`}>
-                              {c.order_status || 'Active'}
-                            </span>
-                            <span 
-                              className="session-close-icon"
-                              onClick={(e) => closeSession(c.chat_id, e)}
-                              title="Archive Session"
-                            >
-                              ✕
-                            </span>
+                            <div className="active-sessions-dropdown-trigger-left">
+                              <span className="session-card-icon-emoji">
+                                {currentChat?.item_type === 'product' && '📦'}
+                                {currentChat?.item_type === 'skill' && '📖'}
+                                {currentChat?.item_type === 'service' && '💼'}
+                                {!['product', 'skill', 'service'].includes(currentChat?.item_type) && '💬'}
+                              </span>
+                              <span className="session-card-item-title-text">{currentChat?.item_title || 'Request'}</span>
+                              <span className="session-card-item-sep">•</span>
+                              <span className="session-card-item-type-text">{formatItemType(currentChat?.item_type)}</span>
+                              <span className="session-card-item-sep">•</span>
+                              <span className={`session-card-item-status-text order-${(currentChat?.order_status || 'Pending').toLowerCase()}`}>
+                                {currentChat?.order_status || 'Pending'}
+                              </span>
+                            </div>
+                            <div className="active-sessions-dropdown-trigger-right">
+                              <span className="active-sessions-count-pill">{activeChats.length} Active Sessions</span>
+                              <svg className={`chevron-down-svg ${showActiveSessionsDropdown ? 'open' : ''}`} xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                                <polyline points="6 9 12 15 18 9"></polyline>
+                              </svg>
+                            </div>
                           </button>
-                        ))
+
+                          {showActiveSessionsDropdown && (
+                            <div className="active-sessions-dropdown-menu-list">
+                              <div className="active-sessions-menu-header">Select Session</div>
+                              <div className="active-sessions-menu-scroll">
+                                {activeChats.map(c => (
+                                  <div 
+                                    key={c.chat_id}
+                                    className={`active-sessions-menu-item ${c.chat_id === effectiveChatId ? 'selected' : ''}`}
+                                    onClick={() => {
+                                      setActiveChatId(c.chat_id);
+                                      setUnreadSessions(prev => ({ ...prev, [c.chat_id]: false }));
+                                      setShowActiveSessionsDropdown(false);
+                                    }}
+                                  >
+                                    <div className="active-sessions-menu-item-left">
+                                      <span className="session-card-icon-emoji">
+                                        {c.item_type === 'product' && '📦'}
+                                        {c.item_type === 'skill' && '📖'}
+                                        {c.item_type === 'service' && '💼'}
+                                        {!['product', 'skill', 'service'].includes(c.item_type) && '💬'}
+                                      </span>
+                                      <div className="active-sessions-menu-item-meta">
+                                        <span className="active-sessions-menu-title">{c.item_title || 'Request'}</span>
+                                        <span className="active-sessions-menu-subtitle">
+                                          {formatItemType(c.item_type)} • {c.order_status || 'Pending'}
+                                        </span>
+                                      </div>
+                                    </div>
+                                    <div className="active-sessions-menu-item-right">
+                                      {unreadSessions[c.chat_id] && <span className="session-unread-dot-inline" />}
+                                      <button 
+                                        className="active-sessions-close-action-btn"
+                                        onClick={(e) => {
+                                          e.stopPropagation();
+                                          closeSession(c.chat_id, e);
+                                        }}
+                                        title="Archive Session"
+                                      >
+                                        ✕
+                                      </button>
+                                    </div>
+                                  </div>
+                                ))}
+                              </div>
+                            </div>
+                          )}
+                        </div>
                       )}
                     </div>
-
-                    {/* Right scroll arrow */}
-                    {activeChats.length > 3 && showRightArrow && (
-                      <button 
-                        className="carousel-arrow-btn right" 
-                        onClick={scrollRightFn} 
-                        aria-label="Scroll right"
-                        style={{ right: closedChats.length > 0 ? '7.5rem' : '0.75rem' }}
-                      >
-                        <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>
-                      </button>
-                    )}
 
                     {/* Session History dropdown trigger */}
                     {closedChats.length > 0 && (
@@ -943,21 +1003,32 @@ const Messages = () => {
                               {closedChats.map(c => (
                                 <div 
                                   key={c.chat_id}
-                                  className={`history-item-pill ${c.chat_id === effectiveChatId ? 'selected' : ''}`}
+                                  className={`history-item-card-new ${c.chat_id === effectiveChatId ? 'selected' : ''}`}
                                   onClick={() => {
                                     setActiveChatId(c.chat_id);
                                     setShowHistory(false);
                                   }}
                                 >
-                                  <div className="history-item-details">
-                                    <span className="history-item-title">{c.item_title || 'Request'}</span>
-                                    <span className={`session-tab-badge ${c.order_status ? c.order_status.toLowerCase() : 'active'}`}>
-                                      {c.order_status || 'Active'}
+                                  <div className="history-item-details-new">
+                                    <span className="history-item-icon-emoji">
+                                      {c.item_type === 'product' && '📦'}
+                                      {c.item_type === 'skill' && '📖'}
+                                      {c.item_type === 'service' && '💼'}
+                                      {!['product', 'skill', 'service'].includes(c.item_type) && '💬'}
                                     </span>
+                                    <div className="history-item-meta-new">
+                                      <span className="history-item-title-new">{c.item_title || 'Request'}</span>
+                                      <span className="history-item-subtitle-new">
+                                        {formatItemType(c.item_type)} • {c.order_status || 'Pending'}
+                                      </span>
+                                    </div>
                                   </div>
                                   <button 
                                     className="session-restore-btn"
-                                    onClick={(e) => restoreSession(c.chat_id, e)}
+                                    onClick={(e) => {
+                                      e.stopPropagation();
+                                      restoreSession(c.chat_id, e);
+                                    }}
                                     title="Restore Session"
                                   >
                                     <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><polyline points="23 4 23 10 17 10"></polyline><polyline points="1 20 1 14 7 14"></polyline><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"></path></svg>
