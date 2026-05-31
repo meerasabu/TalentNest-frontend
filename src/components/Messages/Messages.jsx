@@ -132,6 +132,12 @@ const renderProgressTracker = (orderStatus, chatStatus) => {
   );
 };
 
+const formatCreatedDate = (isoString) => {
+  if (!isoString) return '';
+  const d = new Date(isoString);
+  return d.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
+};
+
 const Messages = () => {
   const location = useLocation();
   const navigate = useNavigate();
@@ -865,7 +871,7 @@ const Messages = () => {
                         <span className="chat-name">{group.partner_name}</span>
                       </div>
                       <div className="chat-item-preview">
-                        {group.chats.filter(c => !c.is_closed && c.chat_status !== 'Completed' && c.chat_status !== 'Cancelled').length} Active Session(s)
+                        {group.chats.filter(c => !c.is_closed && c.chat_status !== 'Completed' && c.chat_status !== 'Cancelled').length} Active Order(s)
                       </div>
                     </div>
                   </div>
@@ -907,270 +913,216 @@ const Messages = () => {
                 </div>
 
                 {/* Refactored Active Session Selector / Cards and History */}
-                {sortedChats.length > 0 && (
-                  <div className="chat-session-selector-container-row">
-                    {/* Active session card or dropdown menu */}
-                    <div className="active-sessions-selector-box">
-                      {activeChats.length === 0 ? (
-                        <div className="no-active-sessions-msg">No active sessions. Open Session History to restore.</div>
-                      ) : activeChats.length === 1 ? (
-                        // Single active session card
-                        <div className="single-session-card-layout">
-                          <span className="session-card-icon-emoji">
-                            {activeChats[0].item_type === 'product' && '📦'}
-                            {activeChats[0].item_type === 'skill' && '📖'}
-                            {activeChats[0].item_type === 'service' && '💼'}
-                            {!['product', 'skill', 'service'].includes(activeChats[0].item_type) && '💬'}
-                          </span>
-                          <span className="session-card-item-title-text">{activeChats[0].item_title || 'Request'}</span>
-                          <span className="session-card-item-sep">•</span>
-                          <span className="session-card-item-type-text">{formatItemType(activeChats[0].item_type)}</span>
-                          <span className="session-card-item-sep">•</span>
-                          <span className={`session-card-item-status-text order-${(activeChats[0].order_status || 'Pending').toLowerCase()}`}>
-                            {activeChats[0].order_status || 'Pending'}
-                          </span>
-                        </div>
-                      ) : (
-                        // Multiple active sessions dropdown selector
-                        <div className="multiple-sessions-dropdown-wrapper" ref={activeSessionsDropdownRef}>
-                          <button 
-                            className="active-sessions-dropdown-trigger"
-                            onClick={() => setShowActiveSessionsDropdown(!showActiveSessionsDropdown)}
-                          >
-                            <div className="active-sessions-dropdown-trigger-left">
-                              <span className="session-card-icon-emoji">
-                                {currentChat?.item_type === 'product' && '📦'}
-                                {currentChat?.item_type === 'skill' && '📖'}
-                                {currentChat?.item_type === 'service' && '💼'}
-                                {!['product', 'skill', 'service'].includes(currentChat?.item_type) && '💬'}
-                              </span>
-                              <span className="session-card-item-title-text">{currentChat?.item_title || 'Request'}</span>
-                              <span className="session-card-item-sep">•</span>
-                              <span className="session-card-item-type-text">{formatItemType(currentChat?.item_type)}</span>
-                              <span className="session-card-item-sep">•</span>
-                              <span className={`session-card-item-status-text order-${(currentChat?.order_status || 'Pending').toLowerCase()}`}>
-                                {currentChat?.order_status || 'Pending'}
-                              </span>
-                            </div>
-                            <div className="active-sessions-dropdown-trigger-right">
-                              <span className="active-sessions-count-pill">{activeChats.length} Active Sessions</span>
-                              <svg className={`chevron-down-svg ${showActiveSessionsDropdown ? 'open' : ''}`} xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-                                <polyline points="6 9 12 15 18 9"></polyline>
-                              </svg>
-                            </div>
-                          </button>
+                {currentChat && (
+                  <div className={`chat-session-unified-header ${detailsExpanded ? 'expanded' : 'collapsed'}`}>
+                    <div className="unified-header-main-row">
+                      {/* Expandable active order dropdown selector */}
+                      <div className="active-orders-selector-wrapper" ref={activeSessionsDropdownRef}>
+                        <button 
+                          className="active-orders-dropdown-trigger"
+                          onClick={() => setShowActiveSessionsDropdown(!showActiveSessionsDropdown)}
+                        >
+                          <div className="active-orders-dropdown-trigger-left">
+                            <span className="session-card-icon-emoji">
+                              {currentChat.item_type === 'product' && '📦'}
+                              {currentChat.item_type === 'skill' && '📖'}
+                              {currentChat.item_type === 'service' && '💼'}
+                              {!['product', 'skill', 'service'].includes(currentChat.item_type) && '💬'}
+                            </span>
+                            <span className="session-card-item-title-text">{currentChat.item_title || 'Request'}</span>
+                            <span className="session-card-item-sep">•</span>
+                            <span className="session-card-item-type-text">{formatItemType(currentChat.item_type)}</span>
+                            <span className="session-card-item-sep">•</span>
+                            <span className={`session-card-item-status-text order-${(currentChat.order_status || 'Pending').toLowerCase()}`}>
+                              {currentChat.order_status || 'Pending'}
+                            </span>
+                          </div>
+                          
+                          <div className="active-orders-dropdown-trigger-right">
+                            <span className="active-orders-count-pill">
+                              {activeChats.length > 1 ? `Switch Order (${activeChats.length})` : 'Active Order'}
+                            </span>
+                            <svg className={`chevron-down-svg ${showActiveSessionsDropdown ? 'open' : ''}`} xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                              <polyline points="6 9 12 15 18 9"></polyline>
+                            </svg>
+                          </div>
+                        </button>
 
-                          {showActiveSessionsDropdown && (
-                            <div className="active-sessions-dropdown-menu-list">
-                              <div className="active-sessions-menu-header">Select Session</div>
+                        {showActiveSessionsDropdown && (
+                          <div className="active-sessions-dropdown-menu-list">
+                            <div className="active-sessions-menu-header">Orders with {activeGroup.partner_name}</div>
+                            
+                            {/* Search and Filters box */}
+                            <div className="active-sessions-filter-box" onClick={(e) => e.stopPropagation()}>
+                              <div className="active-sessions-search">
+                                <svg className="search-icon-small" xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                                  <circle cx="11" cy="11" r="8"></circle>
+                                  <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+                                </svg>
+                                <input 
+                                  type="text" 
+                                  placeholder="Search active orders..." 
+                                  value={sessionSearchQuery}
+                                  onChange={(e) => setSessionSearchQuery(e.target.value)}
+                                />
+                                {sessionSearchQuery && (
+                                  <button 
+                                    className="clear-search-small"
+                                    onClick={() => setSessionSearchQuery('')}
+                                  >
+                                    ✕
+                                  </button>
+                                )}
+                              </div>
                               
-                              {/* Search and Filters box */}
-                              <div className="active-sessions-filter-box" onClick={(e) => e.stopPropagation()}>
-                                <div className="active-sessions-search">
-                                  <svg className="search-icon-small" xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-                                    <circle cx="11" cy="11" r="8"></circle>
-                                    <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
-                                  </svg>
-                                  <input 
-                                    type="text" 
-                                    placeholder="Search active sessions..." 
-                                    value={sessionSearchQuery}
-                                    onChange={(e) => setSessionSearchQuery(e.target.value)}
-                                  />
-                                  {sessionSearchQuery && (
-                                    <button 
-                                      className="clear-search-small"
-                                      onClick={() => setSessionSearchQuery('')}
-                                    >
-                                      ✕
-                                    </button>
-                                  )}
-                                </div>
-                                
-                                <div className="active-sessions-pills-row">
-                                  <span className="filter-row-label">Type:</span>
-                                  {['All', 'Product', 'Skill', 'Service'].map(type => (
-                                    <button
-                                      key={type}
-                                      className={`filter-pill-small ${sessionTypeFilter === type ? 'active' : ''}`}
-                                      onClick={() => setSessionTypeFilter(type)}
-                                    >
-                                      {type === 'Skill' ? 'Skill Share' : type}
-                                    </button>
-                                  ))}
-                                </div>
-
-                                <div className="active-sessions-pills-row">
-                                  <span className="filter-row-label">Status:</span>
-                                  {['All', 'Pending', 'Accepted', 'Completed', 'Cancelled'].map(status => (
-                                    <button
-                                      key={status}
-                                      className={`filter-pill-small ${sessionStatusFilter === status ? 'active' : ''}`}
-                                      onClick={() => setSessionStatusFilter(status)}
-                                    >
-                                      {status}
-                                    </button>
-                                  ))}
-                                </div>
+                              <div className="active-sessions-pills-row">
+                                <span className="filter-row-label">Type:</span>
+                                {['All', 'Product', 'Skill', 'Service'].map(type => (
+                                  <button
+                                    key={type}
+                                    className={`filter-pill-small ${sessionTypeFilter === type ? 'active' : ''}`}
+                                    onClick={() => setSessionTypeFilter(type)}
+                                  >
+                                    {type === 'Skill' ? 'Skill Share' : type}
+                                  </button>
+                                ))}
                               </div>
 
-                              <div className="active-sessions-menu-scroll">
-                                {filteredActiveChats.length === 0 ? (
-                                  <div className="active-sessions-empty-msg">No matching sessions.</div>
-                                ) : (
-                                  filteredActiveChats.map(c => (
+                              <div className="active-sessions-pills-row">
+                                <span className="filter-row-label">Status:</span>
+                                {['All', 'Pending', 'Accepted', 'Completed', 'Cancelled'].map(status => (
+                                  <button
+                                    key={status}
+                                    className={`filter-pill-small ${sessionStatusFilter === status ? 'active' : ''}`}
+                                    onClick={() => setSessionStatusFilter(status)}
+                                  >
+                                    {status}
+                                  </button>
+                                ))}
+                              </div>
+                            </div>
+
+                            <div className="active-sessions-menu-scroll">
+                              {filteredActiveChats.length === 0 ? (
+                                <div className="active-sessions-empty-msg">No matching orders.</div>
+                              ) : (
+                                filteredActiveChats.map(c => (
+                                  <div 
+                                    key={c.chat_id}
+                                    className={`active-sessions-menu-item ${c.chat_id === effectiveChatId ? 'selected' : ''}`}
+                                    onClick={() => {
+                                      setActiveChatId(c.chat_id);
+                                      setUnreadSessions(prev => ({ ...prev, [c.chat_id]: false }));
+                                      setShowActiveSessionsDropdown(false);
+                                    }}
+                                  >
+                                    <div className="active-sessions-menu-item-left">
+                                      <span className="session-card-icon-emoji">
+                                        {c.item_type === 'product' && '📦'}
+                                        {c.item_type === 'skill' && '📖'}
+                                        {c.item_type === 'service' && '💼'}
+                                        {!['product', 'skill', 'service'].includes(c.item_type) && '💬'}
+                                      </span>
+                                      <div className="active-sessions-menu-item-meta">
+                                        <span className="active-sessions-menu-title">{c.item_title || 'Request'}</span>
+                                        <span className="active-sessions-menu-subtitle">
+                                          {formatItemType(c.item_type)} • {c.order_status || 'Pending'}
+                                        </span>
+                                      </div>
+                                    </div>
+                                    <div className="active-sessions-menu-item-right">
+                                      {unreadSessions[c.chat_id] && <span className="session-unread-dot-inline" />}
+                                      <button 
+                                        className="active-sessions-close-action-btn"
+                                        onClick={(e) => {
+                                          e.stopPropagation();
+                                          closeSession(c.chat_id, e);
+                                        }}
+                                        title="Archive Order"
+                                      >
+                                        ✕
+                                      </button>
+                                    </div>
+                                  </div>
+                                ))
+                              )}
+                            </div>
+                          </div>
+                        )}
+                      </div>
+
+                      {/* Right actions: History (if any) and details toggle chevron */}
+                      <div className="unified-header-right-actions">
+                        {closedChats.length > 0 && (
+                          <div className="session-history-wrapper" ref={historyRef}>
+                            <button 
+                              className={`history-toggle-btn ${showHistory ? 'active' : ''}`}
+                              onClick={() => setShowHistory(!showHistory)}
+                              title="Order History"
+                            >
+                              <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M12 8v4l3 3"></path><circle cx="12" cy="12" r="10"></circle></svg>
+                              History ({closedChats.length})
+                            </button>
+                            
+                            {showHistory && (
+                              <div className="session-history-dropdown">
+                                <div className="history-dropdown-header">
+                                  <h4>Archived Orders</h4>
+                                </div>
+                                <div className="history-dropdown-list">
+                                  {closedChats.map(c => (
                                     <div 
                                       key={c.chat_id}
-                                      className={`active-sessions-menu-item ${c.chat_id === effectiveChatId ? 'selected' : ''}`}
+                                      className={`history-item-card-new ${c.chat_id === effectiveChatId ? 'selected' : ''}`}
                                       onClick={() => {
                                         setActiveChatId(c.chat_id);
-                                        setUnreadSessions(prev => ({ ...prev, [c.chat_id]: false }));
-                                        setShowActiveSessionsDropdown(false);
+                                        setShowHistory(false);
                                       }}
                                     >
-                                      <div className="active-sessions-menu-item-left">
-                                        <span className="session-card-icon-emoji">
+                                      <div className="history-item-details-new">
+                                        <span className="history-item-icon-emoji">
                                           {c.item_type === 'product' && '📦'}
                                           {c.item_type === 'skill' && '📖'}
                                           {c.item_type === 'service' && '💼'}
                                           {!['product', 'skill', 'service'].includes(c.item_type) && '💬'}
                                         </span>
-                                        <div className="active-sessions-menu-item-meta">
-                                          <span className="active-sessions-menu-title">{c.item_title || 'Request'}</span>
-                                          <span className="active-sessions-menu-subtitle">
+                                        <div className="history-item-meta-new">
+                                          <span className="history-item-title-new">{c.item_title || 'Request'}</span>
+                                          <span className="history-item-subtitle-new">
                                             {formatItemType(c.item_type)} • {c.order_status || 'Pending'}
                                           </span>
                                         </div>
                                       </div>
-                                      <div className="active-sessions-menu-item-right">
-                                        {unreadSessions[c.chat_id] && <span className="session-unread-dot-inline" />}
-                                        <button 
-                                          className="active-sessions-close-action-btn"
-                                          onClick={(e) => {
-                                            e.stopPropagation();
-                                            closeSession(c.chat_id, e);
-                                          }}
-                                          title="Archive Session"
-                                        >
-                                          ✕
-                                        </button>
-                                      </div>
+                                      <button 
+                                        className="session-restore-btn"
+                                        onClick={(e) => {
+                                          e.stopPropagation();
+                                          restoreSession(c.chat_id, e);
+                                        }}
+                                        title="Restore Order"
+                                      >
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><polyline points="23 4 23 10 17 10"></polyline><polyline points="1 20 1 14 7 14"></polyline><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"></path></svg>
+                                      </button>
                                     </div>
-                                  ))
-                                )}
-                              </div>
-                            </div>
-                          )}
-                        </div>
-                      )}
-                    </div>
-
-                    {/* Session History dropdown trigger */}
-                    {closedChats.length > 0 && (
-                      <div className="session-history-wrapper" ref={historyRef}>
-                        <button 
-                          className={`history-toggle-btn ${showHistory ? 'active' : ''}`}
-                          onClick={() => setShowHistory(!showHistory)}
-                          title="Session History"
-                        >
-                          <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M12 8v4l3 3"></path><circle cx="12" cy="12" r="10"></circle></svg>
-                          History ({closedChats.length})
-                        </button>
-                        
-                        {showHistory && (
-                          <div className="session-history-dropdown">
-                            <div className="history-dropdown-header">
-                              <h4>Closed Sessions</h4>
-                            </div>
-                            <div className="history-dropdown-list">
-                              {closedChats.map(c => (
-                                <div 
-                                  key={c.chat_id}
-                                  className={`history-item-card-new ${c.chat_id === effectiveChatId ? 'selected' : ''}`}
-                                  onClick={() => {
-                                    setActiveChatId(c.chat_id);
-                                    setShowHistory(false);
-                                  }}
-                                >
-                                  <div className="history-item-details-new">
-                                    <span className="history-item-icon-emoji">
-                                      {c.item_type === 'product' && '📦'}
-                                      {c.item_type === 'skill' && '📖'}
-                                      {c.item_type === 'service' && '💼'}
-                                      {!['product', 'skill', 'service'].includes(c.item_type) && '💬'}
-                                    </span>
-                                    <div className="history-item-meta-new">
-                                      <span className="history-item-title-new">{c.item_title || 'Request'}</span>
-                                      <span className="history-item-subtitle-new">
-                                        {formatItemType(c.item_type)} • {c.order_status || 'Pending'}
-                                      </span>
-                                    </div>
-                                  </div>
-                                  <button 
-                                    className="session-restore-btn"
-                                    onClick={(e) => {
-                                      e.stopPropagation();
-                                      restoreSession(c.chat_id, e);
-                                    }}
-                                    title="Restore Session"
-                                  >
-                                    <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><polyline points="23 4 23 10 17 10"></polyline><polyline points="1 20 1 14 7 14"></polyline><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"></path></svg>
-                                  </button>
+                                  ))}
                                 </div>
-                              ))}
-                            </div>
+                              </div>
+                            )}
                           </div>
                         )}
-                      </div>
-                    )}
-                  </div>
-                )}
 
-                {/* Fixed session details/actions bar */}
-                {currentChat && (
-                  <div className={`chat-session-info-bar ${detailsExpanded ? 'expanded' : 'collapsed'}`}>
-                    <div className="session-info-header-row">
-                      <div className="session-order-info-card">
-                        <div className="card-item-details">
-                          <span className="card-item-type-tag">
-                            {currentChat.item_type === 'product' && '📦'}
-                            {currentChat.item_type === 'skill' && '📖'}
-                            {currentChat.item_type === 'service' && '💼'}
-                            {!['product', 'skill', 'service'].includes(currentChat.item_type) && '💬'}
-                            {' '}{formatItemType(currentChat.item_type)}
-                          </span>
-                          <span className="card-item-separator">•</span>
-                          <span className="card-item-title" title={currentChat.item_title || 'Request'}>
-                            {currentChat.item_title || 'Request'}
-                          </span>
-                        </div>
-                        <div className="card-status-details">
-                          <div className="card-status-group">
-                            <span className="status-label">Order Status:</span>
-                            <span className={`status-badge-inline order-${(currentChat.order_status || 'Pending').toLowerCase()}`}>
-                              {currentChat.order_status || 'Pending'}
-                            </span>
-                          </div>
-                          <span className="card-status-separator">|</span>
-                          <div className="card-status-group">
-                            <span className="status-label">Chat Status:</span>
-                            <span className={`status-badge-inline chat-${(currentChat.chat_status || 'Active').toLowerCase()}`}>
-                              {currentChat.chat_status || 'Active'}
-                            </span>
-                          </div>
-                        </div>
+                        <button 
+                          className={`session-details-toggle-btn ${detailsExpanded ? 'expanded' : 'collapsed'}`}
+                          onClick={() => setDetailsExpanded(!detailsExpanded)}
+                          title={detailsExpanded ? "Hide Details" : "Show Details & Actions"}
+                          aria-label={detailsExpanded ? "Hide Details" : "Show Details & Actions"}
+                          aria-expanded={detailsExpanded}
+                        >
+                          <svg className="toggle-chevron" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                            <polyline points="6 9 12 15 18 9"></polyline>
+                          </svg>
+                        </button>
                       </div>
-                      <button 
-                        className={`session-details-toggle-btn ${detailsExpanded ? 'expanded' : 'collapsed'}`}
-                        onClick={() => setDetailsExpanded(!detailsExpanded)}
-                        title={detailsExpanded ? "Hide Details" : "Show Details"}
-                        aria-label={detailsExpanded ? "Hide Details" : "Show Details"}
-                        aria-expanded={detailsExpanded}
-                      >
-                        <svg className="toggle-chevron" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-                          <polyline points="6 9 12 15 18 9"></polyline>
-                        </svg>
-                      </button>
                     </div>
 
                     <div className="session-progress-tracker-container">
@@ -1293,6 +1245,27 @@ const Messages = () => {
                   {/* Messages timeline for activeChatId */}
                   {effectiveChatId && (
                     <div className="chat-session-messages-list">
+                      {currentChat && (
+                        <div className="order-context-timeline-summary">
+                          <div className="summary-card-header">
+                            <span className="summary-card-icon">
+                              {currentChat.item_type === 'product' && '📦'}
+                              {currentChat.item_type === 'skill' && '📖'}
+                              {currentChat.item_type === 'service' && '💼'}
+                              {!['product', 'skill', 'service'].includes(currentChat.item_type) && '💬'}
+                            </span>
+                            <div className="summary-card-info">
+                              <h4>{currentChat.item_title || 'Request'}</h4>
+                              <span className="summary-card-subtitle">
+                                {formatItemType(currentChat.item_type)} • Created on {formatCreatedDate(currentChat.created_at)}
+                              </span>
+                            </div>
+                            <span className={`summary-card-status order-${(currentChat.order_status || 'Pending').toLowerCase()}`}>
+                              {currentChat.order_status || 'Pending'}
+                            </span>
+                          </div>
+                        </div>
+                      )}
                       {messages
                         .filter(m => m.chat_id === effectiveChatId)
                         .map((msg, mIdx) => {
