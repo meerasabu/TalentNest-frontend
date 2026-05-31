@@ -303,7 +303,6 @@ const ProductDetails = () => {
                  <div style={{ color: '#6B7280', padding: '1rem 0', fontSize: '0.9rem' }}>Loading reviews...</div>
                ) : reviews.length === 0 ? (
                  <div style={{ textAlign: 'center', padding: '2.5rem 1rem', color: '#9CA3AF', fontSize: '0.95rem' }}>
-                   <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="#D1D5DB" strokeWidth="1.5" style={{ marginBottom: '0.75rem' }}><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon></svg>
                    <div>No reviews yet for this product.</div>
                    <div style={{ fontSize: '0.82rem', marginTop: '4px', color: '#CBD5E1' }}>Be the first to buy and review!</div>
                  </div>

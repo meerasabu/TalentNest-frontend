@@ -252,7 +252,7 @@ const ServiceDetails = () => {
                       >
                         <span className="sd-pkg-ribbon">STANDARD</span>
                         <h4 className="sd-pkg-title">Basic Plan</h4>
-                        <div className="sd-pkg-price">₹{service.standard_plan} <span className="sd-pkg-period"></span></div>
+                        <div className="sd-pkg-price">₹{service.standard_plan}/hr <span className="sd-pkg-period"></span></div>
                         <ul className="sd-pkg-features">
                           <li><svg className="sd-chk-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><polyline points="20 6 9 17 4 12"></polyline></svg> Comprehensive Service</li>
                           <li><svg className="sd-chk-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><polyline points="20 6 9 17 4 12"></polyline></svg> Direct Communication</li>
@@ -266,7 +266,7 @@ const ServiceDetails = () => {
                         onClick={() => setSelectedPlan(selectedPlan === 'Group/Premium Plan' ? null : 'Group/Premium Plan')}
                       >
                         <h4 className="sd-pkg-title">Group/Premium Plan</h4>
-                        <div className="sd-pkg-price">₹{service.group_plan} <span className="sd-pkg-period"></span></div>
+                        <div className="sd-pkg-price">₹{service.group_plan}/hr <span className="sd-pkg-period"></span></div>
                         <ul className="sd-pkg-features">
                           <li><svg className="sd-chk-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><polyline points="20 6 9 17 4 12"></polyline></svg> Extended Service</li>
                           <li><svg className="sd-chk-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><polyline points="20 6 9 17 4 12"></polyline></svg> Group Sessions</li>
@@ -284,7 +284,6 @@ const ServiceDetails = () => {
                     <div style={{ color: '#6B7280', padding: '1rem 0', fontSize: '0.9rem' }}>Loading reviews...</div>
                   ) : totalReviews === 0 ? (
                     <div style={{ textAlign: 'center', padding: '2.5rem 1rem', color: '#9CA3AF', fontSize: '0.95rem' }}>
-                      <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="#D1D5DB" strokeWidth="1.5" style={{ marginBottom: '0.75rem' }}><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon></svg>
                       <div>No reviews yet for this service.</div>
                       <div style={{ fontSize: '0.82rem', marginTop: '4px', color: '#CBD5E1' }}>Be the first to book and review!</div>
                     </div>
@@ -413,7 +412,7 @@ const ServiceDetails = () => {
               <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M12 2L2 7l10 5 10-5-10-5z"></path><path d="M2 17l10 5 10-5"></path><path d="M2 12l10 5 10-5"></path></svg>
               <span>{selectedPlan}</span>
               <span className="sd-modal-plan-price">
-                ₹{selectedPlan === 'Basic Plan' ? service.standard_plan : service.group_plan}
+                ₹{selectedPlan === 'Basic Plan' ? service.standard_plan : service.group_plan}/hr
               </span>
             </div>
 

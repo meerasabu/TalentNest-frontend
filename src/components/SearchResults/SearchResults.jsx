@@ -128,7 +128,7 @@ const SearchResults = () => {
       </div>
       <div>
         <h3 style={{fontSize: '1.125rem', fontWeight: '700', color: '#111827', margin: '0 0 0.25rem 0'}}>{service.title}</h3>
-        <p style={{fontSize: '1rem', fontWeight: '800', color: '#F59E0B', margin: '0 0 0.5rem 0'}}>{service.standard_plan ? `₹${service.standard_plan}` : 'Custom'}</p>
+        <p style={{fontSize: '1rem', fontWeight: '800', color: '#F59E0B', margin: '0 0 0.5rem 0'}}>{service.standard_plan ? `₹${service.standard_plan}/hr` : 'Custom'}</p>
         <p style={{fontSize: '0.875rem', color: '#6B7280', margin: '0'}}>{service.service_type || 'General'}</p>
       </div>
     </div>

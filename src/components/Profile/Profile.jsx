@@ -385,7 +385,7 @@ const Profile = () => {
                  </div>
                  <span className="sk-cat">{service.category}</span>
                  <div className="sk-btm-row">
-                   <span className="price-lbl">💼 {service.standard_plan ? '₹'+service.standard_plan : 'Custom'}</span>
+                   <span className="price-lbl">💼 {service.standard_plan ? '₹'+service.standard_plan+'/hr' : 'Custom'}</span>
                    {service.status === 'Active' ? (
                      <span className="act-pill">ACTIVE</span>
                    ) : (

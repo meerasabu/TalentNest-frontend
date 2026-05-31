@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useNotifications } from '../../context/NotificationContext';
+import api from '../../api/axiosConfig';
 
 const Header = ({ 
   user, 
@@ -13,8 +14,30 @@ const Header = ({
   const [searchQuery, setSearchQuery] = useState('');
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const dropdownRef = useRef(null);
+  const [wishlistCount, setWishlistCount] = useState(0);
   
   const { unreadNotificationCount, unreadChatCount } = useNotifications() || { unreadNotificationCount: 0, unreadChatCount: 0 };
+
+  useEffect(() => {
+    if (!user || !user.id) return;
+    const fetchWishlistCount = async () => {
+      try {
+        const res = await api.get(`/wishlist/users/${user.id}`);
+        if (res.data.success) {
+          setWishlistCount(res.data.items.length);
+        }
+      } catch (err) {
+        console.error('Error fetching wishlist count:', err);
+      }
+    };
+
+    fetchWishlistCount();
+
+    window.addEventListener('wishlistUpdated', fetchWishlistCount);
+    return () => {
+      window.removeEventListener('wishlistUpdated', fetchWishlistCount);
+    };
+  }, [user?.id]);
 
   // Click-away listener to close profile dropdown
   useEffect(() => {
@@ -76,6 +99,7 @@ const Header = ({
         </div>
         <div className="icon-wrapper" onClick={() => navigate('/wishlist', { state: { user } })} style={{cursor: 'pointer'}} title="Wishlist">
           <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="nav-icon"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path></svg>
+          {wishlistCount > 0 && <span className="notif-badge">{wishlistCount}</span>}
         </div>
         <div className="icon-wrapper notification-icon" onClick={() => navigate('/notifications', { state: { user } })} style={{cursor: 'pointer'}} title="Notifications">
           <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="nav-icon"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"></path><path d="M13.73 21a2 2 0 0 1-3.46 0"></path></svg>

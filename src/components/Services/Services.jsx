@@ -30,6 +30,20 @@ const Services = () => {
   const [sortBy, setSortBy] = useState('latest');
   const [searchQuery, setSearchQuery] = useState('');
 
+  const [wishlistIds, setWishlistIds] = useState(new Set());
+
+  const fetchWishlist = async () => {
+    try {
+      const res = await api.get(`/wishlist/users/${user.id}`);
+      if (res.data.success) {
+        const ids = new Set(res.data.items.filter(item => item.type === 'service').map(item => item.id));
+        setWishlistIds(ids);
+      }
+    } catch (err) {
+      console.error('Error fetching wishlist:', err);
+    }
+  };
+
   useEffect(() => {
     const fetchServices = async () => {
       try {
@@ -46,22 +60,37 @@ const Services = () => {
       }
     };
     fetchServices();
+    fetchWishlist();
   }, []);
 
   const handleAddToWishlist = async (e, itemId) => {
     e.stopPropagation();
+    const isWishlisted = wishlistIds.has(itemId);
     try {
-      const res = await api.post('/wishlist', {
-        userId: user.id,
-        itemType: 'service',
-        itemId
-      });
-      if (res.data.success) {
-        alert(res.data.message || 'Added to wishlist!');
+      if (isWishlisted) {
+        const res = await api.delete(`/wishlist/${user.id}/service/${itemId}`);
+        if (res.data.success) {
+          const newIds = new Set(wishlistIds);
+          newIds.delete(itemId);
+          setWishlistIds(newIds);
+          window.dispatchEvent(new Event('wishlistUpdated'));
+        }
+      } else {
+        const res = await api.post('/wishlist', {
+          userId: user.id,
+          itemType: 'service',
+          itemId
+        });
+        if (res.data.success) {
+          const newIds = new Set(wishlistIds);
+          newIds.add(itemId);
+          setWishlistIds(newIds);
+          window.dispatchEvent(new Event('wishlistUpdated'));
+        }
       }
     } catch (err) {
-      console.error('Error adding to wishlist:', err);
-      alert('Failed to add to wishlist.');
+      console.error('Error toggling wishlist:', err);
+      alert('Failed to update wishlist.');
     }
   };
 
@@ -294,7 +323,16 @@ const Services = () => {
                          </span>
                        )}
                        <span className="heart-icon-layer" onClick={(e) => handleAddToWishlist(e, service.id)}>
-                         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#6B7280" strokeWidth="2"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path></svg>
+                         <svg 
+                            width="16" 
+                            height="16" 
+                            viewBox="0 0 24 24" 
+                            fill={wishlistIds.has(service.id) ? "#EF4444" : "none"} 
+                            stroke={wishlistIds.has(service.id) ? "#EF4444" : "#6B7280"} 
+                            strokeWidth="2"
+                          >
+                            <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path>
+                          </svg>
                        </span>
                      </div>
                      <div className="srv-card-body">
@@ -307,7 +345,7 @@ const Services = () => {
 
                        <div className="srv-card-footer">
                          <span className="srv-foot-sess">{service.service_type || 'Flexible'}</span>
-                         <span className="srv-foot-price">{service.standard_plan ? '₹'+service.standard_plan : 'Custom'}</span>
+                         <span className="srv-foot-price">{service.standard_plan ? '₹'+service.standard_plan+'/hr' : 'Custom'}</span>
                        </div>
                      </div>
                    </div>

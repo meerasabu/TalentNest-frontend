@@ -43,6 +43,7 @@ const Wishlist = () => {
       const res = await api.delete(`/wishlist/${user.id}/${itemType}/${itemId}`);
       if (res.data.success) {
         setWishlistItems(prev => prev.filter(item => !(item.type === itemType && item.id === itemId)));
+        window.dispatchEvent(new Event('wishlistUpdated'));
       }
     } catch (err) {
       console.error('Error removing wishlist item:', err);
@@ -86,7 +87,7 @@ const Wishlist = () => {
                   <div className="card-details">
                     <h3 className="card-title">{item.title}</h3>
                     <div className="card-meta">
-                      <span className="card-price">₹{item.price}</span>
+                      <span className="card-price">₹{item.price}{item.type === 'service' ? '/hr' : ''}</span>
                       <span className="card-status">{item.status?.toUpperCase() || 'AVAILABLE'}</span>
                     </div>
                     <div style={{display: 'flex', gap: '0.5rem'}}>
