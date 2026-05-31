@@ -11,6 +11,127 @@ import { usePresence } from '../../context/PresenceContext';
 import { useConfirmation } from '../../context/ConfirmationContext';
 import { useToast } from '../../context/ToastContext';
 
+// Helper functions for session header clarity
+const getItemTypeIcon = (type) => {
+  switch (type?.toLowerCase()) {
+    case 'product':
+      return (
+        <svg className="item-type-icon product" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+          <path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"></path>
+          <polyline points="3.27 6.96 12 12.01 20.73 6.96"></polyline>
+          <line x1="12" y1="22.08" x2="12" y2="12"></line>
+        </svg>
+      );
+    case 'skill':
+      return (
+        <svg className="item-type-icon skill" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+          <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"></path>
+          <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"></path>
+        </svg>
+      );
+    case 'service':
+      return (
+        <svg className="item-type-icon service" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+          <rect x="2" y="7" width="20" height="14" rx="2" ry="2"></rect>
+          <path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"></path>
+        </svg>
+      );
+    default:
+      return (
+        <svg className="item-type-icon request" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+          <circle cx="12" cy="12" r="10"></circle>
+          <line x1="12" y1="16" x2="12" y2="12"></line>
+          <line x1="12" y1="8" x2="12.01" y2="8"></line>
+        </svg>
+      );
+  }
+};
+
+const formatItemType = (type) => {
+  if (!type) return 'Request';
+  if (type.toLowerCase() === 'skill') return 'Skill Share';
+  return type.charAt(0).toUpperCase() + type.slice(1);
+};
+
+const renderProgressTracker = (orderStatus, chatStatus) => {
+  const isCancelled = orderStatus === 'Cancelled' || chatStatus === 'Cancelled';
+  
+  let step1Class = 'completed'; 
+  let step2Class = 'upcoming';
+  let step3Class = 'upcoming';
+  
+  if (orderStatus === 'Accepted') {
+    step2Class = 'completed';
+  } else if (orderStatus === 'Completed' || chatStatus === 'Completed') {
+    step2Class = 'completed';
+    step3Class = 'completed';
+  }
+  
+  if (isCancelled) {
+    if (orderStatus === 'Pending') {
+      step2Class = 'cancelled';
+    } else {
+      step2Class = 'completed';
+      step3Class = 'cancelled';
+    }
+  }
+
+  return (
+    <div className="progress-tracker">
+      <div className={`tracker-step ${step1Class}`}>
+        <div className="step-circle">
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round">
+            <polyline points="20 6 9 17 4 12"></polyline>
+          </svg>
+        </div>
+        <div className="step-label">Request Sent</div>
+      </div>
+      
+      <div className={`tracker-line ${step2Class === 'completed' ? 'active' : step2Class === 'cancelled' ? 'cancelled' : ''}`} />
+      
+      <div className={`tracker-step ${step2Class}`}>
+        <div className="step-circle">
+          {step2Class === 'cancelled' ? (
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round">
+              <line x1="18" y1="6" x2="6" y2="18"></line>
+              <line x1="6" y1="6" x2="18" y2="18"></line>
+            </svg>
+          ) : step2Class === 'completed' ? (
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round">
+              <polyline points="20 6 9 17 4 12"></polyline>
+            </svg>
+          ) : (
+            <span>2</span>
+          )}
+        </div>
+        <div className="step-label">
+          {step2Class === 'cancelled' ? 'Declined / Cancelled' : 'Accepted'}
+        </div>
+      </div>
+      
+      <div className={`tracker-line ${step3Class === 'completed' ? 'active' : step3Class === 'cancelled' ? 'cancelled' : ''}`} />
+      
+      <div className={`tracker-step ${step3Class}`}>
+        <div className="step-circle">
+          {step3Class === 'cancelled' ? (
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round">
+              <line x1="18" y1="6" x2="6" y2="18"></line>
+              <line x1="6" y1="6" x2="18" y2="18"></line>
+            </svg>
+          ) : step3Class === 'completed' ? (
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round">
+              <polyline points="20 6 9 17 4 12"></polyline>
+            </svg>
+          ) : (
+            <span>3</span>
+          )}
+        </div>
+        <div className="step-label">Completed</div>
+      </div>
+    </div>
+  );
+};
+
 const Messages = () => {
   const location = useLocation();
   const navigate = useNavigate();
@@ -856,17 +977,34 @@ const Messages = () => {
                   <div className={`chat-session-info-bar ${detailsExpanded ? 'expanded' : 'collapsed'}`}>
                     <div className="session-info-header-row">
                       <div className="session-info-meta-basic">
-                        <span className="session-info-type">{currentChat.item_type || 'Request'}</span>
-                        <h4 className="session-info-title">{currentChat.item_title || 'Request'}</h4>
-                        {currentChat.chat_status === 'Completed' || currentChat.order_status === 'Completed' ? (
-                          <span className="session-badge completed">Completed</span>
-                        ) : currentChat.chat_status === 'Cancelled' || currentChat.order_status === 'Cancelled' ? (
-                          <span className="session-badge cancelled">Cancelled</span>
-                        ) : currentChat.order_status === 'Pending' ? (
-                          <span className="session-badge pending">Pending</span>
-                        ) : (
-                          <span className="session-badge active">Active</span>
-                        )}
+                        <div className="session-item-type-container">
+                          {getItemTypeIcon(currentChat.item_type)}
+                          <span className="session-item-type-text">
+                            {formatItemType(currentChat.item_type)}
+                          </span>
+                        </div>
+                        
+                        <div className="session-title-section">
+                          <h4 className="session-info-title" title={currentChat.item_title || 'Request'}>
+                            {currentChat.item_title || 'Request'}
+                          </h4>
+                        </div>
+
+                        <div className="session-labels-grid">
+                          <div className="session-label-group">
+                            <span className="session-label-title">Order Status:</span>
+                            <span className={`session-badge-new order-${(currentChat.order_status || 'Pending').toLowerCase()}`}>
+                              {currentChat.order_status || 'Pending'}
+                            </span>
+                          </div>
+                          
+                          <div className="session-label-group">
+                            <span className="session-label-title">Chat Session:</span>
+                            <span className={`session-badge-new chat-${(currentChat.chat_status || 'Active').toLowerCase()}`}>
+                              {currentChat.chat_status || 'Active'}
+                            </span>
+                          </div>
+                        </div>
                       </div>
                       <button 
                         className={`session-details-toggle-btn ${detailsExpanded ? 'expanded' : 'collapsed'}`}
@@ -879,6 +1017,10 @@ const Messages = () => {
                           <polyline points="6 9 12 15 18 9"></polyline>
                         </svg>
                       </button>
+                    </div>
+
+                    <div className="session-progress-tracker-container">
+                      {renderProgressTracker(currentChat.order_status, currentChat.chat_status)}
                     </div>
 
                     <div className={`session-info-details-row ${detailsExpanded ? 'expanded' : 'collapsed'}`}>

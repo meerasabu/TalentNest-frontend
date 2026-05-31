@@ -820,6 +820,234 @@
   box-shadow: 0 0 0 2.5px #ffffff;
 }
 
+/* Enhanced Session Info Layout */
+.session-item-type-container {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  font-size: 0.65rem;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  padding: 0.25rem 0.6rem;
+  background: #f1f5f9;
+  color: #475569;
+  border-radius: 6px;
+  border: 1px solid #e2e8f0;
+}
+
+.item-type-icon {
+  flex-shrink: 0;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.item-type-icon.product {
+  color: #06b6d4 !important;
+}
+
+.item-type-icon.skill {
+  color: #a855f7 !important;
+}
+
+.item-type-icon.service {
+  color: #3b82f6 !important;
+}
+
+.item-type-icon.request {
+  color: #64748b !important;
+}
+
+.session-item-type-text {
+  font-weight: 800;
+}
+
+.session-title-section {
+  display: flex;
+  align-items: center;
+}
+
+.session-labels-grid {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+
+.session-label-group {
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
+  font-size: 0.75rem;
+}
+
+.session-label-title {
+  font-weight: 600;
+  color: #64748b;
+}
+
+.session-badge-new {
+  font-size: 0.68rem;
+  font-weight: 750;
+  padding: 0.2rem 0.6rem;
+  border-radius: 12px;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  border: 1px solid;
+}
+
+.session-badge-new.order-pending {
+  background: #fef3c7;
+  color: #d97706;
+  border-color: #fde68a;
+}
+
+.session-badge-new.order-accepted {
+  background: #ecfdf5;
+  color: #059669;
+  border-color: #a7f3d0;
+}
+
+.session-badge-new.order-completed {
+  background: #e0e7ff;
+  color: #4f46e5;
+  border-color: #c7d2fe;
+}
+
+.session-badge-new.order-cancelled {
+  background: #fef2f2;
+  color: #dc2626;
+  border-color: #fecaca;
+}
+
+.session-badge-new.chat-active {
+  background: #f0fdf4;
+  color: #16a34a;
+  border-color: #bbf7d0;
+}
+
+.session-badge-new.chat-completed {
+  background: #e0e7ff;
+  color: #4f46e5;
+  border-color: #c7d2fe;
+}
+
+.session-badge-new.chat-cancelled {
+  background: #fef2f2;
+  color: #dc2626;
+  border-color: #fecaca;
+}
+
+.session-badge-new.chat-restricted {
+  background: #fff7ed;
+  color: #ea580c;
+  border-color: #ffedd5;
+}
+
+/* Progress Tracker Styles */
+.session-progress-tracker-container {
+  margin-top: 0.75rem;
+  padding-bottom: 0.25rem;
+  width: 100%;
+}
+
+.progress-tracker {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  max-width: 500px;
+  margin: 0 auto;
+}
+
+.tracker-step {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  position: relative;
+  z-index: 2;
+  gap: 0.35rem;
+}
+
+.step-circle {
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  background: #f1f5f9;
+  border: 2px solid #e2e8f0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.75rem;
+  font-weight: 700;
+  color: #94a3b8;
+  transition: all 0.3s ease;
+}
+
+.step-circle svg {
+  width: 12px;
+  height: 12px;
+  color: #ffffff;
+}
+
+.step-label {
+  font-size: 0.72rem;
+  font-weight: 600;
+  color: #64748b;
+  text-align: center;
+  white-space: nowrap;
+}
+
+.tracker-line {
+  flex: 1;
+  height: 2px;
+  background: #e2e8f0;
+  margin: 0 0.5rem;
+  margin-top: -16px;
+  position: relative;
+  z-index: 1;
+  transition: all 0.3s ease;
+}
+
+.tracker-step.completed .step-circle {
+  background: #4f46e5;
+  border-color: #4f46e5;
+  color: #ffffff;
+  box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.15);
+}
+
+.tracker-step.completed .step-label {
+  color: #4f46e5;
+  font-weight: 700;
+}
+
+.tracker-line.active {
+  background: #4f46e5;
+}
+
+.tracker-step.upcoming .step-circle {
+  background: #ffffff;
+  border-color: #cbd5e1;
+  color: #64748b;
+}
+
+.tracker-step.cancelled .step-circle {
+  background: #ef4444;
+  border-color: #ef4444;
+  color: #ffffff;
+  box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.15);
+}
+
+.tracker-step.cancelled .step-label {
+  color: #ef4444;
+  font-weight: 700;
+}
+
+.tracker-line.cancelled {
+  background: #ef4444;
+}
+
 /* Fixed Session Details/Actions Bar */
 .chat-session-info-bar {
   display: flex;
