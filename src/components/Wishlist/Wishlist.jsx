@@ -5,6 +5,7 @@ import Sidebar from '../Common/Sidebar';
 import '../Dashboard/Index.css';
 import './Wishlist.css';
 import Header from '../Common/Header';
+import { useConfirmation } from '../../context/ConfirmationContext';
 
 const Wishlist = () => {
   const navigate = useNavigate();
@@ -13,6 +14,7 @@ const Wishlist = () => {
   
   const [wishlistItems, setWishlistItems] = useState([]);
   const [loading, setLoading] = useState(true);
+  const { confirm } = useConfirmation();
 
   const user = location.state?.user || JSON.parse(localStorage.getItem('user'));
   const token = localStorage.getItem('token');
@@ -39,16 +41,22 @@ const Wishlist = () => {
   }, [user.id]);
 
   const handleRemoveFromWishlist = async (itemType, itemId) => {
-    try {
-      const res = await api.delete(`/wishlist/${user.id}/${itemType}/${itemId}`);
-      if (res.data.success) {
-        setWishlistItems(prev => prev.filter(item => !(item.type === itemType && item.id === itemId)));
-        window.dispatchEvent(new Event('wishlistUpdated'));
+    await confirm({
+      title: 'Remove from Wishlist',
+      message: 'Are you sure you want to remove this item from your wishlist?',
+      type: 'warning',
+      confirmText: 'Remove',
+      cancelText: 'Cancel',
+      onConfirm: async () => {
+        const res = await api.delete(`/wishlist/${user.id}/${itemType}/${itemId}`);
+        if (res.data.success) {
+          setWishlistItems(prev => prev.filter(item => !(item.type === itemType && item.id === itemId)));
+          window.dispatchEvent(new Event('wishlistUpdated'));
+        } else {
+          throw new Error(res.data.message || 'Failed to remove item.');
+        }
       }
-    } catch (err) {
-      console.error('Error removing wishlist item:', err);
-      alert('Failed to remove item.');
-    }
+    });
   };
 
   const filteredItems = activeTab === 'all' ? wishlistItems : wishlistItems.filter(item => item.type === activeTab);

@@ -6,6 +6,7 @@ import Pagination from '../Common/Pagination';
 import '../Dashboard/Index.css';
 import './Orders.css';
 import Header from '../Common/Header';
+import { useConfirmation } from '../../context/ConfirmationContext';
 
 const Orders = () => {
   const navigate = useNavigate();
@@ -17,6 +18,7 @@ const Orders = () => {
     return <Navigate to="/login" />;
   }
   const handlePrefix = user.email ? user.email.split('@')[0].toUpperCase() : '';
+  const { confirm } = useConfirmation();
 
   const [activeTab, setActiveTab] = useState(() => {
     try {
@@ -124,36 +126,89 @@ const Orders = () => {
   }, [user.id]);
 
   const handleUpdateStatus = async (orderId, newStatus) => {
-    try {
-      const res = await api.put(`/orders/${orderId}/status`, { status: newStatus });
-      if (res.data.success) {
-        fetchOrders();
-        if (newStatus === 'Accepted') {
-          navigate('/messages', { state: { user, orderId } });
+    if (newStatus === 'Accepted') {
+      await confirm({
+        title: 'Accept Request',
+        message: 'Are you sure you want to accept this request? A chat session will be created for you to communicate with the buyer.',
+        type: 'success',
+        confirmText: 'Accept Request',
+        cancelText: 'Cancel',
+        onConfirm: async () => {
+          const res = await api.put(`/orders/${orderId}/status`, { status: newStatus });
+          if (res.data.success) {
+            fetchOrders();
+            navigate('/messages', { state: { user, orderId } });
+          } else {
+            throw new Error(res.data.message || 'Failed to accept request.');
+          }
         }
+      });
+    } else if (newStatus === 'Rejected') {
+      await confirm({
+        title: 'Reject Request',
+        message: 'Are you sure you want to reject this request? This action cannot be undone.',
+        type: 'danger',
+        confirmText: 'Reject Request',
+        cancelText: 'Cancel',
+        onConfirm: async () => {
+          const res = await api.put(`/orders/${orderId}/status`, { status: newStatus });
+          if (res.data.success) {
+            fetchOrders();
+          } else {
+            throw new Error(res.data.message || 'Failed to reject request.');
+          }
+        }
+      });
+    } else {
+      try {
+        const res = await api.put(`/orders/${orderId}/status`, { status: newStatus });
+        if (res.data.success) {
+          fetchOrders();
+        }
+      } catch (err) {
+        console.error('Error updating status:', err);
+        alert('Failed to update order status');
       }
-    } catch (err) {
-      console.error('Error updating status:', err);
-      alert('Failed to update order status');
     }
   };
 
   const handleDeleteOrder = async (orderId) => {
-    if (!window.confirm("Are you sure you want to cancel this request? This will restore inventory and disable the chat.")) return;
-    try {
-      const res = await api.post(`/orders/${orderId}/cancel`);
-      if (res.data.success) {
-        alert("Order cancelled successfully.");
-        // Refresh orders
-        const bRes = await api.get(`/orders/buyer/${user.id}`);
-        if (bRes.data.success) setBuyerOrders(bRes.data.orders);
-        const sRes = await api.get(`/orders/seller/${user.id}`);
-        if (sRes.data.success) setSellerOrders(sRes.data.orders);
+    await confirm({
+      title: 'Cancel Order Request',
+      message: 'Are you sure you want to cancel this request? This will restore inventory and disable the chat.',
+      type: 'warning',
+      confirmText: 'Cancel Request',
+      cancelText: 'Keep Request',
+      onConfirm: async () => {
+        const res = await api.post(`/orders/${orderId}/cancel`);
+        if (res.data.success) {
+          alert("Order cancelled successfully.");
+          // Refresh orders
+          const bRes = await api.get(`/orders/buyer/${user.id}`);
+          if (bRes.data.success) setBuyerOrders(bRes.data.orders);
+          const sRes = await api.get(`/orders/seller/${user.id}`);
+          if (sRes.data.success) setSellerOrders(sRes.data.orders);
+        } else {
+          throw new Error(res.data.message || 'Failed to cancel request.');
+        }
       }
-    } catch (err) {
-      console.error('Error cancelling order:', err);
-      alert(err.response?.data?.message || 'Failed to cancel request.');
-    }
+    });
+  };
+
+  const handleDeleteOrdersConfirm = async (idsToDelete) => {
+    const isMultiple = idsToDelete.length > 1;
+    await confirm({
+      title: isMultiple ? 'Delete Selected Requests' : 'Delete Request',
+      message: isMultiple 
+        ? `Are you sure you want to delete the ${idsToDelete.length} selected requests from your view?` 
+        : 'Are you sure you want to delete this request from your view? This will only hide it from your dashboard.',
+      type: 'danger',
+      confirmText: 'Delete',
+      cancelText: 'Cancel',
+      onConfirm: () => {
+        deleteOrders(idsToDelete);
+      }
+    });
   };
 
   const openReviewModal = (order) => {
@@ -466,11 +521,7 @@ const Orders = () => {
                 
                 <button 
                   className="ord-bulk-delete-btn"
-                  onClick={() => {
-                    if (window.confirm(`Are you sure you want to delete ${selectedIds.length} selected orders?`)) {
-                      deleteOrders(selectedIds);
-                    }
-                  }}
+                  onClick={() => handleDeleteOrdersConfirm(selectedIds)}
                 >
                   <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
                     <polyline points="3 6 5 6 21 6"></polyline>
@@ -620,11 +671,7 @@ const Orders = () => {
                   <button 
                     className="ord-delete-single-btn" 
                     title="Delete request"
-                    onClick={() => {
-                      if (window.confirm("Are you sure you want to delete this request from your view?")) {
-                        deleteOrders([order.id]);
-                      }
-                    }}
+                    onClick={() => handleDeleteOrdersConfirm([order.id])}
                   >
                     <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
                       <polyline points="3 6 5 6 21 6"></polyline>

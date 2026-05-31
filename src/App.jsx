@@ -38,6 +38,7 @@ import AdminVerification from './components/Admin/AdminVerification';
 import AdminReports from './components/Admin/AdminReports';
 import { NotificationProvider } from './context/NotificationContext';
 import { PresenceProvider } from './context/PresenceContext';
+import { ConfirmationProvider } from './context/ConfirmationContext';
 import ErrorBoundary from './components/Common/ErrorBoundary';
 
 const About = () => <div style={{ padding: '2rem' }}><h1>About TalentNest</h1><p>A campus ecosystem for student talent.</p></div>;
@@ -47,8 +48,9 @@ function App() {
     <ErrorBoundary>
     <Router>
       <PresenceProvider>
-        <NotificationProvider>
-          <Routes>
+        <ConfirmationProvider>
+          <NotificationProvider>
+            <Routes>
           <Route path="/" element={<Home />} />
           <Route path="/admin" element={<AdminDashboard />} />
           <Route path="/admin/students" element={<AdminStudents />} />
@@ -90,6 +92,7 @@ function App() {
           <Route path="/search" element={<SearchResults />} />
           </Routes>
         </NotificationProvider>
+        </ConfirmationProvider>
       </PresenceProvider>
     </Router>
     </ErrorBoundary>

@@ -4,6 +4,7 @@ import { useNavigate, useLocation, Navigate } from 'react-router-dom';
 import Sidebar from '../Common/Sidebar';
 import '../Dashboard/Index.css'; 
 import './Profile.css';
+import { useConfirmation } from '../../context/ConfirmationContext';
 
 const Profile = () => {
   const navigate = useNavigate();
@@ -11,6 +12,7 @@ const Profile = () => {
   // Extract user and token for persistent sessions
   const user = location.state?.user || JSON.parse(localStorage.getItem('user'));
   const token = localStorage.getItem('token');
+  const { confirm } = useConfirmation();
 
   if (!user || !token || token === 'undefined') {
     return <Navigate to="/login" />;
@@ -206,24 +208,30 @@ const Profile = () => {
   };
 
   const handleDeleteItem = async (id, type) => {
-    if (!window.confirm(`Are you sure you want to delete this ${type.slice(0, -1)}?`)) return;
-    try {
-      const endpoint = `/${type}/${id}`;
-      const res = await api.delete(endpoint);
-      if (res.data.success) {
-        // Update local state
-        if (type === 'products') {
-          setUserProducts(userProducts.filter(p => p.id !== id));
-        } else if (type === 'skills') {
-          setUserSkills(userSkills.filter(s => s.id !== id));
-        } else if (type === 'services') {
-          setUserServices(userServices.filter(srv => srv.id !== id));
+    const itemTypeSingular = type.slice(0, -1);
+    await confirm({
+      title: `Delete ${itemTypeSingular.charAt(0).toUpperCase() + itemTypeSingular.slice(1)} Listing`,
+      message: `Are you sure you want to delete this ${itemTypeSingular}? This action cannot be undone.`,
+      type: 'danger',
+      confirmText: 'Delete',
+      cancelText: 'Cancel',
+      onConfirm: async () => {
+        const endpoint = `/${type}/${id}`;
+        const res = await api.delete(endpoint);
+        if (res.data.success) {
+          // Update local state
+          if (type === 'products') {
+            setUserProducts(userProducts.filter(p => p.id !== id));
+          } else if (type === 'skills') {
+            setUserSkills(userSkills.filter(s => s.id !== id));
+          } else if (type === 'services') {
+            setUserServices(userServices.filter(srv => srv.id !== id));
+          }
+        } else {
+          throw new Error(res.data.message || 'Failed to delete listing.');
         }
       }
-    } catch (err) {
-      console.error(`Error deleting ${type}:`, err);
-      alert('Failed to delete item.');
-    }
+    });
   };
 
   // Hardcoded structure rendering logic mimicking specific visual boundaries completely!

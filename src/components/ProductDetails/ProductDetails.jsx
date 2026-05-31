@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import api from '../../api/axiosConfig';
 import { useNavigate, useLocation, useParams, Navigate } from 'react-router-dom';
+import { useConfirmation } from '../../context/ConfirmationContext';
 import Sidebar from '../Common/Sidebar';
 import '../Dashboard/Index.css'; 
 import './ProductDetails.css';
@@ -10,6 +11,7 @@ const ProductDetails = () => {
   const navigate = useNavigate();
   const location = useLocation();
   const { id } = useParams();
+  const { confirm } = useConfirmation();
   
   const user = location.state?.user || JSON.parse(localStorage.getItem('user'));
   const token = localStorage.getItem('token');
@@ -77,22 +79,26 @@ const ProductDetails = () => {
   }, [product, id]);
 
   const handleOrderRequest = async () => {
-    try {
-      const res = await api.post('/orders', {
-        buyerId: user.id || 5,
-        sellerId: product.user_id,
-        itemType: 'product',
-        itemId: product.id,
-        quantity: quantity
-      });
-      if (res.data.success) {
-        alert('Order request sent successfully!');
-        navigate('/orders', { state: { user } });
+    await confirm({
+      title: 'Confirm Order Request',
+      message: 'Do you want to send a purchase request for this item? A chat session will be created after the seller accepts.',
+      type: 'info',
+      confirmText: 'Confirm Request',
+      cancelText: 'Cancel',
+      onConfirm: async () => {
+        const res = await api.post('/orders', {
+          buyerId: user.id || 5,
+          sellerId: product.user_id,
+          itemType: 'product',
+          itemId: product.id,
+          quantity: quantity
+        });
+        if (res.data.success) {
+          alert('Order request sent successfully!');
+          navigate('/orders', { state: { user } });
+        }
       }
-    } catch (err) {
-      console.error('Error sending order request:', err);
-      alert(err.response?.data?.message || 'Failed to send order request.');
-    }
+    });
   };
 
   const handleNotifyMe = async () => {

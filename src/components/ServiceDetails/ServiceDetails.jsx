@@ -5,6 +5,7 @@ import Sidebar from '../Common/Sidebar';
 import '../Dashboard/Index.css'; 
 import './ServiceDetails.css';
 import Header from '../Common/Header';
+import { useConfirmation } from '../../context/ConfirmationContext';
 
 const PREDEFINED_SLOTS = [
   '09:00 AM - 11:00 AM',
@@ -26,6 +27,7 @@ const ServiceDetails = () => {
   const navigate = useNavigate();
   const location = useLocation();
   const { id } = useParams();
+  const { confirm } = useConfirmation();
   
   const user = location.state?.user || JSON.parse(localStorage.getItem('user'));
   const token = localStorage.getItem('token');
@@ -146,34 +148,36 @@ const ServiceDetails = () => {
       return;
     }
 
-    setBookingSubmitting(true);
     setBookingError('');
 
     const planPrice = selectedPlan === 'Basic Plan' ? service.standard_plan : service.group_plan;
 
-    try {
-      const res = await api.post('/orders', {
-        buyerId: user.id || 5,
-        sellerId: service.user_id,
-        itemType: 'service',
-        itemId: service.id,
-        selectedPlanType: selectedPlan,
-        selectedPrice: planPrice,
-        bookingDate: bookingDate,
-        bookingSlot: selectedSlot,
-      });
-      if (res.data.success) {
-        setShowBookingModal(false);
-        alert('Service booking sent successfully!');
-        navigate('/orders', { state: { user } });
+    await confirm({
+      title: 'Confirm Booking Request',
+      message: 'Do you want to send a booking request for this session? The slot will be reserved once the provider accepts.',
+      type: 'info',
+      confirmText: 'Confirm Booking',
+      cancelText: 'Cancel',
+      onConfirm: async () => {
+        const res = await api.post('/orders', {
+          buyerId: user.id || 5,
+          sellerId: service.user_id,
+          itemType: 'service',
+          itemId: service.id,
+          selectedPlanType: selectedPlan,
+          selectedPrice: planPrice,
+          bookingDate: bookingDate,
+          bookingSlot: selectedSlot,
+        });
+        if (res.data.success) {
+          setShowBookingModal(false);
+          alert('Service booking sent successfully!');
+          navigate('/orders', { state: { user } });
+        } else {
+          throw new Error(res.data.message || 'Failed to send booking request.');
+        }
       }
-    } catch (err) {
-      console.error('Error sending booking request:', err);
-      const msg = err.response?.data?.message || 'Failed to send booking request.';
-      setBookingError(msg);
-    } finally {
-      setBookingSubmitting(false);
-    }
+    });
   };
 
   if (loading) {

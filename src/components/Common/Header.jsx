@@ -2,6 +2,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useNotifications } from '../../context/NotificationContext';
 import api from '../../api/axiosConfig';
+import { useConfirmation } from '../../context/ConfirmationContext';
 
 const Header = ({ 
   user, 
@@ -15,6 +16,7 @@ const Header = ({
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const dropdownRef = useRef(null);
   const [wishlistCount, setWishlistCount] = useState(0);
+  const { confirm } = useConfirmation();
   
   const { unreadNotificationCount, unreadChatCount } = useNotifications() || { unreadNotificationCount: 0, unreadChatCount: 0 };
 
@@ -168,11 +170,20 @@ const Header = ({
               <button 
                 className="dropdown-item logout" 
                 role="menuitem"
-                onClick={() => {
+                onClick={async () => {
                   setDropdownOpen(false);
-                  localStorage.removeItem('user');
-                  localStorage.removeItem('token');
-                  navigate('/');
+                  const confirmed = await confirm({
+                    title: 'Confirm Logout',
+                    message: 'Are you sure you want to log out of TalentNest?',
+                    type: 'danger',
+                    confirmText: 'Logout',
+                    cancelText: 'Cancel'
+                  });
+                  if (confirmed) {
+                    localStorage.removeItem('user');
+                    localStorage.removeItem('token');
+                    navigate('/');
+                  }
                 }}
               >
                 <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="dropdown-icon"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path><polyline points="16 17 21 12 16 7"></polyline><line x1="21" y1="12" x2="9" y2="12"></line></svg>

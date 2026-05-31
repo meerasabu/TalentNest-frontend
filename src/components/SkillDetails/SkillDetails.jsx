@@ -5,6 +5,7 @@ import Sidebar from '../Common/Sidebar';
 import '../Dashboard/Index.css'; 
 import './SkillDetails.css';
 import Header from '../Common/Header';
+import { useConfirmation } from '../../context/ConfirmationContext';
 
 const PREDEFINED_SLOTS = [
   '09:00 AM - 11:00 AM',
@@ -26,6 +27,7 @@ const SkillDetails = () => {
   const navigate = useNavigate();
   const location = useLocation();
   const { id } = useParams();
+  const { confirm } = useConfirmation();
   
   const user = location.state?.user || JSON.parse(localStorage.getItem('user'));
   const token = localStorage.getItem('token');
@@ -139,33 +141,35 @@ const SkillDetails = () => {
       return;
     }
 
-    setBookingSubmitting(true);
     setBookingError('');
 
-    try {
-      const res = await api.post('/orders', {
-        buyerId: user.id || 5,
-        sellerId: skill.user_id,
-        itemType: 'skill',
-        itemId: skill.id,
-        bookingDate: bookingDate,
-        bookingSlot: selectedSlot,
-        learningGoal: learningGoal,
-        preferredSchedule: preferredSchedule,
-        userSkillLevel: userSkillLevel,
-      });
-      if (res.data.success) {
-        setShowBookingModal(false);
-        alert('Session request sent successfully!');
-        navigate('/orders', { state: { user } });
+    await confirm({
+      title: 'Confirm Booking Request',
+      message: 'Do you want to send a booking request for this session? The slot will be reserved once the provider accepts.',
+      type: 'info',
+      confirmText: 'Confirm Booking',
+      cancelText: 'Cancel',
+      onConfirm: async () => {
+        const res = await api.post('/orders', {
+          buyerId: user.id || 5,
+          sellerId: skill.user_id,
+          itemType: 'skill',
+          itemId: skill.id,
+          bookingDate: bookingDate,
+          bookingSlot: selectedSlot,
+          learningGoal: learningGoal,
+          preferredSchedule: preferredSchedule,
+          userSkillLevel: userSkillLevel,
+        });
+        if (res.data.success) {
+          setShowBookingModal(false);
+          alert('Session request sent successfully!');
+          navigate('/orders', { state: { user } });
+        } else {
+          throw new Error(res.data.message || 'Failed to send session request.');
+        }
       }
-    } catch (err) {
-      console.error('Error sending booking request:', err);
-      const msg = err.response?.data?.message || 'Failed to send session request.';
-      setBookingError(msg);
-    } finally {
-      setBookingSubmitting(false);
-    }
+    });
   };
 
   if (loading) {
