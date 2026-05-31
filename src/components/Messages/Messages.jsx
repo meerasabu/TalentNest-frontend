@@ -976,31 +976,31 @@ const Messages = () => {
                 {currentChat && (
                   <div className={`chat-session-info-bar ${detailsExpanded ? 'expanded' : 'collapsed'}`}>
                     <div className="session-info-header-row">
-                      <div className="session-info-meta-basic">
-                        <div className="session-item-type-container">
-                          {getItemTypeIcon(currentChat.item_type)}
-                          <span className="session-item-type-text">
-                            {formatItemType(currentChat.item_type)}
+                      <div className="session-order-info-card">
+                        <div className="card-item-details">
+                          <span className="card-item-type-tag">
+                            {currentChat.item_type === 'product' && '📦'}
+                            {currentChat.item_type === 'skill' && '📖'}
+                            {currentChat.item_type === 'service' && '💼'}
+                            {!['product', 'skill', 'service'].includes(currentChat.item_type) && '💬'}
+                            {' '}{formatItemType(currentChat.item_type)}
+                          </span>
+                          <span className="card-item-separator">•</span>
+                          <span className="card-item-title" title={currentChat.item_title || 'Request'}>
+                            {currentChat.item_title || 'Request'}
                           </span>
                         </div>
-                        
-                        <div className="session-title-section">
-                          <h4 className="session-info-title" title={currentChat.item_title || 'Request'}>
-                            {currentChat.item_title || 'Request'}
-                          </h4>
-                        </div>
-
-                        <div className="session-labels-grid">
-                          <div className="session-label-group">
-                            <span className="session-label-title">Order Status:</span>
-                            <span className={`session-badge-new order-${(currentChat.order_status || 'Pending').toLowerCase()}`}>
+                        <div className="card-status-details">
+                          <div className="card-status-group">
+                            <span className="status-label">Order Status:</span>
+                            <span className={`status-badge-inline order-${(currentChat.order_status || 'Pending').toLowerCase()}`}>
                               {currentChat.order_status || 'Pending'}
                             </span>
                           </div>
-                          
-                          <div className="session-label-group">
-                            <span className="session-label-title">Chat Session:</span>
-                            <span className={`session-badge-new chat-${(currentChat.chat_status || 'Active').toLowerCase()}`}>
+                          <span className="card-status-separator">|</span>
+                          <div className="card-status-group">
+                            <span className="status-label">Chat Status:</span>
+                            <span className={`status-badge-inline chat-${(currentChat.chat_status || 'Active').toLowerCase()}`}>
                               {currentChat.chat_status || 'Active'}
                             </span>
                           </div>

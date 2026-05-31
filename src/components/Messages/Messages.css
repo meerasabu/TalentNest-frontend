@@ -821,131 +821,133 @@
 }
 
 /* Enhanced Session Info Layout */
-.session-item-type-container {
-  display: inline-flex;
+.session-order-info-card {
+  display: flex;
   align-items: center;
-  gap: 0.35rem;
-  font-size: 0.65rem;
-  font-weight: 800;
+  justify-content: space-between;
+  background: #f8fafc;
+  border: 1px solid #e2e8f0;
+  border-radius: 12px;
+  padding: 0.65rem 1rem;
+  gap: 1.5rem;
+  flex: 1;
+  margin-right: 1rem;
+  box-sizing: border-box;
+}
+
+.card-item-details {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  min-width: 0;
+}
+
+.card-item-type-tag {
+  font-size: 0.7rem;
+  font-weight: 750;
   text-transform: uppercase;
-  letter-spacing: 0.08em;
-  padding: 0.25rem 0.6rem;
-  background: #f1f5f9;
   color: #475569;
+  background: #ffffff;
+  padding: 0.2rem 0.5rem;
   border-radius: 6px;
   border: 1px solid #e2e8f0;
+  white-space: nowrap;
 }
 
-.item-type-icon {
+.card-item-separator {
+  color: #cbd5e1;
+  font-weight: bold;
+}
+
+.card-item-title {
+  font-size: 0.875rem;
+  font-weight: 700;
+  color: #0f172a;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 220px;
+}
+
+.card-status-details {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
   flex-shrink: 0;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
 }
 
-.item-type-icon.product {
-  color: #06b6d4 !important;
-}
-
-.item-type-icon.skill {
-  color: #a855f7 !important;
-}
-
-.item-type-icon.service {
-  color: #3b82f6 !important;
-}
-
-.item-type-icon.request {
-  color: #64748b !important;
-}
-
-.session-item-type-text {
-  font-weight: 800;
-}
-
-.session-title-section {
-  display: flex;
-  align-items: center;
-}
-
-.session-labels-grid {
-  display: flex;
-  align-items: center;
-  gap: 1rem;
-  flex-wrap: wrap;
-}
-
-.session-label-group {
+.card-status-group {
   display: flex;
   align-items: center;
   gap: 0.35rem;
-  font-size: 0.75rem;
 }
 
-.session-label-title {
+.status-label {
+  font-size: 0.72rem;
   font-weight: 600;
   color: #64748b;
 }
 
-.session-badge-new {
+.card-status-separator {
+  color: #e2e8f0;
+  font-weight: 300;
+}
+
+.status-badge-inline {
   font-size: 0.68rem;
   font-weight: 750;
-  padding: 0.2rem 0.6rem;
-  border-radius: 12px;
+  padding: 0.15rem 0.45rem;
+  border-radius: 8px;
   text-transform: uppercase;
-  letter-spacing: 0.04em;
+  letter-spacing: 0.03em;
   border: 1px solid;
 }
 
-.session-badge-new.order-pending {
+/* Order Status Badge Colors */
+.status-badge-inline.order-pending {
   background: #fef3c7;
   color: #d97706;
   border-color: #fde68a;
 }
-
-.session-badge-new.order-accepted {
+.status-badge-inline.order-accepted {
   background: #ecfdf5;
   color: #059669;
   border-color: #a7f3d0;
 }
-
-.session-badge-new.order-completed {
+.status-badge-inline.order-completed {
   background: #e0e7ff;
   color: #4f46e5;
   border-color: #c7d2fe;
 }
-
-.session-badge-new.order-cancelled {
+.status-badge-inline.order-cancelled {
   background: #fef2f2;
   color: #dc2626;
   border-color: #fecaca;
 }
 
-.session-badge-new.chat-active {
+/* Chat Status Badge Colors */
+.status-badge-inline.chat-active {
   background: #f0fdf4;
   color: #16a34a;
   border-color: #bbf7d0;
 }
-
-.session-badge-new.chat-completed {
+.status-badge-inline.chat-completed {
   background: #e0e7ff;
   color: #4f46e5;
   border-color: #c7d2fe;
 }
-
-.session-badge-new.chat-cancelled {
+.status-badge-inline.chat-cancelled {
   background: #fef2f2;
   color: #dc2626;
   border-color: #fecaca;
 }
-
-.session-badge-new.chat-restricted {
+.status-badge-inline.chat-restricted {
   background: #fff7ed;
   color: #ea580c;
   border-color: #ffedd5;
 }
 
-/* Progress Tracker Styles */
+/* Progress Tracker Styles (Visually Secondary) */
 .session-progress-tracker-container {
   margin-top: 0.75rem;
   padding-bottom: 0.25rem;
@@ -957,8 +959,9 @@
   align-items: center;
   justify-content: space-between;
   width: 100%;
-  max-width: 500px;
+  max-width: 420px;
   margin: 0 auto;
+  opacity: 0.8;
 }
 
 .tracker-step {
@@ -967,85 +970,105 @@
   align-items: center;
   position: relative;
   z-index: 2;
-  gap: 0.35rem;
+  gap: 0.2rem;
 }
 
 .step-circle {
-  width: 24px;
-  height: 24px;
+  width: 18px;
+  height: 18px;
   border-radius: 50%;
   background: #f1f5f9;
-  border: 2px solid #e2e8f0;
+  border: 1.5px solid #e2e8f0;
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 0.75rem;
+  font-size: 0.65rem;
   font-weight: 700;
   color: #94a3b8;
   transition: all 0.3s ease;
 }
 
 .step-circle svg {
-  width: 12px;
-  height: 12px;
+  width: 9px;
+  height: 9px;
   color: #ffffff;
 }
 
 .step-label {
-  font-size: 0.72rem;
+  font-size: 0.65rem;
   font-weight: 600;
-  color: #64748b;
+  color: #94a3b8;
   text-align: center;
   white-space: nowrap;
 }
 
 .tracker-line {
   flex: 1;
-  height: 2px;
+  height: 1.5px;
   background: #e2e8f0;
   margin: 0 0.5rem;
-  margin-top: -16px;
+  margin-top: -13px;
   position: relative;
   z-index: 1;
   transition: all 0.3s ease;
 }
 
 .tracker-step.completed .step-circle {
-  background: #4f46e5;
-  border-color: #4f46e5;
+  background: #6366f1;
+  border-color: #6366f1;
   color: #ffffff;
-  box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.15);
+  box-shadow: 0 0 0 2px rgba(99, 102, 241, 0.1);
 }
 
 .tracker-step.completed .step-label {
-  color: #4f46e5;
-  font-weight: 700;
+  color: #6366f1;
+  font-weight: 600;
 }
 
 .tracker-line.active {
-  background: #4f46e5;
+  background: #6366f1;
 }
 
 .tracker-step.upcoming .step-circle {
   background: #ffffff;
   border-color: #cbd5e1;
-  color: #64748b;
+  color: #94a3b8;
 }
 
 .tracker-step.cancelled .step-circle {
   background: #ef4444;
   border-color: #ef4444;
   color: #ffffff;
-  box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.15);
+  box-shadow: 0 0 0 2px rgba(239, 68, 68, 0.1);
 }
 
 .tracker-step.cancelled .step-label {
   color: #ef4444;
-  font-weight: 700;
+  font-weight: 600;
 }
 
 .tracker-line.cancelled {
   background: #ef4444;
+}
+
+@media (max-width: 768px) {
+  .session-order-info-card {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.5rem;
+    padding: 0.5rem 0.75rem;
+    margin-right: 0.5rem;
+  }
+  .card-status-details {
+    width: 100%;
+    justify-content: flex-start;
+  }
+  .card-status-separator {
+    display: none;
+  }
+  .card-status-group {
+    margin-right: 0.5rem;
+  }
 }
 
 /* Fixed Session Details/Actions Bar */
