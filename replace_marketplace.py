@@ -1,7 +1,6 @@
 import os
 
 content = """import React, { useState, useEffect } from 'react';
-import axios from 'axios';
 import api from '../../api/axiosConfig';
 import { useNavigate, useLocation, Navigate } from 'react-router-dom';
 import Sidebar from '../Common/Sidebar';
@@ -9,12 +8,14 @@ import Pagination from '../Common/Pagination';
 import '../Dashboard/Index.css'; 
 import './Marketplace.css';
 import Header from '../Common/Header';
+import { useToast } from '../../context/ToastContext';
 
 const Marketplace = () => {
   const navigate = useNavigate();
   const location = useLocation();
   const user = location.state?.user || JSON.parse(localStorage.getItem('user'));
   const token = localStorage.getItem('token');
+  const toast = useToast();
 
   if (!user || !token || token === 'undefined') {
     return <Navigate to="/login" />;
@@ -32,6 +33,21 @@ const Marketplace = () => {
   const [priceRange, setPriceRange] = useState('All');
   const [minRating, setMinRating] = useState(0);
   const [sortBy, setSortBy] = useState('latest');
+  const [searchQuery, setSearchQuery] = useState('');
+
+  const [wishlistIds, setWishlistIds] = useState(new Set());
+
+  const fetchWishlist = async () => {
+    try {
+      const res = await api.get(`/wishlist/users/${user.id}`);
+      if (res.data.success) {
+        const ids = new Set(res.data.items.filter(item => item.type === 'product').map(item => item.id));
+        setWishlistIds(ids);
+      }
+    } catch (err) {
+      console.error('Error fetching wishlist:', err);
+    }
+  };
 
   useEffect(() => {
     const fetchProducts = async () => {
@@ -47,27 +63,48 @@ const Marketplace = () => {
       }
     };
     fetchProducts();
+    fetchWishlist();
   }, []);
 
   const handleAddToWishlist = async (e, itemId) => {
     e.stopPropagation();
+    const isWishlisted = wishlistIds.has(itemId);
     try {
-      const res = await api.post('/wishlist', {
-        userId: user.id || 5,
-        itemType: 'product',
-        itemId
-      });
-      if (res.data.success) {
-        alert(res.data.message || 'Added to wishlist!');
+      if (isWishlisted) {
+        const res = await api.delete(`/wishlist/${user.id}/product/${itemId}`);
+        if (res.data.success) {
+          const newIds = new Set(wishlistIds);
+          newIds.delete(itemId);
+          setWishlistIds(newIds);
+          window.dispatchEvent(new Event('wishlistUpdated'));
+        }
+      } else {
+        const res = await api.post('/wishlist', {
+          userId: user.id,
+          itemType: 'product',
+          itemId
+        });
+        if (res.data.success) {
+          const newIds = new Set(wishlistIds);
+          newIds.add(itemId);
+          setWishlistIds(newIds);
+          window.dispatchEvent(new Event('wishlistUpdated'));
+        }
       }
     } catch (err) {
-      console.error('Error adding to wishlist:', err);
-      alert('Failed to add to wishlist.');
+      console.error('Error toggling wishlist:', err);
+      toast.error('Failed to update wishlist.');
     }
   };
 
   // Filter Logic
   const filteredProducts = products.filter(prod => {
+    if (searchQuery) {
+      const q = searchQuery.toLowerCase();
+      const titleMatch = prod.title?.toLowerCase().includes(q);
+      const descMatch = prod.description?.toLowerCase().includes(q);
+      if (!titleMatch && !descMatch) return false;
+    }
     if (activeCategory !== 'All' && prod.category !== activeCategory) return false;
     
     if (priceRange !== 'All') {
@@ -125,6 +162,19 @@ const Marketplace = () => {
             </div>
             
             <div className="market-action-group">
+              <div className="marketplace-search-box">
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="search-icon" viewBox="0 0 24 24">
+                  <circle cx="11" cy="11" r="8"></circle>
+                  <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+                </svg>
+                <input 
+                  type="text" 
+                  placeholder="Search products..." 
+                  value={searchQuery} 
+                  onChange={(e) => { setSearchQuery(e.target.value); setCurrentPage(1); }}
+                  className="search-input-field"
+                />
+              </div>
               <button className="btn-add-product" onClick={() => navigate('/create-listing', { state: { initialTab: 'product' } })}>
                 + Add Product
               </button>
@@ -208,7 +258,7 @@ const Marketplace = () => {
               <div key={prod.id} className="market-card" onClick={() => navigate(`/product/${prod.id}`, { state: { user } })} style={{cursor: 'pointer'}}>
                  <div className="market-card-img-wrap">
                    {prod.image_urls && prod.image_urls.length > 0 ? (
-                     <img src={`http://localhost:5000${prod.image_urls[0]}`} alt={prod.title} className="market-card-img" />
+                     <img src={window.getImageUrl(prod.image_urls[0])} alt={prod.title} className="market-card-img" />
                    ) : (
                      <div className="market-card-img placeholder-null"></div>
                    )}
@@ -222,27 +272,65 @@ const Marketplace = () => {
                          </span>
                       </div>
                       <span className="heart-icon-layer" onClick={(e) => handleAddToWishlist(e, prod.id)}>
-                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#6B7280" strokeWidth="2"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path></svg>
+                        <svg 
+                           width="16" 
+                           height="16" 
+                           viewBox="0 0 24 24" 
+                           fill={wishlistIds.has(prod.id) ? "#EF4444" : "none"} 
+                           stroke={wishlistIds.has(prod.id) ? "#EF4444" : "#6B7280"} 
+                           strokeWidth="2"
+                         >
+                           <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path>
+                         </svg>
                       </span>
                    </div>
                  </div>
 
                  <div className="market-card-body">
-                   <h3 className="prod-title">{prod.title}</h3>
-                   <div className="prod-rating">
-                      <svg width="12" height="12" fill="#FBBF24" viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon></svg>
-                      <span className="rating-num">{prod.rating || '0.0'}</span>
-                      <span className="rating-revs">({prod.reviews || 0})</span>
-                   </div>
-                   
-                   <div className="prod-price">₹{prod.price}</div>
-                   
-                   <p className="prod-meta">{prod.category} • Today</p>
+                    <h3 className="prod-title">{prod.title}</h3>
+                     <div className="prod-rating">
+                        <span style={{ color: '#FBBF24', fontSize: '0.75rem', marginRight: '2px' }}>⭐</span>
+                        <span className="rating-revs">({prod.reviews || 0} {prod.reviews === 1 ? 'Review' : 'Reviews'})</span>
+                     </div>
+                    
+                    <div className="prod-seller-row" style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '0.75rem' }}>
+                      {prod.profile_image ? (
+                        <img 
+                          src={window.getImageUrl(prod.profile_image)} 
+                          alt={prod.first_name} 
+                          style={{ width: '20px', height: '20px', borderRadius: '50%', objectFit: 'cover' }} 
+                        />
+                      ) : (
+                        <div 
+                          style={{ 
+                            width: '20px', 
+                            height: '20px', 
+                            borderRadius: '50%', 
+                            backgroundColor: '#E5E7EB', 
+                            color: '#4B5563', 
+                            display: 'flex', 
+                            alignItems: 'center', 
+                            justifyContent: 'center', 
+                            fontSize: '9px', 
+                            fontWeight: 'bold' 
+                          }}
+                        >
+                          {prod.first_name?.[0]?.toUpperCase() || 'U'}
+                        </div>
+                      )}
+                      <span style={{ fontSize: '0.75rem', color: '#4B5563' }}>
+                        by <strong>{prod.first_name} {prod.last_name?.charAt(0)}.</strong>
+                      </span>
+                    </div>
+                    
+                    <div className="prod-price">₹{prod.price}</div>
+                    
+                    <p className="prod-meta">{prod.category} • Today</p>
 
-                   <button className="prod-request-btn">
-                      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#4F46E5" strokeWidth="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path></svg>
-                      Request-based purchase via chat
-                   </button>
+                    <button className="prod-request-btn">
+                       <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#4F46E5" strokeWidth="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path></svg>
+                       Request-based purchase via chat
+                    </button>
                  </div>
               </div>
             ))}
